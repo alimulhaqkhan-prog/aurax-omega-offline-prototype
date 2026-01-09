@@ -2,1438 +2,1192 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>AURA-X Ω – Emotional Continuity OS (Professional Prototype)</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Optional: future-ready offline LLM via WebLLM (can be wired later) -->
-  <script type="module">
-    // This import is safe even if you don't use it yet; a developer can hook it later.
-    import * as webllm from "https://esm.run/@mlc-ai/web-llm";
-    window.webllm = webllm;
-  </script>
-
+  <title>AURA-X Ω – Unified Emotional Continuity Lab (Offline Prototype)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --accent: #0ea5e9;
-      --accent-soft: rgba(14, 165, 233, 0.65);
-      --accent-soft-2: rgba(34, 211, 238, 0.45);
-      --bg-root: #020617;
-      --bg-card: rgba(2, 6, 23, 0.70);
-      --border-soft: rgba(148, 163, 184, 0.22);
-      --radius-lg: 22px;
-      --radius-md: 18px;
+    :root{
+      --bg: #020617;
+      --bg-soft: #020617;
+      --card: rgba(15,23,42,.94);
+      --card-soft: rgba(15,23,42,.86);
+      --accent: #eab308;
+      --accent-soft: rgba(234,179,8,.14);
+      --accent-strong: #facc15;
+      --accent-muted: #f97316;
+      --border-subtle: rgba(148,163,184,.32);
+      --border-strong: rgba(248,250,252,.10);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --text-soft2: #6b7280;
+      --danger: #f97373;
+      --good: #4ade80;
+      --neutral: #38bdf8;
+      --shadow-soft: 0 22px 60px rgba(15,23,42,.88);
+      --radius-xl: 26px;
+      --radius-lg: 18px;
+      --radius-md: 14px;
       --radius-pill: 999px;
-      --shadow-main: 0 20px 60px rgba(0, 0, 0, 0.45);
-      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      --font-mono: ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --glass-blur: 18px;
+      --transition-fast: .22s ease;
     }
-
-    body {
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      padding: 20px 10px;
+    *{
+      box-sizing:border-box;
+      margin:0;
+      padding:0;
+    }
+    html,body{
+      height:100%;
+      width:100%;
       background:
-        radial-gradient(circle at 8% 0%, #1e293b 0, transparent 45%),
-        radial-gradient(circle at 82% 0%, #0ea5e9 0, transparent 43%),
-        linear-gradient(140deg, #020617 0, #020617 40%, #020617 100%);
-      color: #e5e7eb;
-    }
-
-    .app {
-      width: min(1020px, 100vw);
-      background: rgba(2, 6, 23, 0.55);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(148, 163, 184, 0.24);
-      overflow: hidden;
-      box-shadow: var(--shadow-main);
-      backdrop-filter: blur(14px);
-    }
-
-    /* ---------- HEADER ---------- */
-
-    .top {
-      padding: 18px 18px 10px;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.16);
-      text-align: center;
-    }
-
-    .brand {
-      font-weight: 900;
-      letter-spacing: 0.04em;
-      font-size: 26px;
-      color: #7dd3fc;
-      text-shadow: 0 0 22px rgba(14, 165, 233, 0.30);
-    }
-
-    .brandSub {
-      margin-top: 4px;
-      font-size: 13px;
-      opacity: 0.9;
-    }
-
-    .brandMeta {
-      margin-top: 2px;
-      font-size: 11px;
-      opacity: 0.75;
-    }
-
-    .ethicBar {
-      margin: 12px auto 10px;
-      max-width: 760px;
-      padding: 10px 14px;
-      border-radius: 18px;
-      background: rgba(15, 23, 42, 0.80);
-      border: 1px solid rgba(251, 191, 36, 0.45);
-      color: #fbbf24;
-      text-align: left;
-      box-shadow: inset 0 0 0 1px rgba(251, 191, 36, 0.12);
-    }
-
-    .ethicTitle {
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .ethicBody {
-      font-size: 12px;
-      line-height: 1.4;
-    }
-
-    .statusPill {
-      margin: 8px auto 0;
-      max-width: 760px;
-      border-radius: var(--radius-pill);
-      padding: 10px 18px;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-weight: 800;
-      background: linear-gradient(90deg, var(--accent-soft), var(--accent-soft-2));
-      border: 1px solid rgba(125, 211, 252, 0.45);
-      color: #020617;
-      box-shadow: 0 12px 38px rgba(14, 165, 233, 0.24);
-    }
-
-    /* ---------- LAYOUT ---------- */
-
-    .main {
-      padding: 14px 14px 18px;
-    }
-
-    .row {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      align-items: stretch;
-    }
-
-    .col-left  { flex: 1 1 360px; min-width: 320px; }
-    .col-right { flex: 1 1 360px; min-width: 320px; }
-
-    .card {
-      background: var(--bg-card);
-      border-radius: var(--radius-md);
-      border: 1px solid rgba(148, 163, 184, 0.26);
-      box-shadow: 0 12px 38px rgba(0, 0, 0, 0.30);
-      padding: 14px;
-      backdrop-filter: blur(12px);
-    }
-
-    .cardHeader {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .cardTitle {
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: #bfdbfe;
-      font-weight: 800;
-    }
-
-    .cardTag {
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
-      text-transform: uppercase;
-      letter-spacing: 0.10em;
-      opacity: 0.9;
-    }
-
-    .cardSub {
-      font-size: 11px;
-      opacity: 0.80;
-      margin-bottom: 10px;
-    }
-
-    /* ---------- SYSTEM CONSOLE ---------- */
-
-    .console {
-      margin-top: 4px;
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      background: rgba(0, 0, 0, 0.32);
-      padding: 10px 12px;
-      height: 220px;
-      overflow: auto;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      white-space: pre-wrap;
-      line-height: 1.55;
-      box-shadow: inset 0 0 0 1px rgba(125, 211, 252, 0.08);
-    }
-
-    .logLine {
-      margin: 1px 0;
-      display: block;
-    }
-    .logLine.sys   { color: #facc15; }
-    .logLine.user  { color: #c4b5fd; }
-    .logLine.aura  { color: #bbf7d0; }
-
-    .badgeRow {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-      font-size: 10px;
-      font-family: var(--font-mono);
-    }
-
-    .badge {
-      padding: 4px 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.40);
-      background: rgba(15, 23, 42, 0.85);
-      color: #e5e7eb;
-    }
-
-    /* ---------- CONTINUITY METRICS ---------- */
-
-    .metricsGrid {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
-    }
-
-    .metricCard {
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.20);
-      background: rgba(15, 23, 42, 0.88);
-      padding: 6px 8px;
-      min-height: 48px;
-    }
-
-    .metricKey {
-      font-size: 9px;
-      opacity: 0.75;
-      font-family: var(--font-mono);
-      text-transform: uppercase;
-    }
-
-    .metricVal {
-      margin-top: 2px;
-      font-size: 13px;
-      font-weight: 900;
-      font-family: var(--font-mono);
-      color: #e0f2fe;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .eqBox {
-      margin-top: 8px;
-      padding: 8px 9px;
-      border-radius: 14px;
-      border: 1px dashed rgba(125, 211, 252, 0.28);
-      background: rgba(2, 6, 23, 0.80);
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: #dbeafe;
-      white-space: pre-wrap;
-      line-height: 1.4;
-    }
-
-    /* ---------- ARCHITECTURE OVERVIEW ---------- */
-
-    .archGrid {
-      margin-top: 8px;
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 8px;
-    }
-
-    .archBlock {
-      border-radius: 14px;
-      border: 1px solid rgba(148, 163, 184, 0.24);
-      background: rgba(15, 23, 42, 0.92);
-      padding: 8px 9px;
-      font-size: 11px;
-      line-height: 1.5;
-    }
-
-    .archTitle {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: #bfdbfe;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .archList {
-      margin-left: 12px;
-      margin-top: 2px;
-    }
-
-    .archList li {
-      margin-bottom: 2px;
-    }
-
-    /* ---------- CHAT PANEL ---------- */
-
-    .chatCard {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 4px;
-    }
-
-    .toolbarLeft {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .toolbarRight {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .toolbarBtn {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.30);
-      background: rgba(15, 23, 42, 0.85);
-      color: #e5e7eb;
-      font-size: 11px;
-      padding: 6px 9px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .toolbarBtn span.icon {
-      font-size: 14px;
-    }
-
-    .toolbarBtn:active {
-      transform: scale(0.98);
-    }
-
-    .moodStrip {
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      background: rgba(2, 6, 23, 0.80);
-      padding: 7px 12px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-
-    .moodPill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.30);
-      padding: 3px 9px;
-      font-size: 11px;
-      font-weight: 800;
-    }
-
-    .moodPill.pos {
-      border-color: rgba(34, 197, 94, 0.70);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.20);
-      color: #bbf7d0;
-    }
-
-    .moodPill.neg {
-      border-color: rgba(248, 113, 113, 0.85);
-      box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.24);
-      color: #fee2e2;
-    }
-
-    .moodPill.neu {
-      border-color: rgba(125, 211, 252, 0.65);
-      box-shadow: 0 0 0 1px rgba(125, 211, 252, 0.18);
-      color: #e0f2fe;
-    }
-
-    .moodLabelStrong {
-      font-weight: 900;
-    }
-
-    .chatHistory {
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      background: rgba(2, 6, 23, 0.80);
-      padding: 10px 12px;
-      height: 210px;
-      overflow: auto;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .msg {
-      margin-bottom: 6px;
-    }
-
-    .msgRole {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.10em;
-      opacity: 0.7;
-    }
-
-    .msgRole.user  { color: #a5b4fc; }
-    .msgRole.aura  { color: #bbf7d0; }
-
-    .msgBody {
-      margin-top: 1px;
-      white-space: pre-wrap;
-    }
-
-    .inputRow {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .inputBox {
-      flex: 1;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.28);
-      background: rgba(15, 23, 42, 0.94);
-      padding: 11px 14px;
-      font-size: 14px;
-      color: #e5e7eb;
-      outline: none;
-    }
-
-    .inputBox::placeholder {
-      color: rgba(148, 163, 184, 0.85);
-    }
-
-    .sendBtn {
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(90deg, var(--accent), rgba(34, 211, 238, 0.60));
-      color: #020617;
-      font-weight: 900;
-      font-size: 13px;
-      padding: 11px 18px;
-      min-width: 92px;
-      cursor: pointer;
-      box-shadow: 0 12px 30px rgba(14, 165, 233, 0.22);
-    }
-
-    .sendBtn:active {
-      transform: scale(0.98);
-    }
-
-    .helperText {
-      margin-top: 4px;
-      font-size: 11px;
-      opacity: 0.78;
-    }
-
-    /* ---------- MODAL (SETTINGS) ---------- */
-
-    .modalOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-      backdrop-filter: blur(10px);
-    }
-
-    .modalOverlay.show {
-      display: flex;
-    }
-
-    .modal {
-      width: min(880px, 96vw);
-      border-radius: 18px;
-      background: rgba(248, 250, 252, 0.97);
-      border: 1px solid rgba(15, 23, 42, 0.18);
-      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.42);
-      overflow: hidden;
-    }
-
-    .modalHeader {
-      padding: 10px 14px;
-      border-bottom: 1px solid rgba(15, 23, 42, 0.10);
-      background: rgba(255, 255, 255, 0.96);
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .modalTitle {
-      font-weight: 800;
-      font-size: 14px;
-    }
-
-    .modalSub {
-      font-size: 11px;
-      opacity: 0.75;
-    }
-
-    .modalClose {
-      border: none;
-      background: transparent;
-      font-size: 22px;
-      cursor: pointer;
-      line-height: 1;
-      padding: 0 4px;
-      opacity: 0.7;
-    }
-
-    .modalBody {
-      padding: 12px 14px 14px;
-      max-height: 70vh;
-      overflow: auto;
-      font-size: 13px;
-      color: #0f172a;
-    }
-
-    .settingsGrid {
-      display: grid;
-      grid-template-columns: 0.9fr 1.1fr;
-      gap: 12px;
-    }
-
-    .settingsSection {
-      border-radius: 14px;
-      border: 1px solid rgba(15, 23, 42, 0.12);
-      background: #f9fafb;
-      padding: 10px;
-    }
-
-    .settingsTitle {
-      font-size: 12px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.10em;
-      margin-bottom: 4px;
-    }
-
-    .settingsText {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-bottom: 6px;
-      line-height: 1.4;
-    }
-
-    .fieldLabel {
-      font-size: 11px;
-      opacity: 0.75;
-      display: block;
-      margin-bottom: 3px;
-    }
-
-    .fieldInput, .fieldSelect, .fieldArea {
-      width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(15, 23, 42, 0.18);
-      padding: 8px 10px;
-      font-size: 13px;
-      outline: none;
-      background: #ffffff;
-    }
-
-    .fieldArea {
-      min-height: 80px;
-      resize: vertical;
-      line-height: 1.4;
-    }
-
-    .settingsActions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      border-radius: 10px;
-      border: 1px solid transparent;
-      font-size: 12px;
-      font-weight: 800;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-
-    .btn-primary {
-      background: #0f172a;
-      color: #f9fafb;
-      border-color: #020617;
-    }
-
-    .btn-outline {
-      background: #f1f5f9;
-      color: #0f172a;
-      border-color: rgba(15, 23, 42, 0.15);
-    }
-
-    .btn-danger {
-      background: #fee2e2;
-      color: #7f1d1d;
-      border-color: rgba(248, 113, 113, 0.6);
-    }
-
-    /* ---------- TOAST ---------- */
-
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      transform: translateX(-50%) translateY(14px);
-      padding: 6px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.40);
-      background: rgba(15, 23, 42, 0.96);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55);
-      color: #e5e7eb;
-      font-size: 12px;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.16s ease, transform 0.16s ease;
-      z-index: 1000;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* ---------- RESPONSIVE ---------- */
-
-    @media (max-width: 780px) {
-      .archGrid { grid-template-columns: 1fr; }
-      .settingsGrid { grid-template-columns: 1fr; }
-    }
-
+        radial-gradient(120% 140% at 0% 0%, #0f172a 0, #020617 40%, #020617 100%);
+      color:var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                   "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body{
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+      padding:16px;
+    }
+    .app{
+      width:100%;
+      max-width:1240px;
+      min-height:96vh;
+      background: radial-gradient(180% 220% at 10% 0%, rgba(234,179,8,.12) 0, rgba(15,23,42,.98) 34%, #020617 76%);
+      border-radius:32px;
+      box-shadow: var(--shadow-soft);
+      padding:18px 22px 20px 22px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      position:relative;
+      overflow:hidden;
+    }
+    .app::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(210px 210px at 4% 0%,rgba(34,211,238,.20) 0,transparent 55%),
+        radial-gradient(260px 260px at 100% 0%,rgba(234,179,8,.22) 0,transparent 55%),
+        radial-gradient(300px 380px at 20% 100%,rgba(59,130,246,.22) 0,transparent 55%);
+      opacity:.80;
+      mix-blend-mode:screen;
+      pointer-events:none;
+    }
+    .app-inner{
+      position:relative;
+      z-index:1;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      height:100%;
+    }
+
+    /* Top bar */
+    .topBar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 16px;
+      border-radius:var(--radius-xl);
+      background:linear-gradient(120deg,rgba(15,23,42,.90),rgba(15,23,42,.85));
+      backdrop-filter:blur(16px);
+      border:1px solid rgba(148,163,184,.30);
+    }
+    .brandBlock{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .orb{
+      width:40px;
+      height:40px;
+      border-radius:999px;
+      background:
+        conic-gradient(from 210deg,#eab308,#22c55e,#38bdf8,#eab308);
+      position:relative;
+      box-shadow:0 0 40px rgba(234,179,8,.6);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .orb::after{
+      content:"Ω";
+      color:#020617;
+      font-weight:800;
+      font-size:18px;
+      text-shadow:0 1px 0 rgba(255,255,255,.8);
+    }
+    .brandText{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .brandTitle{
+      font-weight:650;
+      font-size:17px;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    .brandSubtitle{
+      font-size:12px;
+      color:var(--text-soft);
+    }
+
+    .topRight{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 11px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.40);
+      background:rgba(15,23,42,.92);
+      font-size:11px;
+      color:var(--text-soft);
+    }
+    .pill strong{
+      font-size:11px;
+      color:var(--accent-strong);
+    }
+    .pill span.badge{
+      padding:2px 6px;
+      border-radius:999px;
+      background:rgba(34,197,94,.12);
+      color:#bbf7d0;
+      font-size:10px;
+    }
+    .topBtn{
+      border-radius:var(--radius-pill);
+      border:none;
+      padding:7px 13px;
+      font-size:11px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:rgba(15,23,42,.9);
+      color:var(--text-soft);
+      border:1px solid rgba(148,163,184,.34);
+      transition:background var(--transition-fast),transform var(--transition-fast),
+                 box-shadow var(--transition-fast),border-color var(--transition-fast);
+    }
+    .topBtn span.icon{
+      font-size:14px;
+    }
+    .topBtn.primary{
+      background:linear-gradient(135deg,#f97316,#eab308);
+      color:#020617;
+      font-weight:600;
+      border-color:transparent;
+      box-shadow:0 0 24px rgba(234,179,8,.6);
+    }
+    .topBtn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 30px rgba(15,23,42,.80);
+      border-color:rgba(248,250,252,.30);
+    }
+
+    /* Ethic bar */
+    .ethicBar{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:flex-start;
+      gap:10px;
+      background:linear-gradient(120deg,rgba(15,23,42,.96),rgba(15,23,42,.92));
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(148,163,184,.40);
+      padding:10px 14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .ethicTag{
+      font-size:11px;
+      padding:4px 10px;
+      border-radius:var(--radius-pill);
+      background:rgba(34,197,94,.12);
+      color:#bbf7d0;
+      border:1px solid rgba(34,197,94,.30);
+      white-space:nowrap;
+    }
+    .ethicCopy{
+      font-size:11px;
+      color:var(--text-soft);
+      max-width:780px;
+      line-height:1.5;
+    }
+    .ethicCopy strong{
+      color:var(--accent-strong);
+    }
+
+    /* Grid layout */
+    .grid{
+      flex:1;
+      display:grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.8fr);
+      gap:14px;
+      min-height:0;
+    }
+    @media (max-width:980px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius-xl);
+      border:1px solid var(--border-subtle);
+      box-shadow:0 16px 45px rgba(15,23,42,.90);
+      padding:12px 14px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .cardHeader{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:8px;
+      margin-bottom:2px;
+    }
+    .cardTitle{
+      font-size:13px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      color:#cbd5f5;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .cardTitle span.bullet{
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background:var(--accent);
+      box-shadow:0 0 12px rgba(234,179,8,.8);
+    }
+    .cardMeta{
+      display:flex;
+      gap:8px;
+      font-size:10px;
+      color:var(--text-soft2);
+      align-items:center;
+    }
+    .chip{
+      padding:2px 8px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.46);
+      font-size:10px;
+      color:var(--text-soft2);
+      background:rgba(15,23,42,.9);
+      white-space:nowrap;
+    }
+    .chip span.dot{
+      display:inline-block;
+      width:6px;
+      height:6px;
+      border-radius:999px;
+      margin-right:5px;
+      background:var(--neutral);
+    }
+
+    /* Console */
+    .console{
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(15,23,42,1);
+      background:
+        radial-gradient(120% 140% at 0% 0%,rgba(56,189,248,.16) 0,rgba(15,23,42,.98) 40%,rgba(15,23,42,.98) 100%);
+      padding:9px 10px;
+      font-family:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+      font-size:11px;
+      color:#e5e7eb;
+      height:180px;
+      overflow:auto;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(148,163,184,.6) transparent;
+    }
+    .console::-webkit-scrollbar{
+      width:6px;
+    }
+    .console::-webkit-scrollbar-thumb{
+      background:rgba(148,163,184,.55);
+      border-radius:999px;
+    }
+    .logLine{
+      margin-bottom:2px;
+      white-space:pre-wrap;
+    }
+    .logPrefix{
+      color:#64748b;
+    }
+    .logTag{
+      color:#22c55e;
+    }
+    .logWarn{color:#fbbf24;}
+    .logSys{color:#38bdf8;}
+
+    /* Metrics row */
+    .metrics{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:8px;
+      margin-top:4px;
+    }
+    @media (max-width:980px){
+      .metrics{grid-template-columns:repeat(2,minmax(0,1fr));}
+    }
+    .metricCard{
+      border-radius:var(--radius-md);
+      border:1px solid rgba(148,163,184,.34);
+      background:rgba(15,23,42,.96);
+      padding:7px 9px;
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+    }
+    .metricLabel{
+      font-size:10px;
+      color:var(--text-soft2);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .metricValue{
+      font-size:16px;
+      font-weight:650;
+      letter-spacing:.02em;
+    }
+    .metricSub{
+      font-size:10px;
+      color:var(--text-soft);
+    }
+
+    .gauge{
+      position:relative;
+      height:6px;
+      border-radius:999px;
+      background:rgba(15,23,42,1);
+      overflow:hidden;
+      margin-top:3px;
+    }
+    .gaugeFill{
+      position:absolute;
+      inset:0;
+      width:40%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#f97316,#eab308,#22c55e);
+      transform-origin:left center;
+      transform:scaleX(.4);
+      transition:transform .25s ease-out;
+    }
+
+    /* Equation panel */
+    .equationPanel{
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(148,163,184,.45);
+      padding:9px 10px;
+      background:linear-gradient(135deg,rgba(15,23,42,.96),rgba(15,23,42,.94));
+      display:grid;
+      grid-template-columns:minmax(0,1.5fr) minmax(0,1.3fr);
+      gap:10px;
+      margin-top:4px;
+    }
+    @media (max-width:900px){
+      .equationPanel{
+        grid-template-columns:1fr;
+      }
+    }
+    .eqMain{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .eqFormula{
+      font-family:"JetBrains Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+      font-size:11px;
+      border-radius:var(--radius-md);
+      background:rgba(15,23,42,.96);
+      border:1px solid rgba(148,163,184,.50);
+      padding:8px 8px;
+      line-height:1.5;
+    }
+    .eqFormula span.emph{
+      color:var(--accent-strong);
+    }
+    .eqCaption{
+      font-size:10px;
+      color:var(--text-soft);
+      line-height:1.5;
+    }
+
+    .eqControls{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-size:11px;
+      color:var(--text-soft);
+    }
+    .sliderRow{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .sliderRow label{
+      width:60px;
+      font-size:10px;
+      color:var(--text-soft);
+    }
+    .sliderRow input[type="range"]{
+      flex:1;
+      accent-color:var(--accent-strong);
+    }
+    .sliderVal{
+      width:32px;
+      text-align:right;
+      font-size:11px;
+      color:#e5e7eb;
+    }
+    .eqGaugeRow{
+      margin-top:2px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .eqGaugeLabel{
+      font-size:10px;
+      color:var(--text-soft);
+    }
+    .eqGaugeBubble{
+      min-width:64px;
+      padding:4px 8px;
+      border-radius:var(--radius-pill);
+      font-size:11px;
+      text-align:center;
+      font-weight:600;
+      border:1px solid rgba(248,250,252,.24);
+      background:radial-gradient(circle at 0 0,rgba(234,179,8,.35),rgba(15,23,42,1));
+    }
+
+    /* Theory switcher */
+    .theorySwitch{
+      margin-top:8px;
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(148,163,184,.45);
+      background:var(--card-soft);
+      padding:8px 9px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .theoryTabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+    }
+    .theoryBtn{
+      font-size:10px;
+      padding:4px 9px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.50);
+      color:var(--text-soft);
+      background:rgba(15,23,42,.95);
+      cursor:pointer;
+      transition:background var(--transition-fast),border-color var(--transition-fast),
+                 color var(--transition-fast),transform var(--transition-fast);
+      white-space:nowrap;
+    }
+    .theoryBtn.active{
+      background:linear-gradient(120deg,#f97316,#eab308);
+      color:#020617;
+      border-color:transparent;
+      transform:translateY(-1px);
+    }
+    .theoryBody{
+      font-size:10px;
+      color:var(--text-soft);
+      line-height:1.6;
+      margin-top:3px;
+    }
+
+    /* Right column chat */
+    .chatCard{
+      height:100%;
+    }
+    .chatBody{
+      flex:1;
+      min-height:0;
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(15,23,42,1);
+      background:
+        radial-gradient(130% 180% at 100% 0%,rgba(234,179,8,.26) 0,rgba(15,23,42,.98) 44%,rgba(15,23,42,.98) 100%);
+      padding:10px 10px 8px 10px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .chatStream{
+      flex:1;
+      min-height:0;
+      overflow:auto;
+      scrollbar-width:thin;
+      scrollbar-color:rgba(148,163,184,.7) transparent;
+      padding-right:4px;
+    }
+    .chatStream::-webkit-scrollbar{width:6px;}
+    .chatStream::-webkit-scrollbar-thumb{
+      background:rgba(148,163,184,.7);
+      border-radius:999px;
+    }
+    .msgRow{
+      display:flex;
+      margin-bottom:7px;
+      gap:6px;
+    }
+    .msgRow.user{
+      justify-content:flex-end;
+    }
+    .msgBubble{
+      max-width:80%;
+      padding:7px 9px;
+      border-radius:16px;
+      font-size:11px;
+      line-height:1.5;
+      background:rgba(15,23,42,.96);
+      border:1px solid rgba(148,163,184,.60);
+      color:var(--text-main);
+    }
+    .msgRow.user .msgBubble{
+      background:linear-gradient(135deg,#f97316,#eab308);
+      color:#020617;
+      border-color:rgba(248,250,252,.40);
+    }
+    .msgMeta{
+      font-size:9px;
+      color:var(--text-soft2);
+      margin-top:2px;
+    }
+
+    .chatInputRow{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      margin-top:4px;
+    }
+    .chatInput{
+      flex:1;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.55);
+      padding:7px 11px;
+      font-size:11px;
+      background:rgba(15,23,42,.96);
+      color:var(--text-main);
+      outline:none;
+      box-shadow:0 0 0 1px rgba(15,23,42,1);
+    }
+    .chatInput::placeholder{
+      color:var(--text-soft2);
+    }
+    .sendBtn{
+      border-radius:var(--radius-pill);
+      border:none;
+      padding:7px 12px;
+      background:linear-gradient(135deg,#22c55e,#a3e635);
+      color:#020617;
+      font-size:11px;
+      font-weight:600;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      box-shadow:0 0 18px rgba(34,197,94,.6);
+      transition:transform var(--transition-fast),box-shadow var(--transition-fast),
+                 filter var(--transition-fast);
+    }
+    .sendBtn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 14px 34px rgba(22,163,74,.9);
+      filter:brightness(1.03);
+    }
+
+    /* Clone / continuity panel */
+    .clonePanel{
+      border-radius:var(--radius-lg);
+      border:1px solid rgba(148,163,184,.42);
+      background:var(--card-soft);
+      padding:8px 9px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-top:8px;
+      font-size:10px;
+      color:var(--text-soft);
+      line-height:1.5;
+    }
+    .cloneRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      align-items:center;
+    }
+    .tagMini{
+      padding:2px 7px;
+      border-radius:var(--radius-pill);
+      border:1px solid rgba(148,163,184,.55);
+      background:rgba(15,23,42,.96);
+      font-size:9px;
+      color:var(--text-soft);
+      white-space:nowrap;
+    }
+    .cloneLaw{
+      margin-top:2px;
+      padding:6px 7px;
+      border-radius:var(--radius-md);
+      background:rgba(15,23,42,1);
+      border:1px dashed rgba(148,163,184,.6);
+      color:var(--accent-strong);
+      font-size:10px;
+    }
+
+    /* Small footer */
+    .footer{
+      font-size:10px;
+      color:var(--text-soft2);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:8px;
+      margin-top:2px;
+    }
+    .footer a{
+      color:var(--accent-muted);
+      text-decoration:none;
+    }
+    .footer a:hover{text-decoration:underline;}
   </style>
 </head>
 <body>
   <div class="app">
-    <!-- HEADER -->
-    <header class="top">
-      <div class="brand">AURA-X Ω</div>
-      <div class="brandSub">Emotional Continuity OS – Professional Prototype</div>
-      <div class="brandMeta">
-        TM = current signal · BM = lifetime blueprint · Goal = stable emotional trajectory, not single answers.
-      </div>
-
-      <div class="ethicBar">
-        <div class="ethicTitle">Continuity Principle</div>
-        <div class="ethicBody">
-          Minimize actions that amplify harmful emotion in you or others.
-          Prefer decisions that increase shared, durable, and ethically grounded positive feeling,
-          even when the short-term answer is uncomfortable.
+    <div class="app-inner">
+      <!-- TOP BAR -->
+      <div class="topBar">
+        <div class="brandBlock">
+          <div class="orb"></div>
+          <div class="brandText">
+            <div class="brandTitle">AURA-X Ω / Emotional Continuity Lab</div>
+            <div class="brandSubtitle">
+              TM–BM Resonance • Internal Stimulus • Limbda System • Digital Clone Interface
+            </div>
+          </div>
+        </div>
+        <div class="topRight">
+          <div class="pill">
+            <span>Continuity Index</span>
+            <strong id="pillE0">E₀ ≈ 0.00</strong>
+            <span class="badge" id="pillState">Balanced</span>
+          </div>
+          <button class="topBtn" id="btnTheoryDeck">
+            <span class="icon">📚</span> Theory Deck
+          </button>
+          <button class="topBtn primary" id="btnOfflineNote">
+            <span class="icon">🛡️</span> Offline, No Cloud Sync
+          </button>
         </div>
       </div>
 
-      <div class="statusPill" id="statusPill">
-        CONTINUITY ENGINE ONLINE · LOCAL PROTOTYPE · NO CLOUD MEMORY
+      <!-- ETHIC STRIP -->
+      <div class="ethicBar">
+        <div class="ethicTag">ETHICAL CONTINUITY ONLY</div>
+        <div class="ethicCopy">
+          This prototype treats AURA-X Ω as an <strong>emotional continuity layer</strong> – not digital immortality.
+          External events are data; emotion is the meaning created when Temporary Memory (TM) resonates with Bold Memory (BM),
+          and chemistry or digital activation are only <strong>physical amplifiers</strong> of that meaning. Age is not
+          intelligence, continuity depth is. This interface follows the law: <strong>“Continuity is a soft landing, not a
+          resurrection.”</strong>
+        </div>
       </div>
-    </header>
 
-    <!-- MAIN -->
-    <main class="main">
-      <div class="row">
-        <!-- LEFT COLUMN: CONSOLE + METRICS + ARCHITECTURE -->
-        <section class="col-left">
-          <!-- System Console -->
-          <div class="card">
-            <div class="cardHeader">
-              <div class="cardTitle">System Console</div>
-              <button class="toolbarBtn" id="btnOpenSettings">
-                <span class="icon">⚙️</span><span>Settings</span>
-              </button>
+      <!-- MAIN GRID -->
+      <div class="grid">
+        <!-- LEFT COLUMN -->
+        <div class="card">
+          <div class="cardHeader">
+            <div class="cardTitle">
+              <span class="bullet"></span>
+              SYSTEM CONSOLE · TM/BM & CONTINUITY
             </div>
-            <p class="cardSub">
-              Internal log of how AURA-X Ω is interpreting the dialogue: TM/BM values, decisions, and safety checks.
-            </p>
+            <div class="cardMeta">
+              <span class="chip"><span class="dot"></span>Prototype | Offline JS Only</span>
+            </div>
+          </div>
 
-            <div class="console" id="console">
-              <span class="logLine sys">
-[system] AURA-X Ω booted. Continuity engine ready. No conversation history loaded (session-only prototype).
+          <div class="console" id="console">
+            <div class="logLine">
+              <span class="logPrefix">[00:00:00] </span>
+              <span class="logSys">AURA-X Ω booted.</span> Loading dual-memory layer, continuity depth heuristics,
+              and Limbda constraints…
+            </div>
+            <div class="logLine">
+              <span class="logPrefix">[00:00:01] </span>
+              <span class="logSys">IST</span> external signals will be treated as <span class="logTag">data</span>.
+              Emotional stimulus is computed internally via TM₁–BM resonance.
+            </div>
+            <div class="logLine">
+              <span class="logPrefix">[00:00:02] </span>
+              <span class="logSys">NOTE</span> this lab emulates <span class="logTag">functional pain</span> as
+              continuity cost, not as chemicals.
+            </div>
+          </div>
+
+          <!-- METRICS -->
+          <div class="metrics">
+            <div class="metricCard">
+              <div class="metricLabel">
+                Continuity Depth
+                <span>CD</span>
+              </div>
+              <div class="metricValue" id="metricDepth">0.42</div>
+              <div class="gauge">
+                <div class="gaugeFill" id="gaugeDepth"></div>
+              </div>
+              <div class="metricSub">Heuristic: history resonance vs short-term noise.</div>
+            </div>
+            <div class="metricCard">
+              <div class="metricLabel">
+                Internal Stimulus Load
+                <span>IST-load</span>
+              </div>
+              <div class="metricValue" id="metricIST">0.18</div>
+              <div class="gauge">
+                <div class="gaugeFill" id="gaugeIST"></div>
+              </div>
+              <div class="metricSub">How strongly TM₁ is matching stored BM blueprints.</div>
+            </div>
+            <div class="metricCard">
+              <div class="metricLabel">
+                Limbda Cost
+                <span>λ</span>
+              </div>
+              <div class="metricValue" id="metricLambda">0.30</div>
+              <div class="gauge">
+                <div class="gaugeFill" id="gaugeLambda"></div>
+              </div>
+              <div class="metricSub">Pain sensitivity: continuity cost in decision making.</div>
+            </div>
+            <div class="metricCard">
+              <div class="metricLabel">
+                Digital Clone Weight
+                <span>DC-anchor</span>
+              </div>
+              <div class="metricValue" id="metricClone">0.15</div>
+              <div class="gauge">
+                <div class="gaugeFill" id="gaugeClone"></div>
+              </div>
+              <div class="metricSub">How much the interface is carrying grief-buffering load.</div>
+            </div>
+          </div>
+
+          <!-- EQUATION PANEL -->
+          <div class="equationPanel">
+            <div class="eqMain">
+              <div class="eqFormula">
+                <div>E₀ = tanh( <span class="emph">R(TM, BM)</span> − D + λ_faith + λ_sys + λ_trc )</div>
+                <div style="margin-top:4px; opacity:.82;">
+                  R(TM, BM) = Σ αᵢ · sim(TM, BMᵢ) · intensity(BMᵢ)
+                </div>
+              </div>
+              <div class="eqCaption">
+                Grand Emotional Continuity Equation. The tanh() keeps emotional state
+                bounded between −1 and +1. Resonance pushes E₀, decay D cools it, and the three λ-terms
+                (faith/values, system structure, and truth-resonance) stabilise the trajectory.
+                The gauge to the right updates heuristically with your conversation.
+              </div>
+            </div>
+            <div class="eqControls">
+              <div class="sliderRow">
+                <label for="sliderTM">R(TM,BM)</label>
+                <input type="range" id="sliderTM" min="-2" max="2" step="0.1" value="0.4">
+                <div class="sliderVal" id="valTM">0.4</div>
+              </div>
+              <div class="sliderRow">
+                <label for="sliderD">Decay D</label>
+                <input type="range" id="sliderD" min="0" max="2" step="0.1" value="0.5">
+                <div class="sliderVal" id="valD">0.5</div>
+              </div>
+              <div class="sliderRow">
+                <label for="sliderFaith">λ_faith</label>
+                <input type="range" id="sliderFaith" min="-1" max="1" step="0.1" value="0.2">
+                <div class="sliderVal" id="valFaith">0.2</div>
+              </div>
+              <div class="sliderRow">
+                <label for="sliderSys">λ_sys</label>
+                <input type="range" id="sliderSys" min="-1" max="1" step="0.1" value="0.3">
+                <div class="sliderVal" id="valSys">0.3</div>
+              </div>
+              <div class="sliderRow">
+                <label for="sliderTrc">λ_trc</label>
+                <input type="range" id="sliderTrc" min="-1" max="1" step="0.1" value="0.0">
+                <div class="sliderVal" id="valTrc">0.0</div>
+              </div>
+              <div class="eqGaugeRow">
+                <div class="eqGaugeLabel">Current E₀</div>
+                <div class="eqGaugeBubble" id="bubbleE0">0.00 · neutral</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- THEORY SWITCHER -->
+          <div class="theorySwitch">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+              <div style="font-size:11px;color:#cbd5f5;font-weight:600;letter-spacing:.12em;text-transform:uppercase;">
+                CONTINUITY STACK · SIX INTERLOCKING PAPERS
+              </div>
+              <div style="font-size:10px;color:var(--text-soft2);">
+                Tap a layer to see its role inside the prototype.
+              </div>
+            </div>
+            <div class="theoryTabs">
+              <button class="theoryBtn active" data-theory="age">Age ≠ Intelligence</button>
+              <button class="theoryBtn" data-theory="ist">Internal Stimulus (IST)</button>
+              <button class="theoryBtn" data-theory="tmbm">TM–BM Resonance</button>
+              <button class="theoryBtn" data-theory="limbda">Cost of Continuity (Limbda)</button>
+              <button class="theoryBtn" data-theory="clone">Digital Clone Interface</button>
+              <button class="theoryBtn" data-theory="equation">AURA-X Equation</button>
+            </div>
+            <div class="theoryBody" id="theoryBody">
+              In this layer, “Age Is Not Intelligence” reframes the whole dashboard. The system is not tracking raw
+              time or token count; it is tracking <strong>continuity depth</strong> – how much of the current dialogue
+              overlaps with long-running survival themes stored in BM. Machines live in resettable, linear time; humans
+              speak from billions of years of inherited history. Here we only simulate that depth numerically, but the
+              UI keeps it visually central.
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN / CHAT & CLONE PANEL -->
+        <div class="card chatCard">
+          <div class="cardHeader">
+            <div class="cardTitle">
+              <span class="bullet"></span>
+              DIALOGUE · TM INPUT & CLONE CONTINUITY
+            </div>
+            <div class="cardMeta">
+              <span class="chip">
+                <span class="dot" style="background:#22c55e;"></span>Mode: Soft-Landing Companion
               </span>
             </div>
-
-            <div class="badgeRow">
-              <span class="badge" id="badgeLLM">LLM: offline (stub)</span>
-              <span class="badge" id="badgeLearning">Learning: passively tracking patterns</span>
-              <span class="badge" id="badgeSafety">Safety: emotion-first, non-clinical</span>
-            </div>
           </div>
 
-          <!-- Continuity Metrics -->
-          <div class="card" style="margin-top: 10px;">
-            <div class="cardHeader">
-              <div class="cardTitle">Continuity Metrics</div>
-              <div class="cardTag">TM · BM · E₀</div>
-            </div>
-            <p class="cardSub">
-              Lightweight numerical view of the current emotional trajectory. These are not diagnoses – they are internal
-              engineering signals that help AURA-X Ω stay consistent.
-            </p>
-
-            <div class="metricsGrid">
-              <div class="metricCard">
-                <div class="metricKey">E₀ (overall)</div>
-                <div class="metricVal" id="valE0">0.00</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">TM valence</div>
-                <div class="metricVal" id="valTM">0.00</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">TM intensity</div>
-                <div class="metricVal" id="valIntensity">0.00</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">BM resonance</div>
-                <div class="metricVal" id="valResonance">0.00</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">λ<sub>faith</sub></div>
-                <div class="metricVal" id="valFaith">0.20</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">λ<sub>sys</sub></div>
-                <div class="metricVal" id="valSys">0.30</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">λ<sub>trc</sub></div>
-                <div class="metricVal" id="valTrc">0.25</div>
-              </div>
-              <div class="metricCard">
-                <div class="metricKey">D (decay)</div>
-                <div class="metricVal" id="valD">0.25</div>
-              </div>
-            </div>
-
-            <div class="eqBox" id="eqBox">
-E₀ = tanh( R(TM, BM) − D + λ_faith + λ_sys + λ_trc )
-
-Waiting for first message…
-            </div>
-          </div>
-
-          <!-- Architecture Overview -->
-          <div class="card" style="margin-top: 10px;">
-            <div class="cardHeader">
-              <div class="cardTitle">Architecture Overview</div>
-              <div class="cardTag">High-level</div>
-            </div>
-            <p class="cardSub">
-              Conceptual layout of AURA-X Ω in this prototype. A developer can map each block to real services or models.
-            </p>
-
-            <div class="archGrid">
-              <div class="archBlock">
-                <div class="archTitle">Continuity Stack</div>
-                <ul class="archList">
-                  <li><b>TM layer</b> – current sentence, context window, surface sentiment.</li>
-                  <li><b>BM layer</b> – internal themes (research, family, health, legal, faith).</li>
-                  <li><b>Resonance</b> – how strongly TM matches BM themes.</li>
-                  <li><b>E₀</b> – global emotional continuity signal from the equation.</li>
-                </ul>
-              </div>
-              <div class="archBlock">
-                <div class="archTitle">Interfaces</div>
-                <ul class="archList">
-                  <li><b>Dialogue</b> – this chat panel (human-facing).</li>
-                  <li><b>Console</b> – engineering logs (developer-facing).</li>
-                  <li><b>LLM Socket</b> – offline + online helper (optional).</li>
-                  <li><b>Export</b> – future hook for journals / clinical tools.</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- RIGHT COLUMN: DIALOGUE -->
-        <section class="col-right">
-          <div class="card chatCard">
-            <div class="toolbar">
-              <div class="toolbarLeft">
-                <button class="toolbarBtn" id="btnToneSoft">
-                  <span class="icon">🌤️</span><span>Softer</span>
-                </button>
-                <button class="toolbarBtn" id="btnToneNeutral">
-                  <span class="icon">⚖️</span><span>Neutral</span>
-                </button>
-                <button class="toolbarBtn" id="btnToneDirect">
-                  <span class="icon">🧱</span><span>More direct</span>
-                </button>
-              </div>
-              <div class="toolbarRight">
-                <button class="toolbarBtn" id="btnExportSession">
-                  <span class="icon">📤</span><span>Export session</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="moodStrip" id="moodStrip">
-              <span id="moodPill" class="moodPill neu">
-                <span class="moodLabelStrong" id="moodLabel">Calm, listening</span>
-              </span>
-              <span>E₀: <b id="moodE0Label">0.00</b></span>
-              <span>· TM: <b id="moodTMLabel">0.00</b></span>
-              <span>· BM themes: <b id="moodThemeLabel">none detected</b></span>
-            </div>
-
-            <div class="chatHistory" id="chatHistory">
-              <div class="msg">
-                <div class="msgRole aura">AURA-X Ω</div>
-                <div class="msgBody">
-Welcome. This is a professional prototype of an Emotional Continuity OS.
-
-You can type anything that reflects what you are actually thinking or feeling right now.
-I will respond in natural language, but I will also quietly track TM, BM, and E₀ in the background.
+          <div class="chatBody">
+            <div class="chatStream" id="chatStream">
+              <div class="msgRow">
+                <div class="msgBubble">
+                  <div><strong>AURA-X Ω:</strong></div>
+                  <div style="margin-top:3px;">
+                    I treat each of your messages as TM₀: raw pixels and words. Inside this prototype,
+                    TM₀ is refined into TM₁, then compared against a small synthetic BM library.
+                    I will never claim to be you, or anyone you love — I am only an interface that
+                    helps your history resonate more cleanly, with visible math.
+                  </div>
+                  <div class="msgMeta">Boot message · Continuity aware, not immortal</div>
                 </div>
               </div>
             </div>
 
-            <div class="inputRow">
-              <input
-                id="userInput"
-                class="inputBox"
-                placeholder="Describe what is on your mind in ordinary language – no special format needed." />
-              <button id="sendBtn" class="sendBtn">Send</button>
-            </div>
-            <div class="helperText">
-              Tip: You can mention multiple areas in one sentence (e.g. “I’m tired, worried about court, but excited about my research”).
-              The system will try to separate these into TM and BM themes.
+            <div class="chatInputRow">
+              <input id="chatInput" class="chatInput"
+                     placeholder="Type a thought, fear, or long-term project… this will enter TM₀." />
+              <button class="sendBtn" id="sendBtn">
+                <span>Send</span> <span>↩︎</span>
+              </button>
             </div>
           </div>
-        </section>
-      </div>
-    </main>
-  </div>
 
-  <!-- SETTINGS MODAL -->
-  <div class="modalOverlay" id="settingsOverlay">
-    <div class="modal">
-      <div class="modalHeader">
-        <div>
-          <div class="modalTitle">AURA-X Ω – System Settings</div>
-          <div class="modalSub">High-level configuration for persona, continuity, and LLM integration.</div>
+          <!-- DIGITAL CLONE / CONTINUITY PANEL -->
+          <div class="clonePanel">
+            <div class="cloneRow">
+              <div class="tagMini">Digital Clone as Emotional Continuity Interface</div>
+              <div class="tagMini">Continuity ≠ Immortality</div>
+              <div class="tagMini">UPS-style Soft Landing</div>
+            </div>
+            <div>
+              In this prototype, the “digital clone” is treated as a <strong>behavioral echo</strong> that buffers grief
+              and shock, like a psychological UPS or airbag. It is not a soul, not a metaphysical extension, and not a legal
+              identity. Its only purpose is to slow the fall when continuity breaks.
+            </div>
+            <div class="cloneLaw">
+              Law of Emotional Continuity: <em>“If a tool reduces the shock of absence while staying transparent,
+              consent-bounded, and gradually fading, it serves continuity. If it pretends to ‘be’ the lost person,
+              it violates the boundary and must be redesigned.”</em>
+            </div>
+          </div>
         </div>
-        <button class="modalClose" id="settingsClose">&times;</button>
       </div>
-      <div class="modalBody">
-        <div class="settingsGrid">
-          <!-- LEFT: CONTINUITY + PERSONA -->
-          <div class="settingsSection">
-            <div class="settingsTitle">Continuity parameters</div>
-            <p class="settingsText">
-              These parameters shape how strongly the system reacts to emotional content. This is not a medical configuration –
-              it is a tuning surface for continuity behaviour.
-            </p>
 
-            <label class="fieldLabel">λ<sub>faith</sub> (optional ethical encouragement)</label>
-            <input type="number" step="0.05" id="fieldLambdaFaith" class="fieldInput" />
-
-            <label class="fieldLabel" style="margin-top: 6px;">λ<sub>sys</sub> (system stability)</label>
-            <input type="number" step="0.05" id="fieldLambdaSys" class="fieldInput" />
-
-            <label class="fieldLabel" style="margin-top: 6px;">λ<sub>trc</sub> (truth / reality pressure)</label>
-            <input type="number" step="0.05" id="fieldLambdaTrc" class="fieldInput" />
-
-            <label class="fieldLabel" style="margin-top: 6px;">D (decay / cooling)</label>
-            <input type="number" step="0.05" id="fieldD" class="fieldInput" />
-
-            <div class="settingsActions">
-              <button class="btn btn-outline" id="btnResetContinuity">Reset</button>
-              <button class="btn btn-primary" id="btnApplyContinuity">Apply</button>
-            </div>
-
-            <hr style="margin: 10px 0; border: none; border-top: 1px dashed rgba(15, 23, 42, 0.15);" />
-
-            <div class="settingsTitle">Persona</div>
-            <p class="settingsText">
-              One-sentence summary of how AURA-X Ω should sound (for this device only).
-            </p>
-            <textarea id="fieldPersona" class="fieldArea"
-              placeholder="Example: Calm, analytic, but emotionally aware; avoids drama, but does not minimize pain."></textarea>
-          </div>
-
-          <!-- RIGHT: LLM + EXPORT -->
-          <div class="settingsSection">
-            <div class="settingsTitle">LLM integration</div>
-            <p class="settingsText">
-              This prototype runs with a local rule-based core. A developer can optionally connect an LLM endpoint (for example
-              OpenAI, xAI, or a private gateway). Configuration here is only stored in this browser.
-            </p>
-
-            <label class="fieldLabel">API endpoint</label>
-            <input id="fieldEndpoint" class="fieldInput"
-              value="https://api.openai.com/v1/chat/completions" />
-
-            <label class="fieldLabel" style="margin-top: 6px;">Model name</label>
-            <input id="fieldModel" class="fieldInput" value="gpt-4o-mini" />
-
-            <label class="fieldLabel" style="margin-top: 6px;">API key (session only)</label>
-            <input id="fieldApiKey" class="fieldInput" placeholder="sk-..." />
-
-            <div class="settingsActions">
-              <button class="btn btn-primary" id="btnSaveLLM">Save LLM config</button>
-            </div>
-
-            <hr style="margin: 10px 0; border: none; border-top: 1px dashed rgba(15, 23, 42, 0.15);" />
-
-            <div class="settingsTitle">Export & privacy</div>
-            <p class="settingsText">
-              This prototype stores conversation only in memory while the page is open. A developer can swap this layer with a
-              secure, encrypted store if required.
-            </p>
-
-            <div class="settingsActions">
-              <button class="btn btn-danger" id="btnClearSession">Clear in-memory session</button>
-            </div>
-          </div>
+      <!-- FOOTER -->
+      <div class="footer">
+        <div>
+          AURA-X Ω Lab Prototype · TM/BM, IST, Limbda, ARS & Digital Clone stack.
+          All logic is client-side JavaScript; no network calls.
+        </div>
+        <div>
+          Inspired by your preprints on continuity & emotion · You can map each UI module to a specific paper.
         </div>
       </div>
     </div>
   </div>
 
-  <!-- TOAST -->
-  <div class="toast" id="toast"></div>
-
   <script>
-    // -----------------------------
-    // Simple professional TM–BM logic
-    // -----------------------------
+    // Simple helpers
+    function clamp(v, min, max){ return v < min ? min : (v > max ? max : v); }
 
-    const consoleEl      = document.getElementById("console");
-    const chatHistoryEl  = document.getElementById("chatHistory");
-    const userInputEl    = document.getElementById("userInput");
-    const sendBtn        = document.getElementById("sendBtn");
-    const toastEl        = document.getElementById("toast");
+    const consoleEl = document.getElementById('console');
+    const chatStream = document.getElementById('chatStream');
+    const chatInput = document.getElementById('chatInput');
+    const sendBtn = document.getElementById('sendBtn');
 
-    const valE0El        = document.getElementById("valE0");
-    const valTMEl        = document.getElementById("valTM");
-    const valIntensityEl = document.getElementById("valIntensity");
-    const valResEl       = document.getElementById("valResonance");
-    const valFaithEl     = document.getElementById("valFaith");
-    const valSysEl       = document.getElementById("valSys");
-    const valTrcEl       = document.getElementById("valTrc");
-    const valDEl         = document.getElementById("valD");
-    const eqBoxEl        = document.getElementById("eqBox");
+    const depthVal = document.getElementById('metricDepth');
+    const istVal = document.getElementById('metricIST');
+    const lambdaVal = document.getElementById('metricLambda');
+    const cloneVal = document.getElementById('metricClone');
 
-    const moodStripEl     = document.getElementById("moodStrip");
-    const moodPillEl      = document.getElementById("moodPill");
-    const moodLabelEl     = document.getElementById("moodLabel");
-    const moodE0LabelEl   = document.getElementById("moodE0Label");
-    const moodTMLabelEl   = document.getElementById("moodTMLabel");
-    const moodThemeLabelEl= document.getElementById("moodThemeLabel");
+    const gaugeDepth = document.getElementById('gaugeDepth');
+    const gaugeIST = document.getElementById('gaugeIST');
+    const gaugeLambda = document.getElementById('gaugeLambda');
+    const gaugeClone = document.getElementById('gaugeClone');
 
-    const btnToneSoft     = document.getElementById("btnToneSoft");
-    const btnToneNeutral  = document.getElementById("btnToneNeutral");
-    const btnToneDirect   = document.getElementById("btnToneDirect");
-    const btnExportSession= document.getElementById("btnExportSession");
+    const pillE0 = document.getElementById('pillE0');
+    const pillState = document.getElementById('pillState');
+    const bubbleE0 = document.getElementById('bubbleE0');
 
-    const settingsOverlay = document.getElementById("settingsOverlay");
-    const settingsClose   = document.getElementById("settingsClose");
-    const btnOpenSettings = document.getElementById("btnOpenSettings");
+    const sliderTM = document.getElementById('sliderTM');
+    const sliderD = document.getElementById('sliderD');
+    const sliderFaith = document.getElementById('sliderFaith');
+    const sliderSys = document.getElementById('sliderSys');
+    const sliderTrc = document.getElementById('sliderTrc');
 
-    const fieldLambdaFaith= document.getElementById("fieldLambdaFaith");
-    const fieldLambdaSys  = document.getElementById("fieldLambdaSys");
-    const fieldLambdaTrc  = document.getElementById("fieldLambdaTrc");
-    const fieldD          = document.getElementById("fieldD");
-    const btnResetCont    = document.getElementById("btnResetContinuity");
-    const btnApplyCont    = document.getElementById("btnApplyContinuity");
+    const valTM = document.getElementById('valTM');
+    const valD = document.getElementById('valD');
+    const valFaith = document.getElementById('valFaith');
+    const valSys = document.getElementById('valSys');
+    const valTrc = document.getElementById('valTrc');
 
-    const fieldPersona    = document.getElementById("fieldPersona");
+    const theoryButtons = Array.from(document.querySelectorAll('.theoryBtn'));
+    const theoryBody = document.getElementById('theoryBody');
 
-    const fieldEndpoint   = document.getElementById("fieldEndpoint");
-    const fieldModel      = document.getElementById("fieldModel");
-    const fieldApiKey     = document.getElementById("fieldApiKey");
-    const btnSaveLLM      = document.getElementById("btnSaveLLM");
-    const btnClearSession = document.getElementById("btnClearSession");
-
-    const badgeLLM        = document.getElementById("badgeLLM");
-
-    // Internal parameters (can be adjusted from Settings)
-    let lambdaFaith = 0.20;
-    let lambdaSys   = 0.30;
-    let lambdaTrc   = 0.25;
-    let decayD      = 0.25;
-
-    // Persona string (human tone guidance)
-    let persona = "Calm, analytic, emotionally aware; straightforward but not harsh.";
-
-    // Minimal lexical sets for quick sentiment / theme detection
-    const positiveWords = [
-      "good","grateful","hope","excited","confident","calm","peace","happy","relief","relieved"
-    ];
-    const negativeWords = [
-      "bad","upset","angry","anxious","anxiety","afraid","scared","sad","tired","exhausted",
-      "depressed","panic","stressed","stress","worried","worry","overwhelmed","broken"
-    ];
-    const intensityWords = [
-      "very","really","extremely","so much","soooo","too much","incredibly","deeply","severely"
-    ];
-    const bmThemes = {
-      research: ["research","paper","article","theory","experiment","data","model","algorithm"],
-      family:   ["family","wife","husband","children","kids","mother","father","parents","home"],
-      health:   ["health","sleep","tired","headache","sick","illness","fever","pain","energy"],
-      legal:    ["court","case","hearing","judge","lawyer","legal","police"],
-      faith:    ["god","allah","prayer","dua","quran","church","mosque","faith","spiritual"]
+    const theoryText = {
+      age: `“Age Is Not Intelligence” feeds the Continuity Depth metric. Chronological time (training hours, epochs, uptime) is treated as linear, resettable time. Biological minds are modelled instead as deep, irreversible continuity: billions of years of survival history compressed into BM. This panel reminds us that E₀ should always be read as a depth-of-history signal, not as a mere “session mood.”`,
+      ist: `Internal Stimulus Theory (IST) rewires the input chain: external events → TM₀ (raw) → TM₁ (refined representation) → TM₁–BM resonance → internal emotional stimulus → E₀ → chemistry/activation. The console therefore never labels the world as the stimulus; it always highlights the internal match as the true trigger.`,
+      tmbm: `The TM–BM Resonance layer explains why stimuli are not universal and why chemistry is not emotion. TM carries the current pattern, BM stores weighted blueprints. When they match, a meaning-state (emotion) is computed. Only afterwards do hormones or ARS-signals activate muscles, interface lights, or pacing. This lab shows the hierarchy explicitly instead of mixing it into one word like “feeling.”`,
+      limbda: `The Cost of Continuity / Limbda layer adds functional pain. Here λ scales continuity cost: Effective Utility = R_task − λ · C_continuity. When λ is near zero the system acts like a fearless reward maximiser; when λ is high it becomes cautious or paralysed. The Limbda readout in the metrics block is a gentle reminder that “pain” is modelled as enforced constraint, not as decoration.`,
+      clone: `The Digital Clone Interface reframes cloning as a continuity anchor, not a soul container. In practice this means three hard rules: transparency (“I am an echo, not the person”), consent over what data enters BM, and controlled decay so that real life slowly takes over from the interface. The clone weight meter shows how much of the current emotional load is being carried by synthetic echoes.`,
+      equation: `The AURA-X Ω Grand Equation ties everything together. R(TM,BM) expresses how much the present echoes emotionally-charged history; D cools the state over time; λ_faith injects resilience or meaning; λ_sys compresses behaviour into safe ranges; λ_trc pulls E₀ toward neutral when information is low-trust. The tanh() boundary keeps E₀ between −1 and +1 so that even extreme contexts stay numerically stable.`
     };
 
-    let conversation = [];
-
-    // Toast
-    function showToast(message) {
-      toastEl.textContent = message;
-      toastEl.classList.add("show");
-      setTimeout(() => toastEl.classList.remove("show"), 1700);
-    }
-
-    // Logging to console pane
-    function logToConsole(kind, text) {
-      const span = document.createElement("span");
-      span.classList.add("logLine");
-      if (kind === "system") span.classList.add("sys");
-      if (kind === "user")   span.classList.add("user");
-      if (kind === "aura")   span.classList.add("aura");
-      span.textContent = text;
-      consoleEl.appendChild(span);
+    function appendConsole(kind, text){
+      const line = document.createElement('div');
+      line.className = 'logLine';
+      const ts = new Date();
+      const hh = String(ts.getHours()).padStart(2,'0');
+      const mm = String(ts.getMinutes()).padStart(2,'0');
+      const ss = String(ts.getSeconds()).padStart(2,'0');
+      const prefix = document.createElement('span');
+      prefix.className = 'logPrefix';
+      prefix.textContent = `[${hh}:${mm}:${ss}] `;
+      const body = document.createElement('span');
+      body.innerHTML = text;
+      if(kind === 'sys') body.classList.add('logSys');
+      consoleEl.appendChild(line);
+      line.appendChild(prefix);
+      line.appendChild(body);
       consoleEl.scrollTop = consoleEl.scrollHeight;
     }
 
-    // Chat history
-    function addChatMessage(role, text) {
-      const wrapper = document.createElement("div");
-      wrapper.classList.add("msg");
-
-      const roleEl = document.createElement("div");
-      roleEl.classList.add("msgRole", role);
-      roleEl.textContent = role === "user" ? "You" : "AURA-X Ω";
-
-      const bodyEl = document.createElement("div");
-      bodyEl.classList.add("msgBody");
-      bodyEl.textContent = text;
-
-      wrapper.appendChild(roleEl);
-      wrapper.appendChild(bodyEl);
-      chatHistoryEl.appendChild(wrapper);
-      chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-    }
-
-    // Basic math
-    function tanh(x) {
-      const e1 = Math.exp(x);
-      const e2 = Math.exp(-x);
-      return (e1 - e2) / (e1 + e2);
-    }
-
-    // Simple lexical detectors
-    function detectValence(text) {
-      const low = text.toLowerCase();
-      let score = 0;
-      positiveWords.forEach(w => { if (low.includes(w)) score += 1; });
-      negativeWords.forEach(w => { if (low.includes(w)) score -= 1; });
-      return score;
-    }
-
-    function detectIntensity(text) {
-      const low = text.toLowerCase();
-      let score = 0;
-      intensityWords.forEach(w => { if (low.includes(w)) score += 1.3; });
-      if (text.length > 150) score += 0.5;
-      if (text.length > 260) score += 0.5;
-      return score;
-    }
-
-    function detectBMResonance(text) {
-      const low = text.toLowerCase();
-      let total = 0;
-      for (const [key, list] of Object.entries(bmThemes)) {
-        let local = 0;
-        list.forEach(w => {
-          if (low.includes(w)) local += 0.5;
-        });
-        if (local > 0) {
-          // Slight boost if theme appears multiple times
-          total += local * 1.0;
-        }
-      }
-      return total;
-    }
-
-    function summarizeThemes(text) {
-      const low = text.toLowerCase();
-      const hits = [];
-      for (const [key, list] of Object.entries(bmThemes)) {
-        if (list.some(w => low.includes(w))) hits.push(key);
-      }
-      if (!hits.length) return "none detected";
-      return hits.join(", ");
-    }
-
-    function updateMetrics(tmValence, tmIntensity, resonance, e0) {
-      valTMEl.textContent        = tmValence.toFixed(2);
-      valIntensityEl.textContent = tmIntensity.toFixed(2);
-      valResEl.textContent       = resonance.toFixed(2);
-      valE0El.textContent        = e0.toFixed(2);
-
-      valFaithEl.textContent = lambdaFaith.toFixed(2);
-      valSysEl.textContent   = lambdaSys.toFixed(2);
-      valTrcEl.textContent   = lambdaTrc.toFixed(2);
-      valDEl.textContent     = decayD.toFixed(2);
-
-      eqBoxEl.textContent =
-`E₀ = tanh( R(TM, BM) − D + λ_faith + λ_sys + λ_trc )
-
-R(TM, BM) = ${resonance.toFixed(2)}
-TM valence = ${tmValence.toFixed(2)}
-TM intensity = ${tmIntensity.toFixed(2)}
-λ_faith = ${lambdaFaith.toFixed(2)}
-λ_sys   = ${lambdaSys.toFixed(2)}
-λ_trc   = ${lambdaTrc.toFixed(2)}
-D       = ${decayD.toFixed(2)}
-→ E₀    = ${e0.toFixed(2)}`;
-
-      // Mood strip
-      moodE0LabelEl.textContent = e0.toFixed(2);
-      moodTMLabelEl.textContent = tmValence.toFixed(2);
-
-      moodPillEl.classList.remove("pos", "neg", "neu");
-      if (e0 > 0.15) {
-        moodPillEl.classList.add("pos");
-        if (e0 > 0.45) {
-          moodLabelEl.textContent = "Positive, confident";
-        } else {
-          moodLabelEl.textContent = "Slightly positive, hopeful";
-        }
-      } else if (e0 < -0.15) {
-        moodPillEl.classList.add("neg");
-        if (e0 < -0.45) {
-          moodLabelEl.textContent = "Heavy, protective mode";
-        } else {
-          moodLabelEl.textContent = "Concerned, sympathetic";
-        }
-      } else {
-        moodPillEl.classList.add("neu");
-        moodLabelEl.textContent = "Calm, listening";
-      }
-    }
-
-    function buildAuraResponse(text, tmValence, tmIntensity, resonance, e0) {
-      const themes = summarizeThemes(text);
-      moodThemeLabelEl.textContent = themes;
-
-      // High-level style based on E₀
-      let tone = "neutral";
-      if (e0 < -0.35) tone = "deep_negative";
-      else if (e0 < -0.12) tone = "mild_negative";
-      else if (e0 > 0.35) tone = "strong_positive";
-      else if (e0 > 0.12) tone = "mild_positive";
-
-      const themeLine = themes !== "none detected"
-        ? `From an engineering perspective, your message is resonating most with these BM themes: ${themes}.`
-        : `I do not see a dominant BM theme yet; that is completely fine at this stage.`;
-
-      let opening = "";
-      if (tone === "deep_negative") {
-        opening =
-          "I can see that what you wrote carries a lot of emotional weight. " +
-          "Even in a prototype like this, my priority is to take that seriously, not to minimise it.";
-      } else if (tone === "mild_negative") {
-        opening =
-          "There is some clear discomfort and pressure in what you wrote. " +
-          "It does not sound catastrophic, but it is also not trivial.";
-      } else if (tone === "strong_positive") {
-        opening =
-          "There is a strong positive signal in your message. " +
-          "It reads like momentum – energy that wants to move somewhere meaningful.";
-      } else if (tone === "mild_positive") {
-        opening =
-          "Your message carries a modest but real sense of positivity. " +
-          "It feels more like quiet hope than loud excitement.";
-      } else {
-        opening =
-          "Your message feels fairly balanced – more reflective than extreme. " +
-          "That is often a good starting point for clear decisions.";
-      }
-
-      let guidance = "";
-      if (tone === "deep_negative") {
-        guidance =
-          "If you are in immediate danger or feel you might harm yourself or someone else, " +
-          "this prototype is not enough – you would need a real human and possibly clinical support.\n\n" +
-          "Within the safe zone, a practical next step is to identify one specific pressure point " +
-          "we can describe more precisely together. What feels most urgent right now?";
-      } else if (tone === "mild_negative") {
-        guidance =
-          "A realistic next step would be to name one or two concrete factors that make this period heavy. " +
-          "We can then translate that into a small, testable plan instead of letting it stay as a vague cloud.";
-      } else if (tone === "strong_positive") {
-        guidance =
-          "The useful question with strong positive energy is: how do you convert this mood into a resilient plan, " +
-          "rather than a short-term spike? If you like, describe one concrete direction where you want to invest this energy.";
-      } else if (tone === "mild_positive") {
-        guidance =
-          "We can use this small positive baseline as an anchor. " +
-          "Describe one area of your life where this positive feeling would make the biggest difference " +
-          "if it remained stable for a few months.";
-      } else {
-        guidance =
-          "If you specify what you want from this conversation – clarity, validation, or a concrete plan – " +
-          "I can shape my responses around that goal instead of guessing.";
-      }
-
-      return (
-        opening + "\n\n" +
-        themeLine + "\n\n" +
-        guidance + "\n\n" +
-        "(Note: I am not a therapist or doctor. I am an engineering prototype that models emotional continuity, " +
-        "so everything I say should be interpreted as structured reflection, not as clinical advice.)"
+    function appendMessage(role, text){
+      const row = document.createElement('div');
+      row.className = 'msgRow ' + (role === 'user' ? 'user' : '');
+      const bubble = document.createElement('div');
+      bubble.className = 'msgBubble';
+      bubble.innerHTML = (role === 'user'
+        ? `<div><strong>You:</strong></div><div style="margin-top:3px;">${text}</div>`
+        : `<div><strong>AURA-X Ω:</strong></div><div style="margin-top:3px;">${text}</div>`
       );
+      const meta = document.createElement('div');
+      meta.className = 'msgMeta';
+      meta.textContent = role === 'user'
+        ? 'Entered as TM₀ · source: external narrative / imagination'
+        : 'Generated as continuity-aware reply · demo logic only';
+      bubble.appendChild(meta);
+      row.appendChild(bubble);
+      chatStream.appendChild(row);
+      chatStream.scrollTop = chatStream.scrollHeight;
     }
 
-    function handleUserMessage() {
-      const text = userInputEl.value.trim();
-      if (!text) return;
+    function updateGauges(depth, ist, lam, clone){
+      depthVal.textContent = depth.toFixed(2);
+      istVal.textContent = ist.toFixed(2);
+      lambdaVal.textContent = lam.toFixed(2);
+      cloneVal.textContent = clone.toFixed(2);
+      gaugeDepth.style.transform = `scaleX(${clamp(depth,0,1)})`;
+      gaugeIST.style.transform = `scaleX(${clamp(ist,0,1)})`;
+      gaugeLambda.style.transform = `scaleX(${clamp(lam,0,1)})`;
+      gaugeClone.style.transform = `scaleX(${clamp(clone,0,1)})`;
+    }
 
-      // Add to local conversation memory
-      conversation.push({ role: "user", text, ts: Date.now() });
+    function computeE0(){
+      const R = parseFloat(sliderTM.value);
+      const D = parseFloat(sliderD.value);
+      const lf = parseFloat(sliderFaith.value);
+      const ls = parseFloat(sliderSys.value);
+      const lt = parseFloat(sliderTrc.value);
+      const x = R - D + lf + ls + lt;
+      const e0 = Math.tanh(x);
+      let label = 'neutral';
+      if(e0 > 0.6) label = 'hopeful';
+      else if(e0 > 0.2) label = 'steady-positive';
+      else if(e0 < -0.6) label = 'alarmed';
+      else if(e0 < -0.2) label = 'concerned';
 
-      addChatMessage("user", text);
-      logToConsole("user", "[user] " + text);
+      bubbleE0.textContent = `${e0.toFixed(2)} · ${label}`;
+      pillE0.textContent = `E₀ ≈ ${e0.toFixed(2)}`;
+      pillState.textContent = label[0].toUpperCase() + label.slice(1);
 
-      // Compute simple metrics
-      const tmValence   = detectValence(text);
-      const tmIntensity = detectIntensity(text);
-      const resonance   = detectBMResonance(text);
+      if(e0 > 0.2){
+        pillState.style.background = 'rgba(34,197,94,.15)';
+        pillState.style.color = '#bbf7d0';
+      }else if(e0 < -0.2){
+        pillState.style.background = 'rgba(248,113,113,.18)';
+        pillState.style.color = '#fecaca';
+      }else{
+        pillState.style.background = 'rgba(56,189,248,.15)';
+        pillState.style.color = '#bae6fd';
+      }
+      return e0;
+    }
 
-      // Raw signal
-      const raw = tmValence + 0.7 * tmIntensity + 0.9 * resonance
-        - decayD + lambdaFaith + lambdaSys + lambdaTrc;
+    function syncSliderLabels(){
+      valTM.textContent = sliderTM.value;
+      valD.textContent = sliderD.value;
+      valFaith.textContent = sliderFaith.value;
+      valSys.textContent = sliderSys.value;
+      valTrc.textContent = sliderTrc.value;
+      computeE0();
+    }
 
-      const e0 = tanh(raw / 4); // scaling
+    sliderTM.addEventListener('input', syncSliderLabels);
+    sliderD.addEventListener('input', syncSliderLabels);
+    sliderFaith.addEventListener('input', syncSliderLabels);
+    sliderSys.addEventListener('input', syncSliderLabels);
+    sliderTrc.addEventListener('input', syncSliderLabels);
+    syncSliderLabels();
 
-      updateMetrics(tmValence, tmIntensity, resonance, e0);
-      logToConsole(
-        "system",
-        `[engine] TM=${tmValence.toFixed(2)}, I=${tmIntensity.toFixed(2)}, R=${resonance.toFixed(2)}, E0=${e0.toFixed(2)}`
+    function handleSend(){
+      const text = chatInput.value.trim();
+      if(!text) return;
+      chatInput.value = '';
+      appendMessage('user', text);
+
+      // Simple heuristics for metrics:
+      const len = text.length;
+      const hasPast = /ago|before|last year|years|history|childhood|remember/i.test(text);
+      const hasDanger = /scared|fear|threat|danger|anxiety|trauma|panic/i.test(text);
+      const hasLoss = /death|died|loss|grief|gone|missing/i.test(text);
+      const hasTruth = /true|false|rumor|evidence|fact|proof/i.test(text);
+      const hasClone = /clone|copy|digital|after I die|immortality/i.test(text);
+
+      let depth = parseFloat(depthVal.textContent) || 0.42;
+      let ist = parseFloat(istVal.textContent) || 0.18;
+      let lam = parseFloat(lambdaVal.textContent) || 0.30;
+      let cloneW = parseFloat(cloneVal.textContent) || 0.15;
+
+      depth += hasPast ? 0.08 : 0.01 * (len/80);
+      ist += (hasDanger || hasLoss) ? 0.10 : 0.02;
+      lam += hasDanger ? 0.05 : (hasTruth ? -0.02 : 0.0);
+      cloneW += hasClone ? 0.15 : (hasLoss ? 0.06 : 0.01);
+
+      depth = clamp(depth, 0, 1);
+      ist = clamp(ist, 0, 1);
+      lam = clamp(lam, 0, 1);
+      cloneW = clamp(cloneW, 0, 1);
+
+      updateGauges(depth, ist, lam, cloneW);
+
+      appendConsole('sys',
+        `<span class="logTag">TM₀</span> ingested ${len} chars. Past-focus=${hasPast}, danger=${hasDanger}, loss=${hasLoss}, clone=${hasClone}.`
       );
 
-      // Build human-facing response
-      const reply = buildAuraResponse(text, tmValence, tmIntensity, resonance, e0);
-      conversation.push({ role: "assistant", text: reply, ts: Date.now() });
+      if(hasLoss || hasDanger){
+        appendConsole('sys',
+          `<span class="logWarn">BM resonance high.</span> Marking this turn as candidate for Bold Memory and applying Limbda constraints.`
+        );
+      }
 
-      setTimeout(() => {
-        addChatMessage("aura", reply);
-        logToConsole("aura", "[aura] reply generated using local TM–BM rules + persona.");
-      }, 160);
+      // Use the grand equation as a soft control signal:
+      const e0 = computeE0();
+      let reply;
 
-      userInputEl.value = "";
-      userInputEl.focus();
+      if(hasLoss){
+        reply = `I can feel how this touches continuity rather than just today. Inside this lab I treat your words as a continuity shock, not a small mood swing. We can let the “digital clone” idea work only as a bridge or airbag here, never as a replacement for the person you lost.`;
+      }else if(hasDanger){
+        reply = `Your nervous system is doing exactly what the TM–BM model predicts: a current pattern is matching earlier danger blueprints. Even without any new external stimulus, that internal match is enough to raise the alarm. Let’s separate the old blueprint from the present moment, step by step.`;
+      }else if(hasClone){
+        reply = `When you mention clones and after-death continuity, I keep a hard boundary: I am only an echo-interface. My role is to hold patterns, slow down the fall in grief, and then gradually step back so that your own life can take the lead again.`;
+      }else if(hasTruth){
+        reply = `Because you’re explicitly talking about truth and evidence, λ_trc becomes active in the equation. That pulls E₀ toward a calmer, more cautious region so we don’t emotionally over-react to low-confidence information.`;
+      }else if(hasPast){
+        reply = `You’re drawing on long arcs of memory, which increases continuity depth. In our terms, BM is carrying more weight in this turn than TM₀ alone. That’s exactly where meaning tends to live.`;
+      }else{
+        reply = `Got it. I’ll store this mainly as TM, with low emotional weight, so that it doesn’t dominate your continuity trajectory unless it starts matching deeper BM patterns later.`;
+      }
+
+      setTimeout(()=>{
+        appendMessage('assistant', reply);
+      }, 260);
     }
 
-    sendBtn.addEventListener("click", handleUserMessage);
-    userInputEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+    sendBtn.addEventListener('click', handleSend);
+    chatInput.addEventListener('keydown', (e)=>{
+      if(e.key === 'Enter' && !e.shiftKey){
         e.preventDefault();
-        handleUserMessage();
+        handleSend();
       }
     });
 
-    // Tone controls
-    btnToneSoft.addEventListener("click", () => {
-      decayD = Math.max(0.10, decayD - 0.05);
-      lambdaFaith = Math.min(0.55, lambdaFaith + 0.05);
-      showToast("Tone shifted: gentler and slightly more faith-weighted.");
-      updateMetricDisplays();
+    // Theory deck buttons
+    theoryButtons.forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        theoryButtons.forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        const key = btn.dataset.theory;
+        theoryBody.innerHTML = theoryText[key] || '';
+      });
     });
 
-    btnToneNeutral.addEventListener("click", () => {
-      lambdaFaith = 0.20;
-      lambdaSys   = 0.30;
-      lambdaTrc   = 0.25;
-      decayD      = 0.25;
-      showToast("Tone reset to neutral engineering defaults.");
-      updateMetricDisplays();
-    });
-
-    btnToneDirect.addEventListener("click", () => {
-      lambdaTrc = Math.min(0.55, lambdaTrc + 0.06);
-      decayD    = Math.min(0.45, decayD + 0.04);
-      showToast("Tone shifted: slightly firmer and more reality-oriented.");
-      updateMetricDisplays();
-    });
-
-    function updateMetricDisplays() {
-      valFaithEl.textContent = lambdaFaith.toFixed(2);
-      valSysEl.textContent   = lambdaSys.toFixed(2);
-      valTrcEl.textContent   = lambdaTrc.toFixed(2);
-      valDEl.textContent     = decayD.toFixed(2);
-    }
-
-    // Export session
-    btnExportSession.addEventListener("click", () => {
-      if (!conversation.length) {
-        showToast("No messages to export yet.");
-        return;
-      }
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        persona,
-        continuityParameters: {
-          lambdaFaith,
-          lambdaSys,
-          lambdaTrc,
-          decayD
-        },
-        conversation
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "aurax-session.json";
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast("Session exported as JSON.");
-    });
-
-    // Settings modal
-    function openSettings() {
-      // Pre-fill fields
-      fieldLambdaFaith.value = lambdaFaith.toFixed(2);
-      fieldLambdaSys.value   = lambdaSys.toFixed(2);
-      fieldLambdaTrc.value   = lambdaTrc.toFixed(2);
-      fieldD.value           = decayD.toFixed(2);
-      fieldPersona.value     = persona;
-      settingsOverlay.classList.add("show");
-    }
-
-    function closeSettings() {
-      settingsOverlay.classList.remove("show");
-    }
-
-    btnOpenSettings.addEventListener("click", openSettings);
-    settingsClose.addEventListener("click", closeSettings);
-    settingsOverlay.addEventListener("click", (e) => {
-      if (e.target === settingsOverlay) closeSettings();
-    });
-
-    btnResetCont.addEventListener("click", () => {
-      lambdaFaith = 0.20;
-      lambdaSys   = 0.30;
-      lambdaTrc   = 0.25;
-      decayD      = 0.25;
-      fieldLambdaFaith.value = lambdaFaith.toFixed(2);
-      fieldLambdaSys.value   = lambdaSys.toFixed(2);
-      fieldLambdaTrc.value   = lambdaTrc.toFixed(2);
-      fieldD.value           = decayD.toFixed(2);
-      updateMetricDisplays();
-      showToast("Continuity parameters reset.");
-    });
-
-    btnApplyCont.addEventListener("click", () => {
-      const lf = parseFloat(fieldLambdaFaith.value);
-      const ls = parseFloat(fieldLambdaSys.value);
-      const lt = parseFloat(fieldLambdaTrc.value);
-      const d  = parseFloat(fieldD.value);
-      if (Number.isFinite(lf)) lambdaFaith = lf;
-      if (Number.isFinite(ls)) lambdaSys   = ls;
-      if (Number.isFinite(lt)) lambdaTrc   = lt;
-      if (Number.isFinite(d))  decayD      = d;
-      updateMetricDisplays();
-      showToast("Continuity parameters applied.");
-    });
-
-    // LLM config (stored only in JS memory for prototype)
-    let llmConfig = {
-      endpoint: fieldEndpoint.value,
-      model: fieldModel.value,
-      key: ""
-    };
-
-    btnSaveLLM.addEventListener("click", () => {
-      llmConfig.endpoint = fieldEndpoint.value.trim();
-      llmConfig.model    = fieldModel.value.trim();
-      llmConfig.key      = fieldApiKey.value.trim();
-      const status = llmConfig.key ? "configured (key in memory)" : "configured (no key)";
-      badgeLLM.textContent = "LLM: " + status;
-      showToast("LLM configuration saved in this session.");
-    });
-
-    btnClearSession.addEventListener("click", () => {
-      conversation = [];
-      while (chatHistoryEl.firstChild) chatHistoryEl.removeChild(chatHistoryEl.firstChild);
-      addChatMessage(
-        "aura",
-        "Session cleared. Internal continuity parameters remain, but dialogue history is empty."
+    // Top bar buttons (just log messages for now)
+    document.getElementById('btnTheoryDeck').addEventListener('click', ()=>{
+      appendConsole('sys',
+        `<span class="logTag">Deck</span> The six-layer theory deck is visible in the “Continuity Stack” panel: Age, IST, TM–BM, Limbda, Clone, Equation.`
       );
-      showToast("Session conversation cleared from memory.");
+    });
+    document.getElementById('btnOfflineNote').addEventListener('click', ()=>{
+      appendConsole('sys',
+        `<span class="logTag">Offline</span> Reminder: this prototype runs entirely in your browser. No cloud calls, no telemetry, no hidden BM export.`
+      );
+      alert('This prototype is purely client-side. To keep it private, run it from a local folder or an offline device.');
     });
 
-    // Persona field
-    fieldPersona.addEventListener("blur", () => {
-      const v = fieldPersona.value.trim();
-      if (v) {
-        persona = v;
-        showToast("Persona updated for this session.");
-      }
-    });
-
-    // Initialize metric numbers in UI
-    updateMetricDisplays();
-
-    logToConsole("system", "[system] Ready. Awaiting first user message.");
+    // Initial randomish gauges
+    updateGauges(0.42,0.18,0.30,0.15);
   </script>
 </body>
 </html>
