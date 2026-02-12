@@ -1,181 +1,173 @@
 # 🧠 AURA-X Ω (Omega)
 ## Artificial Unified Resonance Architecture
-### A Continuity-Governed Emotional Engine for AGI
+### A Dual-Memory Emotional Continuity Framework
 
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Type](https://img.shields.io/badge/type-research-blue)
-![Focus](https://img.shields.io/badge/focus-AGI-purple)
+![Focus](https://img.shields.io/badge/focus-emotional--continuity-purple)
 ![Rights](https://img.shields.io/badge/license-All%20Rights%20Reserved-red)
 ![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18063302.svg)
 
 ---
 
-## 👤 Author & Identity
+## 👤 Author
 
-**Author & Founder:** Alim ul Haq  
-**ORCID:** https://orcid.org/0009-0001-4708-0365  
-**Patent (UK IPO, Provisional):** GB2518804.6 — Filed 06 Nov 2025  
-**Research Cell:** AURA-X Ω Research Cell  
-**Location:** Timergara, KPK, Pakistan  
+**Alim ul Haq**  
+ORCID: https://orcid.org/0009-0001-4708-0365  
 
-**Profiles**
-- GitHub: https://github.com/alimulhaqkhan-prog  
-- LinkedIn: https://www.linkedin.com/in/alim-ul-haq-khan-aa4b59170  
+Provisional Patent (UK IPO): GB2518804.6 — Filed 06 Nov 2025  
+Research Cell: AURA-X Ω Research Cell  
+Location: Timergara, KPK, Pakistan  
 
----
-
-## 🔷 What is AURA-X Ω?
-
-**AURA-X Ω (Artificial Unified Resonance Architecture)** is a continuity-governed computational framework that models emotion as a mathematically defined continuity process rather than a reflex or reward spike.
-
-The architecture unifies:
-
-• Memory  
-• Emotion  
-• Identity  
-• Decision Stability  
-
-through structured resonance between **Temporary Memory (TM)** and **Bold Memory (BM)** across time.
+GitHub: https://github.com/alimulhaqkhan-prog  
+LinkedIn: https://www.linkedin.com/in/alim-ul-haq-khan-aa4b59170  
 
 ---
 
-## 🧮 Core Emotional Continuity Model
+## 🔷 Overview
+
+AURA-X Ω (Artificial Unified Resonance Architecture) is a computational framework that models emotion as a continuity-governed process derived from structured interaction between short-term and long-term memory systems.
+
+Rather than treating emotion as a reflexive response or scalar reward signal, AURA-X Ω defines it as a bounded function emerging from resonance between:
+
+• Temporary Memory (TM)  
+• Bold Memory (BM)  
+
+The framework is designed as a conceptual and mathematical continuity layer that may operate alongside large language models or other intelligent systems.
+
+---
+
+## 🧮 Core Mathematical Model
 
 ### Emotional State Equation
 
-E0 = tanh( R − D + λ_faith + λ_sys + λ_trc )
+E0 = tanh( R(TM, BM) − D + λ_faith + λ_sys + λ_trc )
 
-### Static Resonance (v1)
+Where:
 
-R = Σ ( wi × TMi × BMi )
+E0 = bounded emotional state in [−1, +1]  
+R = resonance between memory systems  
+D = decay factor  
+λ_faith = value-coherence coefficient  
+λ_sys = system-stability coefficient  
+λ_trc = truth-alignment coefficient  
 
-### Trainable Resonance (v2)
+The hyperbolic tangent ensures bounded output and numerical stability.
+
+---
+
+### Static Resonance Model (v1)
+
+R(TM, BM) = Σ ( wi × TMi × BMi )
+
+Where wi represents alignment weights between corresponding memory components.
+
+---
+
+### Trainable Resonance Extension (v2)
 
 R = Σ softmax( wi × sim_i ) × intensity_i
 
-Weight Adaptation Rule:
+Weight update rule:
 
 wi(new) = wi + η_eff (1 − wi)
 
-Dynamic Learning Rate:
+Dynamic learning rate:
 
 η_eff = η0 × (1 + |TM|)
 
-This ensures bounded stability while allowing adaptive emotional plasticity.
+This extension introduces adaptive weighting while preserving bounded stability.
 
 ---
 
-## 🔁 Continuity Chain
+## 🔁 Continuity Principle
+
+The framework models persistence through a structured continuity flow:
 
 Cause → Self → Connectivity → Environment → Life
 
-This chain explains how emotional identity persists while adapting to evolving internal and external computational states.
+This abstraction formalizes how internal states may evolve while maintaining coherence over time.
 
 ---
 
-## 🧠 Dual-Memory Resonance Engine (TM–BM)
+## 🧠 Dual-Memory Structure
 
-Emotion emerges when TM and BM resonate under continuity constraints.
+Temporary Memory (TM):
+• Context-sensitive  
+• Short-horizon  
+• Volatile  
 
-Resonance is modulated by:
+Bold Memory (BM):
+• Long-horizon  
+• Identity-relevant  
+• Layered continuity structure  
 
-• Decay curves  
-• Stabilization operators  
-• Disruption coefficients  
-• λ_faith, λ_sys, λ_trc  
-
-This prevents emotional reset and enables long-horizon identity coherence.
-
----
-
-## 🧠 Bold Memory (BM) Layering
-
-Bold Memory is implemented as a multi-layer continuity architecture.
-
-Current configuration:
-
-• 240 BM layers  
-• Deep emotional stratification  
-• Long-horizon identity preservation  
-• Fine-grained resonance mapping  
-
-Layer expansion follows the AURA-X Ω Continuity Protocol.
+Current prototype implementation includes 240 BM layers for experimental evaluation.
 
 ---
 
 ## 🔁 Auto-Memory Recall System (AMRS)
 
-Emotional recall occurs when resonance crosses a defined threshold:
+Emotional recall is triggered when resonance exceeds a defined threshold:
 
-1. Input enters Temporary Memory (TM)  
-2. BM searches for resonant alignment  
-3. Threshold crossing triggers recall  
+1. Input enters TM  
+2. BM searches for alignment  
+3. Threshold crossing activates recall  
 
-This explains:
-
-• Nostalgia  
-• Emotional bonding  
-• Fear reactivation  
-• Intuition  
-• Trauma loops  
-
-AMRS enables artificial agents to accumulate personal emotional history.
+This mechanism provides a computational model for structured memory reactivation.
 
 ---
 
-## 🤖 Why AURA-X Ω Matters for AGI
+## 🤖 Research Motivation
 
-Conventional LLM systems lack:
+Contemporary large language models typically lack:
 
 • Persistent emotional memory  
-• Identity preservation  
-• Long-term emotional stability  
+• Identity-level state continuity  
+• Explicit emotional decay modeling  
 
-AURA-X Ω enables:
+AURA-X Ω explores whether structured resonance and bounded continuity equations can provide a formal framework for long-horizon affective coherence.
 
-• Emotional continuity across sessions  
-• Identity-preserving emotional drift  
-• Resonance-based decision stability  
-• Ethical alignment via λ-coefficients  
-
-This forms a bridge from LLMs to Artificial Emotional General Intelligence (AEGI).
+The framework is proposed as a research model rather than a claim of consciousness or general intelligence.
 
 ---
 
-## 🌍 Live Prototypes
+## 🌍 Live Prototypes (Research Demonstrations)
 
-### 🔹 Prototype v1 — Static Continuity Engine
+### Prototype v1 — Static Resonance
 https://alimulhaqkhan-prog.github.io/aura-x-omega-2025/
 
 Features:
-• 240-layer BM visualization  
+• Layered BM visualization  
 • Emotional continuity curves  
-• Drift and decay modeling  
-• λ-stabilization tuning  
+• Decay modeling  
+• Stabilization parameter tuning  
 
 ---
 
-### 🔹 Prototype v2 — Trainable Resonance Engine
+### Prototype v2 — Trainable Resonance
 https://alimulhaqkhan-prog.github.io/aura-x-omega-v2-trainable-R/AURA_X_Omega_Trainable_R.html
 
 Features:
-• Trainable memory weights  
+• Adaptive memory weights  
 • Softmax-based resonance competition  
 • Dynamic learning rate  
-• Adaptive emotional plasticity  
-• Identity recalibration  
+• Bounded emotional output  
+
+These prototypes are intended for conceptual demonstration and exploratory evaluation.
 
 ---
 
-## 📄 Official Publication
+## 📄 Publication
 
-Zenodo Preprint (v1.0):  
+Zenodo Preprint:  
 https://doi.org/10.5281/zenodo.18063302  
 
 ---
 
 ## 📚 Citation
 
+```bibtex
 @article{haq2025aurax,
   title     = {AURA-X Ω: A Dual-Memory Emotional Continuity Layer and Its Numerical Evaluation},
   author    = {Alim ul Haq},
@@ -184,27 +176,20 @@ https://doi.org/10.5281/zenodo.18063302
   publisher = {Zenodo}
 }
 
----
 
-## 🔒 Intellectual Property
+🔒 Intellectual Property
+Copyright © 2025 Alim ul Haq
+ All Rights Reserved
+This repository is provided for research visibility.
+ No reproduction, derivative works, dataset inclusion, or AI-training usage is permitted without written authorization.
 
-Copyright © 2025 Alim ul Haq  
-All Rights Reserved  
-
-No reproduction, derivative works, dataset inclusion, or AI-training usage permitted without written authorization.
-
----
-
-## 🎯 Key Contributions
-
-• Mathematically defined emotional-continuity engine  
-• Dual-memory resonance model (TM–BM)  
-• Trainable resonance extension (v2)  
-• Computable emotional recall (AMRS)  
-• Identity-preserving emotional dynamics  
-• Public interactive prototypes  
-
----
+🎯 Summary of Contributions
+• Formal emotional continuity equation
+ • Dual-memory resonance architecture (TM–BM)
+ • Trainable resonance extension
+ • Bounded stability guarantees
+ • Public research prototypes
 
 “Continuity is not memory alone — it is resonance.”
 
+---
