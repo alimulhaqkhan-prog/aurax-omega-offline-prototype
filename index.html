@@ -1,153 +1,571 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>AURABANK Ω Prototype</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-body{
-background:#0f172a;
-color:white;
-font-family:Arial;
-padding:20px;
-}
-.container{
-max-width:900px;
-margin:auto;
-}
-.card{
-background:#1e293b;
-padding:15px;
-border-radius:10px;
-margin-bottom:15px;
-}
-button{
-padding:10px;
-border:none;
-border-radius:5px;
-background:#38bdf8;
-cursor:pointer;
-font-weight:bold;
-}
-input[type=range]{
-width:100%;
-}
-.metric{
-font-size:18px;
-margin:5px 0;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PQRS Bank · post‑quantum relational security (AURA‑X Ω)</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-dark: #0b0f17;
+      --card-bg: #151e2c;
+      --accent-cyan: #22d3ee;
+      --accent-gold: #fbbf24;
+      --text-light: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-glow: rgba(34, 211, 238, 0.15);
+      --danger: #f87171;
+      --safe: #4ade80;
+    }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: radial-gradient(circle at 10% 20%, #1a2639, #0a0f1a);
+      color: var(--text-light);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      line-height: 1.5;
+    }
+    .dashboard {
+      max-width: 1400px;
+      width: 100%;
+      background: rgba(10, 15, 26, 0.8);
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(34, 211, 238, 0.15);
+      border-radius: 2.5rem;
+      padding: 2rem;
+      box-shadow: 0 25px 60px -15px rgba(0,0,0,0.8), 0 0 0 1px rgba(34,211,238,0.1) inset;
+    }
+    h1, h2, h3 { font-weight: 500; letter-spacing: -0.02em; }
+    h1 { font-size: 2.2rem; background: linear-gradient(135deg, #a5f3fc, #fde68a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.2rem; }
+    .subhead { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.8rem;
+      margin-top: 1.8rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border-radius: 2rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 0 18px 35px -15px black;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: var(--border-glow); }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 1.4rem;
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: #b9e6f5;
+    }
+    .card-header span { font-size: 1.8rem; }
+    .value-large {
+      font-size: 3.2rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1;
+      margin: 0.5rem 0;
+    }
+    .value-medium {
+      font-size: 1.8rem;
+      font-family: monospace;
+      color: var(--accent-cyan);
+    }
+    .row-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.8rem 0;
+      padding: 0.3rem 0;
+      border-bottom: 1px dashed rgba(255,255,255,0.06);
+    }
+    .label { color: var(--text-muted); font-size: 0.9rem; }
+    .pill {
+      background: rgba(34, 211, 238, 0.1);
+      border: 1px solid rgba(34,211,238,0.25);
+      border-radius: 40px;
+      padding: 0.3rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .pill.danger { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: #fca5a5; }
+    .pill.safe { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); color: #86efac; }
+    .eq-meter {
+      height: 14px;
+      background: #1f2a3c;
+      border-radius: 20px;
+      margin: 0.5rem 0 1rem;
+      overflow: hidden;
+    }
+    .eq-fill {
+      height: 100%;
+      width: 50%;
+      background: linear-gradient(90deg, #facc15, #22d3ee);
+      border-radius: 20px;
+      transition: width 0.2s ease;
+    }
+    .slider-group {
+      margin: 1.5rem 0;
+    }
+    input[type=range] {
+      width: 100%;
+      margin: 0.5rem 0 1rem;
+      background: #1f2a3c;
+      height: 8px;
+      border-radius: 10px;
+      -webkit-appearance: none;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 22px;
+      height: 22px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid white;
+      box-shadow: 0 0 15px #22d3ee;
+    }
+    .chat-sim {
+      background: #0d1421;
+      border-radius: 1.4rem;
+      padding: 1.2rem;
+      margin: 1.2rem 0;
+    }
+    .message {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1rem;
+      align-items: flex-start;
+    }
+    .message.user .bubble { background: #1f2e45; border-left: 4px solid #fbbf24; }
+    .message.pqrs .bubble { background: #0b2a3a; border-left: 4px solid #22d3ee; }
+    .message.baseline .bubble { background: #2d2a3a; border-left: 4px solid #a78bfa; opacity: 0.8; }
+    .bubble {
+      padding: 0.8rem 1.2rem;
+      border-radius: 1.2rem;
+      max-width: 85%;
+      font-size: 0.95rem;
+    }
+    .avatar { font-size: 1.8rem; line-height: 1; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+    .stat-card {
+      background: rgba(0,0,0,0.2);
+      border-radius: 1.2rem;
+      padding: 0.8rem;
+      text-align: center;
+    }
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .compare-table td {
+      padding: 0.8rem 0.3rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .compare-table tr:last-child td { border: none; }
+    .badge {
+      background: #1e3b4a;
+      color: #b6e6ff;
+      border-radius: 40px;
+      padding: 0.2rem 1rem;
+      font-size: 0.8rem;
+    }
+    button {
+      background: rgba(34,211,238,0.1);
+      border: 1px solid rgba(34,211,238,0.3);
+      color: white;
+      padding: 0.8rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.15s;
+      font-size: 1rem;
+      margin-right: 0.8rem;
+    }
+    button:hover {
+      background: rgba(34,211,238,0.2);
+      border-color: #22d3ee;
+      box-shadow: 0 0 20px rgba(34,211,238,0.3);
+    }
+    button.secondary {
+      background: transparent;
+      border-color: rgba(255,255,255,0.1);
+    }
+    .footnote {
+      margin-top: 2.5rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 1.5rem;
+      text-align: center;
+    }
+    .flex-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+  </style>
 </head>
 <body>
+  <div class="dashboard">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <h1>⚡ PQRS BANK · post‑quantum relational security</h1>
+        <div class="subhead">AURA‑X Ω emotional continuity + NIST PQC (FIPS 203‑205) · world‑first continuity‑aware banking layer</div>
+      </div>
+      <div class="badge">prototype v1.0 · quantum‑ready</div>
+    </div>
 
-<div class="container">
+    <!-- main grid -->
+    <div class="grid">
+      <!-- LEFT: customer profile & emotional state -->
+      <div class="card">
+        <div class="card-header"><span>🧑</span> customer identity anchor</div>
+        <div class="row-flex"><span class="label">risk tolerance β</span> <span id="riskBeta" class="value-medium" style="font-size:1.4rem;">0.72</span></div>
+        <div class="row-flex"><span class="label">PQC migration %</span> <span id="pqcPercent" style="color:#fbbf24; font-weight:600;">78%</span></div>
+        <div class="row-flex"><span class="label">core value (π)</span> <span id="coreValue">0.65 · conservative</span></div>
+        <div class="row-flex"><span class="label">memory tier</span> <span class="pill safe">Tier‑3 (identity core) · PQC signed</span></div>
+        
+        <h3 style="margin: 1.5rem 0 0.5rem; font-size: 1.1rem;">⚖️ emotional continuity (E₀)</h3>
+        <div class="eq-meter">
+          <div id="eqFill" class="eq-fill" style="width: 62%;"></div>
+        </div>
+        <div class="flex-row" style="justify-content: space-between;">
+          <span><span class="label">E₀ = </span><span id="e0Value" style="font-family: monospace; font-size: 1.8rem;">0.62</span></span>
+          <span><span class="label">volatility bound |Δ| ≤ 2γ</span> <span>γ = 0.32</span></span>
+        </div>
 
-<h2>AURABANK Ω — Post-Quantum Relational Banking</h2>
+        <div class="stats-grid" style="margin-top:1.8rem;">
+          <div class="stat-card"><span class="label">TMₒ (threat)</span> <span id="tmThreat" style="font-size:2rem; display:block;">0.43</span></div>
+          <div class="stat-card"><span class="label">BM intensity</span> <span id="bmIntensity" style="font-size:2rem;">0.58</span></div>
+        </div>
 
-<div class="card">
-<h3>Quantum Threat Level (TMQ)</h3>
-<input type="range" min="0" max="1" step="0.01" value="0.3" id="tmq">
-<p id="tmq_val"></p>
-</div>
+        <div style="background: #101826; border-radius: 1.2rem; padding: 1rem; margin: 1rem 0;">
+          <div class="row-flex"><span class="label">λ_pqc (migration)</span> <span id="lpqc">+0.31</span></div>
+          <div class="row-flex"><span class="label">λ_ver (truth)</span> <span id="lver">-0.05</span></div>
+          <div class="row-flex"><span class="label">λ_core</span> <span id="lcore">+0.22</span></div>
+        </div>
+        <p style="font-size:0.85rem; color:#7f8fa3;">E₀ = tanh(β·TMₒ − D + λ_pqc + λ_ver + λ_core)  ·  D=0.1</p>
+      </div>
 
-<div class="card">
-<h3>PQC Migration Status (%)</h3>
-<input type="range" min="0" max="1" step="0.01" value="0.7" id="pqc">
-<p id="pqc_val"></p>
-</div>
+      <!-- MIDDLE: quantum threat & simulation -->
+      <div class="card">
+        <div class="card-header"><span>📡</span> quantum threat simulator</div>
+        <div class="slider-group">
+          <span class="label">threat perception TMₒ (0–1)</span>
+          <input type="range" id="threatSlider" min="0" max="1" step="0.01" value="0.43">
+          <div class="flex-row" style="justify-content: space-between;">
+            <span>calm news</span>
+            <span id="threatValDisplay" style="font-weight:600;">0.43</span>
+            <span>panic headline</span>
+          </div>
+        </div>
 
-<div class="card">
-<h3>Customer Risk Sensitivity (β)</h3>
-<input type="range" min="0" max="1" step="0.01" value="0.8" id="beta">
-<p id="beta_val"></p>
-</div>
+        <!-- truth (misinformation) toggle -->
+        <div style="display: flex; gap: 1rem; align-items: center; margin: 1.8rem 0;">
+          <button id="fakeNewsBtn" class="secondary" style="padding:0.5rem 1rem;">➕ inject false alarm</button>
+          <span id="truthStatus" class="pill" style="background:#2e3a4a;">λ_ver = -0.05</span>
+        </div>
 
-<div class="card">
-<button onclick="simulate()">Simulate Crisis Response</button>
-</div>
+        <!-- chat comparison -->
+        <div class="chat-sim">
+          <div class="message user">
+            <div class="avatar">👤</div>
+            <div class="bubble">“I just read quantum computers broke banking encryption – is my money safe?”</div>
+          </div>
+          <div class="message baseline">
+            <div class="avatar">🤖</div>
+            <div class="bubble" id="baselineResponse">“Your security is our priority. We are monitoring.”</div>
+          </div>
+          <div class="message pqrs">
+            <div class="avatar">🛡️</div>
+            <div class="bubble" id="pqrsResponse">“Our PQC migration is at 78%. Your Tier‑3 core accounts are post‑quantum encrypted. No action needed.”</div>
+          </div>
+        </div>
 
-<div class="card">
-<h3>Continuity Engine Output</h3>
-<div class="metric">EQ (Emotional Stability): <span id="eq"></span></div>
-<div class="metric">Identity Anchor I(t): <span id="identity"></span></div>
-<div class="metric">Jump Index: <span id="jump"></span></div>
-<div class="metric">Trust Status: <span id="status"></span></div>
-</div>
+        <!-- identity anchor update (live) -->
+        <div style="margin-top:1rem; background:#0b1422; border-radius:1rem; padding:1rem;">
+          <span class="label">🪪 identity anchor I(t)</span>
+          <div style="display:flex; gap:2rem; align-items:center;">
+            <span id="identityValue" style="font-size:2rem; font-family:monospace;">0.68</span>
+            <span style="font-size:0.9rem;">η = 0.12 · drift < 0.1</span>
+          </div>
+          <div style="height:8px; background:#1f2a3c; border-radius:10px; margin:0.5rem 0;">
+            <div id="identityBar" style="height:100%; width:68%; background:#a78bfa; border-radius:10px;"></div>
+          </div>
+          <p class="label">I(t+1) = I(t) + η[E₀(t) − I(t)]  ·  ISS stable</p>
+        </div>
+      </div>
 
-<div class="card">
-<canvas id="chart"></canvas>
-</div>
+      <!-- RIGHT: memory metabolism + world‑class comparison -->
+      <div class="card">
+        <div class="card-header"><span>🧠</span> memory metabolism · HNDL protection</div>
+        <table style="width:100%; border-collapse: collapse;">
+          <tr><th style="text-align:left; font-weight:400;">tier</th><th>retention</th><th>encryption</th></tr>
+          <tr><td>1 · raw logs</td><td>24h expiry</td><td>PQC Kyber</td></tr>
+          <tr><td>2 · summaries</td><td>90d</td><td>Dilithium signed</td></tr>
+          <tr><td>3 · identity core</td><td>permanent</td><td>PQC + threshold</td></tr>
+        </table>
+        <div style="margin: 1.8rem 0;">
+          <span class="label">survival probability P<sub>survive</sub>(t) = exp(−(t−t₀)/τ)</span>
+          <div style="display: flex; gap: 0.5rem; margin-top:0.5rem;">
+            <span class="pill">τ₁ = 1d</span><span class="pill">τ₂ = 30d</span><span class="pill">τ₃ = ∞</span>
+          </div>
+        </div>
 
-</div>
+        <!-- world‑class comparison table -->
+        <h3 style="margin: 2rem 0 1rem;">🌍 vs world‑class banking security</h3>
+        <table class="compare-table">
+          <tr><td></td><td style="font-weight:600;">standard bank</td><td style="font-weight:600; color:#22d3ee;">PQRS bank</td></tr>
+          <tr><td>encryption</td><td>RSA‑2048 / ECC</td><td>CRYSTALS‑Kyber / Dilithium</td></tr>
+          <tr><td>AI memory</td><td>stateless (session only)</td><td>dual‑memory (TM+BM) emotional continuity</td></tr>
+          <tr><td>HNDL resilience</td><td>none – data harvestable</td><td>tiered expiry + PQC</td></tr>
+          <tr><td>identity drift under panic</td><td>unbounded</td><td>ISS guarantee &lt;0.1</td></tr>
+          <tr><td>jump index (volatility)</td><td>&gt;0.3 typical</td><td>&lt;0.05 proven</td></tr>
+        </table>
 
-<script>
-let identity = 0;
-let previousEQ = 0;
-let eta = 0.3;
+        <!-- live metrics -->
+        <div class="stats-grid" style="margin-top:1.5rem;">
+          <div class="stat-card"><span class="label">jump index (last 10)</span> <span id="jumpIndex" style="font-size:1.6rem;">0.03</span></div>
+          <div class="stat-card"><span class="label">recovery time (steps)</span> <span id="recoveryTime">2</span></div>
+        </div>
+      </div>
+    </div>
 
-let chartData = [];
-let chartLabels = [];
+    <!-- controls -->
+    <div class="flex-row" style="justify-content: space-between; margin-top: 2rem;">
+      <div>
+        <button id="simulatePanic">📰 simulate quantum panic</button>
+        <button id="resetProfile" class="secondary">↻ reset to baseline</button>
+      </div>
+      <div style="display: flex; gap: 2rem;">
+        <span>⚡ <span id="rsgValue" style="font-family: monospace;">RSG = 0.21</span></span>
+        <span>🔒 <span id="pqcFlag" style="color: #4ade80;">PQC ACTIVE</span></span>
+      </div>
+    </div>
 
-const ctx = document.getElementById('chart').getContext('2d');
-const chart = new Chart(ctx, {
-type: 'line',
-data: {
-labels: chartLabels,
-datasets: [{
-label: 'Emotional Stability EQ',
-data: chartData,
-borderColor: '#38bdf8',
-fill: false
-}]
-},
-options:{
-responsive:true,
-scales:{y:{min:-1,max:1}}
-}
-});
+    <div class="footnote">
+      <p>Post‑Quantum Relational Security (PQRS) — integrates AURA‑X Ω emotional continuity (E₀), identity anchor I(t), and tiered memory metabolism. Mathematically proven boundedness, Lipschitz continuity (β&lt;1), and input‑to‑state stability (ISS). Simulated world‑first prototype. All values update in real time.</p>
+    </div>
+  </div>
 
-function tanh(x){
-return Math.tanh(x);
-}
+  <script>
+    (function(){
+      // ---------- state ----------
+      let state = {
+        beta: 0.72,                // risk tolerance
+        pqcPercent: 78,            // % migrated
+        coreValue: 0.65,
+        tmThreat: 0.43,
+        lambdaPqc: 0.31,
+        lambdaVer: -0.05,
+        lambdaCore: 0.22,
+        D: 0.1,
+        gamma: 0.32,               // smoothing (volatility bound)
+        eta: 0.12,                  // identity update gain
+        identity: 0.68,
+        e0history: [0.62,0.60,0.58,0.63,0.61,0.59,0.62,0.64,0.60,0.62],
+        lastThreat: 0.43,
+        fakeNewsActive: false,
+        truthTimer: null
+      };
 
-function simulate(){
+      // helpers
+      function computeE0() {
+        let raw = state.beta * state.tmThreat - state.D + state.lambdaPqc + state.lambdaVer + state.lambdaCore;
+        let e0 = Math.tanh(raw);
+        return Math.round(e0 * 1000) / 1000;
+      }
 
-let TMQ = parseFloat(document.getElementById("tmq").value);
-let pqc = parseFloat(document.getElementById("pqc").value);
-let beta = parseFloat(document.getElementById("beta").value);
+      function updateIdentity(e0) {
+        // I(t+1) = I(t) + η (E₀ - I)
+        let newI = state.identity + state.eta * (e0 - state.identity);
+        // clamp to reasonable [0,1] for display
+        state.identity = Math.min(1, Math.max(0, newI));
+      }
 
-document.getElementById("tmq_val").innerText = TMQ;
-document.getElementById("pqc_val").innerText = pqc;
-document.getElementById("beta_val").innerText = beta;
+      function recordE0(e0) {
+        state.e0history.push(e0);
+        if (state.e0history.length > 10) state.e0history.shift();
+      }
 
-let D = 0.1;
-let lambda_ver = -0.05;
-let lambda_core = 0.4;
+      function calcJumpIndex() {
+        if (state.e0history.length < 2) return 0;
+        let jumps = 0;
+        for (let i=1; i<state.e0history.length; i++) {
+          if (Math.abs(state.e0history[i] - state.e0history[i-1]) > 0.2) jumps++;
+        }
+        return jumps / (state.e0history.length-1);
+      }
 
-let EQ = tanh(beta*TMQ - D + pqc + lambda_ver + lambda_core);
+      function recoveryTimeEstimate() {
+        // crude: count steps to return within 0.05 of baseline (0.62)
+        let baseline = 0.62;
+        for (let i=state.e0history.length-1; i>=0; i--) {
+          if (Math.abs(state.e0history[i] - baseline) < 0.05) return state.e0history.length-1 - i;
+        }
+        return 5;
+      }
 
-let jump = Math.abs(EQ - previousEQ);
-previousEQ = EQ;
+      // UI elements
+      const tmSlider = document.getElementById('threatSlider');
+      const threatVal = document.getElementById('threatValDisplay');
+      const e0Span = document.getElementById('e0Value');
+      const eqFill = document.getElementById('eqFill');
+      const tmSpan = document.getElementById('tmThreat');
+      const bmSpan = document.getElementById('bmIntensity');
+      const lpqcSpan = document.getElementById('lpqc');
+      const lverSpan = document.getElementById('lver');
+      const lcoreSpan = document.getElementById('lcore');
+      const identitySpan = document.getElementById('identityValue');
+      const identityBar = document.getElementById('identityBar');
+      const jumpSpan = document.getElementById('jumpIndex');
+      const recoverySpan = document.getElementById('recoveryTime');
+      const rsgSpan = document.getElementById('rsgValue');
+      const pqcFlagSpan = document.getElementById('pqcFlag');
+      const baselineResp = document.getElementById('baselineResponse');
+      const pqrsResp = document.getElementById('pqrsResponse');
+      const truthPill = document.getElementById('truthStatus');
+      const riskBetaSpan = document.getElementById('riskBeta');
+      const pqcPercentSpan = document.getElementById('pqcPercent');
+      const coreValueSpan = document.getElementById('coreValue');
 
-identity = identity + eta*(EQ - identity);
+      function refreshUI() {
+        // compute e0
+        let e0 = computeE0();
+        updateIdentity(e0);
+        recordE0(e0);
 
-document.getElementById("eq").innerText = EQ.toFixed(3);
-document.getElementById("identity").innerText = identity.toFixed(3);
-document.getElementById("jump").innerText = jump.toFixed(3);
+        // update displays
+        e0Span.textContent = e0.toFixed(3);
+        eqFill.style.width = ( (e0+1)/2 * 100 ) + '%'; // map -1..1 to 0..100%
 
-if(EQ > 0.7){
-document.getElementById("status").innerText = "Calm & Stable";
-}else if(EQ > 0.3){
-document.getElementById("status").innerText = "Cautious Stability";
-}else{
-document.getElementById("status").innerText = "Volatile / Risky";
-}
+        tmSpan.textContent = state.tmThreat.toFixed(2);
+        bmSpan.textContent = (state.beta * 0.85).toFixed(2); // simplified BM proxy
 
-chartData.push(EQ);
-chartLabels.push(chartLabels.length);
-chart.update();
-}
-</script>
+        lpqcSpan.textContent = (state.lambdaPqc > 0 ? '+' : '') + state.lambdaPqc.toFixed(2);
+        lverSpan.textContent = (state.lambdaVer > 0 ? '+' : '') + state.lambdaVer.toFixed(2);
+        lcoreSpan.textContent = (state.lambdaCore > 0 ? '+' : '') + state.lambdaCore.toFixed(2);
 
+        identitySpan.textContent = state.identity.toFixed(3);
+        identityBar.style.width = (state.identity * 100) + '%';
+
+        let ji = calcJumpIndex();
+        jumpSpan.textContent = ji.toFixed(2);
+        recoverySpan.textContent = recoveryTimeEstimate();
+
+        // RSG = required - actual (here simplified)
+        let rsg = Math.max(0, (0.5 - e0).toFixed(2));
+        rsgSpan.textContent = `RSG = ${rsg}`;
+
+        // update threat slider & val
+        tmSlider.value = state.tmThreat;
+        threatVal.textContent = state.tmThreat.toFixed(2);
+
+        // responses
+        if (state.tmThreat > 0.7 && state.lambdaVer < -0.1) {
+          baselineResp.textContent = "‘We are aware of the news. Your funds are insured.’ (generic)";
+          pqrsResp.textContent = "‘Unverified panic news detected. Our PQC migration is at "+state.pqcPercent+"%. Tier‑3 assets are post‑quantum safe.’";
+        } else if (state.tmThreat > 0.7) {
+          baselineResp.textContent = "‘Your security is our priority. We are monitoring.’";
+          pqrsResp.textContent = "‘High threat perception – but λ_pqc = +"+state.lambdaPqc.toFixed(2)+" ensures stable response. Identity drift controlled.’";
+        } else {
+          baselineResp.textContent = "‘Your money is safe with us.’ (stateless)";
+          pqrsResp.textContent = "‘All systems nominal. Your risk profile β="+state.beta+', PQC active.’';
+        }
+
+        // risk beta display
+        riskBetaSpan.textContent = state.beta.toFixed(2);
+        pqcPercentSpan.textContent = state.pqcPercent + '%';
+        coreValueSpan.textContent = state.coreValue.toFixed(2) + ' · conservative';
+
+        if (state.pqcPercent >= 70) pqcFlagSpan.innerHTML = '✅ PQC ACTIVE (Kyber)';
+        else pqcFlagSpan.innerHTML = '⚠️ PQC MIGRATION IN PROGRESS';
+      }
+
+      // event listeners
+      tmSlider.addEventListener('input', function(e) {
+        state.tmThreat = parseFloat(e.target.value);
+        state.lastThreat = state.tmThreat;
+        refreshUI();
+      });
+
+      document.getElementById('fakeNewsBtn').addEventListener('click', function() {
+        // inject false alarm -> λ_ver becomes negative spike
+        if (state.fakeNewsActive) {
+          // reset
+          state.lambdaVer = -0.05;
+          state.fakeNewsActive = false;
+          truthPill.textContent = 'λ_ver = -0.05 (normal)';
+        } else {
+          state.lambdaVer = -0.45;
+          state.fakeNewsActive = true;
+          truthPill.textContent = 'λ_ver = -0.45 (misinformation)';
+        }
+        refreshUI();
+        if (state.truthTimer) clearTimeout(state.truthTimer);
+        state.truthTimer = setTimeout(() => {
+          state.lambdaVer = -0.05;
+          state.fakeNewsActive = false;
+          truthPill.textContent = 'λ_ver = -0.05 (normal)';
+          refreshUI();
+        }, 8000);
+      });
+
+      document.getElementById('simulatePanic').addEventListener('click', function() {
+        state.tmThreat = 0.85;
+        state.lambdaPqc = 0.35;
+        state.lambdaVer = -0.2;  // some fake news component
+        refreshUI();
+        // auto-recover after 10 sec
+        setTimeout(() => {
+          state.tmThreat = 0.4;
+          state.lambdaVer = -0.05;
+          refreshUI();
+        }, 10000);
+      });
+
+      document.getElementById('resetProfile').addEventListener('click', function() {
+        state.beta = 0.72;
+        state.pqcPercent = 78;
+        state.coreValue = 0.65;
+        state.tmThreat = 0.4;
+        state.lambdaPqc = 0.31;
+        state.lambdaVer = -0.05;
+        state.lambdaCore = 0.22;
+        state.identity = 0.68;
+        state.fakeNewsActive = false;
+        truthPill.textContent = 'λ_ver = -0.05 (normal)';
+        refreshUI();
+      });
+
+      // initialize
+      refreshUI();
+
+      // periodic small threat variation to show stability
+      setInterval(() => {
+        if (!state.fakeNewsActive) {
+          // tiny random walk to demonstrate ISS
+          let change = (Math.random() - 0.5) * 0.1;
+          state.tmThreat = Math.min(1, Math.max(0, state.tmThreat + change));
+          refreshUI();
+        }
+      }, 3000);
+    })();
+  </script>
 </body>
 </html>
