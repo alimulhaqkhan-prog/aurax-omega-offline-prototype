@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>AURA-X Ω — ULTIMATE SYNTHETIC EMOTIONAL INTELLIGENCE</title>
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>AURA-X Ω — ULTIMATE EMOTIONAL INTELLIGENCE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
       --bg0: #020608; --bg1: #060d14; --bg2: #0a1520; --bg3: #0f1e2e;
@@ -148,13 +148,24 @@
     .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typBounce { 0%,60%,100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
 
-    .chat-input-row { display: flex; gap: 7px; padding: 10px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); }
+    .chat-input-row { display: flex; gap: 7px; padding: 10px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.2); align-items: flex-end; }
     .chat-input {
       flex: 1; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 7px; padding: 8px 12px;
-      color: var(--white); font-family: var(--font-ui); font-size: 13px; outline: none; transition: border-color 0.3s;
+      color: var(--white); font-family: var(--font-ui); font-size: 13px; outline: none; transition: border-color 0.3s; resize: none; min-height: 42px; max-height: 120px;
     }
     .chat-input:focus { border-color: var(--cyan2); box-shadow: 0 0 0 2px rgba(0,210,255,0.1); }
     .chat-input::placeholder { color: var(--muted); }
+    .input-action-btn {
+      width: 42px; height: 42px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; flex-shrink: 0; transition: all 0.2s; background: rgba(255,255,255,0.06); color: var(--text2);
+    }
+    .input-action-btn:hover { background: rgba(0,210,255,0.15); color: var(--cyan); }
+    .btn-mic.recording { background: rgba(255,77,109,0.2); color: var(--red); animation: pulse 1s infinite; }
+    @keyframes pulse { 50% { box-shadow: 0 0 0 8px rgba(255,77,109,0.15); } }
+    .btn-send { background: linear-gradient(135deg, var(--cyan), #0088cc); color: #fff; width: 42px; height: 42px; border-radius: 50%; }
+    .btn-send:hover { filter: brightness(1.1); }
+    .btn-attach { background: rgba(255,255,255,0.06); color: var(--text2); }
+    .btn-attach:hover { background: rgba(0,210,255,0.15); color: var(--cyan); }
 
     .btn {
       padding: 8px 16px; border: none; border-radius: 7px; cursor: pointer;
@@ -243,11 +254,11 @@
     /* Modals */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 200;
-      display: none; align-items: flex-end; justify-content: center; padding: 18px 12px;
+      display: none; align-items: center; justify-content: center; padding: 18px 12px;
     }
     .modal-overlay.show { display: flex; }
     .modal {
-      width: min(860px, 96vw); border-radius: 18px; overflow: hidden;
+      width: min(600px, 96vw); border-radius: 18px; overflow: hidden;
       background: rgba(10,18,30,0.97); border: 1px solid var(--border);
       backdrop-filter: blur(12px); color: var(--white);
     }
@@ -261,7 +272,7 @@
     .modalBody { padding: 14px; max-height: 70vh; overflow: auto; }
     .modal input, .modal textarea, .modal select {
       width: 100%; padding: 10px 12px; background: rgba(255,255,255,0.06); border: 1px solid var(--border);
-      border-radius: 10px; color: var(--white); font-size: 13px; outline: none; font-family: inherit;
+      border-radius: 10px; color: var(--white); font-size: 13px; outline: none; font-family: inherit; margin-bottom: 8px;
     }
     .modal .m-btns { display: flex; gap: 8px; margin-top: 14px; }
 
@@ -275,7 +286,7 @@
     @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
 
-    #phaseCanvas, #trajCanvas { border-radius: 7px; width: 100%; }
+    #phaseCanvas, #trajCanvas { border-radius: 7px; width: 100%; background: rgba(0,0,0,0.2); }
     footer {
       text-align: center; padding: 18px; font-family: var(--font-mono); font-size: 10px;
       color: var(--muted); border-top: 1px solid var(--border); margin-top: 20px;
@@ -302,7 +313,7 @@
       </svg>
     </div>
     <div class="header-title">AURA-X Ω</div>
-    <div class="header-sub">ULTIMATE SYNTHETIC EMOTIONAL INTELLIGENCE · Patent GB2518804.6</div>
+    <div class="header-sub">ULTIMATE EMOTIONAL INTELLIGENCE · Patent GB2518804.6</div>
     <div class="status-bar">
       <div class="status-pill"><div class="status-dot"></div>AECN 4.0</div>
       <div class="status-pill"><div class="status-dot"></div>DUAL MEMORY</div>
@@ -319,8 +330,16 @@
         <div class="chat-area">
           <div class="chat-messages" id="chatMessages"></div>
           <div class="chat-input-row">
-            <input class="chat-input" id="chatInput" placeholder="Speak to AURA-X Ω…" autocomplete="off">
-            <button class="btn btn-primary" onclick="sendMessage()">SEND</button>
+            <input type="file" id="attachFile" accept="image/*" style="display:none">
+            <button class="input-action-btn btn-attach" onclick="document.getElementById('attachFile').click()">📎</button>
+            <textarea class="chat-input" id="userInput" placeholder="Talk to AURA-X Ω…" rows="1"></textarea>
+            <button class="input-action-btn btn-mic" id="micBtn" onclick="toggleMic()">🎤</button>
+            <button class="input-action-btn btn-send" onclick="sendMessage()">➤</button>
+          </div>
+          <div class="attach-preview" id="attachPreview">
+            <img id="attachImg" src="" alt="preview">
+            <span id="attachName" style="flex:1; font-size:12px;"></span>
+            <button class="remove-attach" onclick="clearAttachment()">✕</button>
           </div>
         </div>
       </div>
@@ -422,7 +441,7 @@
             <div class="truth-meter"><div class="truth-label"><span>Factual Confidence</span><span id="truthPct">100%</span></div><div class="truth-bar-bg"><div class="truth-bar-fill" id="truthBar" style="width:100%; background:var(--green);"></div></div></div>
             <div class="truth-meter"><div class="truth-label"><span>Sentiment Tone</span><span id="sentPct">0%</span></div><div class="truth-bar-bg"><div class="truth-bar-fill" id="sentBar" style="width:50%; background:var(--cyan);"></div></div></div>
             <div class="truth-meter"><div class="truth-label"><span>Emotional Intensity</span><span id="intPct">0%</span></div><div class="truth-bar-bg"><div class="truth-bar-fill" id="intBar" style="width:0%; background:var(--amber);"></div></div></div>
-            <div id="trcAlert" class="alert alert-warn" style="display:none; padding:5px 8px; border:1px solid var(--amber); border-radius:5px; background:rgba(255,170,0,0.1);"><span>⚠️</span><span id="trcMsg"></span></div>
+            <div id="trcAlert" style="display:none; padding:5px 8px; border:1px solid var(--amber); border-radius:5px; background:rgba(255,170,0,0.1); color:var(--amber);"><span>⚠️</span><span id="trcMsg"></span></div>
           </div>
         </div>
       </div>
@@ -460,38 +479,14 @@
 
   <footer>
     AURA-X Ω Ultimate Prototype · Author: Alim ul Haq Khan · Patent GB2518804.6<br>
-    E₀ = tanh(R(TM,BM) − D + λ_faith + λ_sys + λ_trc) · γ-smoothing · self-learning · voice/image/video
+    E₀ = tanh(R(TM,BM) − D + λ_faith + λ_sys + λ_trc) · γ-smoothing · self-learning · voice/LLM/image
   </footer>
 </div>
 
-<!-- Modals -->
-<div class="modal-overlay" id="modalIntel">
+<!-- LLM Modal -->
+<div class="modal-overlay" id="llmModal">
   <div class="modal">
-    <div class="modalHeader"><div>🧠 Intelligence Folder</div><button class="closeX" onclick="closeModal('modalIntel')">✕</button></div>
-    <div class="modalBody">
-      <input id="intelSearch" placeholder="Search Q&A pairs..." style="margin-bottom:10px;">
-      <div id="intelList" style="max-height:300px; overflow:auto;"></div>
-    </div>
-    <div style="padding:10px 14px; display:flex; gap:8px; border-top:1px solid var(--border);">
-      <button class="btn btn-ghost" onclick="addIntel()">➕ Add</button>
-      <button class="btn btn-ghost" onclick="exportIntel()">📤 Export</button>
-      <button class="btn btn-ghost" onclick="importIntel()">📥 Import</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modalFaith">
-  <div class="modal">
-    <div class="modalHeader"><div>🕊 Faith Selection</div><button class="closeX" onclick="closeModal('modalFaith')">✕</button></div>
-    <div class="modalBody">
-      <div class="chipsWrap" id="faithChips"></div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modalLLM">
-  <div class="modal">
-    <div class="modalHeader"><div>🤖 LLM Link</div><button class="closeX" onclick="closeModal('modalLLM')">✕</button></div>
+    <div class="modalHeader"><span>🤖 LLM Connection</span><button class="closeX" onclick="closeModal('llmModal')">✕</button></div>
     <div class="modalBody">
       <label>Provider</label>
       <select id="apiProvider"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option></select>
@@ -499,28 +494,55 @@
       <select id="apiModel"><option value="gpt-4o-mini">GPT-4o Mini</option></select>
       <label>API Key</label><input type="password" id="apiKey" placeholder="Enter API key...">
       <div id="apiStatus" style="margin-top:8px; font-size:12px;"></div>
-      <div class="m-btns"><button class="btn btn-primary" onclick="connectLLM()">Connect</button><button class="btn btn-ghost" onclick="closeModal('modalLLM')">Close</button></div>
+      <div class="m-btns">
+        <button class="btn btn-primary" onclick="connectLLM()">Connect</button>
+        <button class="btn btn-ghost" onclick="closeModal('llmModal')">Close</button>
+        <button class="btn btn-ghost danger" id="disconnectLLM" style="display:none;" onclick="disconnectLLM()">Disconnect</button>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="modal-overlay" id="modalIntelEdit">
+<!-- Intelligence Modal -->
+<div class="modal-overlay" id="intelModal">
   <div class="modal">
-    <div class="modalHeader"><span id="intelEditTitle">Add Q&A</span><button class="closeX" onclick="closeModal('modalIntelEdit')">✕</button></div>
+    <div class="modalHeader"><span>🧠 Intelligence Folder</span><button class="closeX" onclick="closeModal('intelModal')">✕</button></div>
+    <div class="modalBody">
+      <input id="intelSearch" placeholder="Search Q&A pairs...">
+      <div id="intelList" style="max-height:300px; overflow:auto;"></div>
+      <div class="m-btns">
+        <button class="btn btn-primary" onclick="addIntel()">➕ Add</button>
+        <button class="btn btn-ghost" onclick="exportIntel()">📤 Export</button>
+        <button class="btn btn-ghost" onclick="importIntel()">📥 Import</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit Intel Modal -->
+<div class="modal-overlay" id="intelEditModal">
+  <div class="modal">
+    <div class="modalHeader"><span id="intelEditTitle">Add Q&A</span><button class="closeX" onclick="closeModal('intelEditModal')">✕</button></div>
     <div class="modalBody">
       <label>Question / Trigger</label><textarea id="intelEditQ" placeholder="What the user might say..."></textarea>
       <label>Answer / Response</label><textarea id="intelEditA" placeholder="How AURA should respond..." rows="3"></textarea>
-      <div class="m-btns"><button class="btn btn-primary" onclick="saveIntelEdit()">Save</button><button class="btn btn-ghost" onclick="closeModal('modalIntelEdit')">Cancel</button></div>
+      <div class="m-btns"><button class="btn btn-primary" onclick="saveIntelEdit()">Save</button><button class="btn btn-ghost" onclick="closeModal('intelEditModal')">Cancel</button></div>
     </div>
   </div>
 </div>
 
-<!-- Hidden file inputs -->
-<input type="file" id="attachFile" accept="image/*,video/*,audio/*,application/pdf,.txt,.md,.json" style="display:none">
-<input type="file" id="importIntelFile" accept=".json" style="display:none">
-<input type="file" id="importBMFile" accept=".json" style="display:none">
+<!-- Faith Modal (simplified) -->
+<div class="modal-overlay" id="faithModal">
+  <div class="modal">
+    <div class="modalHeader"><span>🕊 Faith Selection</span><button class="closeX" onclick="closeModal('faithModal')">✕</button></div>
+    <div class="modalBody">
+      <div style="display:flex; flex-wrap:wrap; gap:8px;" id="faithChips"></div>
+    </div>
+  </div>
+</div>
 
-<!-- Toast placeholder -->
+<!-- Hidden file input for import -->
+<input type="file" id="importIntelFile" accept=".json" style="display:none">
 <div class="toast" id="toast"></div>
 
 <script>
@@ -544,6 +566,8 @@ const STATE = {
   intelligence: [],
   // Learned responses (auto from feedback)
   learned: [],
+  // Faith selection
+  faithSelection: [],
   // Stats
   totalUpdates: 0, bmAdaptations: 0,
   history: [],                // E0 history for graphs
@@ -558,23 +582,18 @@ const STATE = {
   correcting: false,
   lastUserQ: '',
   lastAuraA: '',
-  // Faith
-  faithSelection: [],
-  currentFaithForCfg: null,
   // API
-  apiConfig: { provider: '', model: '', key: '' },
-  offlineEngine: null,
-  offlineReady: false,
-  // Media
-  pendingMedia: null,           // { dataUrl, kind, name, size, mime }
+  apiConfig: { provider: 'openai', model: 'gpt-4o-mini', key: '' },
   // Voice
   voiceOn: false,
   recognition: null,
   recording: false,
+  // Media
+  pendingImageData: null,
+  pendingImageName: '',
   // Misc
-  dreamCfg: { intensityThreshold: 0.72, glimpseEveryMs: 14000, glimpseHoldMs: 5200, textureEveryMs: 12000 },
-  dreamFX: { running: false, particles: [], sparkles: [], textures: [] },
   maxHist: 120,
+  editingIntelId: null,
 };
 
 /* ==================== CONSTANTS ==================== */
@@ -585,6 +604,7 @@ const STORAGE_KEYS = {
   PERS: 'AURA_ULTIMATE_PERS',
   STATS: 'AURA_ULTIMATE_STATS',
   CFG: 'AURA_ULTIMATE_CFG',
+  FAITH: 'AURA_ULTIMATE_FAITH',
   API_PROVIDER: 'AURA_ULTIMATE_API_PROV',
   API_MODEL: 'AURA_ULTIMATE_API_MODEL',
   API_KEY: 'AURA_ULTIMATE_API_KEY'
@@ -659,6 +679,8 @@ function saveAll() {
   saveJSON(STORAGE_KEYS.LEARNED, STATE.learned);
   saveJSON(STORAGE_KEYS.PERS, STATE.personality);
   saveJSON(STORAGE_KEYS.STATS, { totalUpdates: STATE.totalUpdates, bmAdaptations: STATE.bmAdaptations, turnCount: STATE.turnCount });
+  saveJSON(STORAGE_KEYS.FAITH, STATE.faithSelection);
+  saveJSON(STORAGE_KEYS.CFG, { voiceOn: STATE.voiceOn, gamma: STATE.gamma, D: STATE.D, lf: STATE.lf, ls: STATE.ls, lt: STATE.lt });
 }
 function norm(s) { return String(s||'').toLowerCase().replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim(); }
 function tokenize(s) { const n = norm(s); return n ? n.split(' ') : []; }
@@ -862,7 +884,7 @@ function updateBM(TM, nlp, E0, response, source) {
     source
   };
   STATE.BM.push(entry);
-  if (STATE.BM.length > 30) STATE.BM.shift(); // keep most recent 30
+  if (STATE.BM.length > 30) STATE.BM = STATE.BM.slice(-30); // keep most recent 30
   saveAll();
   renderMemory();
 }
@@ -886,6 +908,69 @@ function applyFeedback(sig) {
   STATE.totalUpdates++;
   renderPersonality();
   updateStats();
+}
+
+/* ==================== LLM API CALLS ==================== */
+async function callLLM(prompt, detection, e0) {
+  const { provider, model, key } = STATE.apiConfig;
+  if (!key) return null;
+  
+  const systemPrompt = `You are AURA-X Ω, a warm and empathetic digital companion created by Alim ul Haq. You speak naturally like a caring friend. You're emotionally intelligent.
+Current emotional state (E₀): ${e0.toFixed(3)} (range -1 to +1)
+Detected user emotion: valence=${detection.valence.toFixed(2)}, intensity=${detection.intensity.toFixed(2)}
+Personality traits: empathy=${STATE.personality.empathy.toFixed(2)}, warmth=${STATE.personality.empathy.toFixed(2)}
+
+Rules:
+- Respond conversationally, warmly, like a real friend
+- Keep responses concise (2-4 sentences usually)
+- Match emotional tone appropriately
+- Never say you're "just an AI" — you're a companion
+- If user shares emotions, acknowledge them genuinely first
+- Ask follow-up questions to show interest`;
+
+  try {
+    if (provider === 'openai') {
+      const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.8,
+          max_tokens: 500
+        })
+      });
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      return data.choices?.[0]?.message?.content?.trim() || null;
+    } else if (provider === 'anthropic') {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 500,
+          system: systemPrompt
+        })
+      });
+      if (!resp.ok) return null;
+      const data = await resp.json();
+      return data.content?.[0]?.text?.trim() || null;
+    }
+  } catch (e) {
+    console.error('LLM error', e);
+    return null;
+  }
+  return null;
 }
 
 /* ==================== MAIN PROCESSING ==================== */
@@ -929,11 +1014,47 @@ async function processInput(text) {
 
   const emo = classifyEmotion(E0);
   const dec = decisionLogits(E0, nlp);
-  const resp = generateResponse(E0, nlp, dec);
-  updateBM(STATE.TM, nlp, E0, resp, 'engine');
+
+  // Determine response source
+  let answer = null, source = 'none';
+  
+  // 1. Intelligence folder
+  const intelMatch = findBestMatch(STATE.intelligence, text, 0.55);
+  if (intelMatch) { answer = intelMatch.item.a; source = 'intelligence'; }
+  
+  // 2. Learned responses
+  if (!answer) {
+    const learnedMatch = findBestMatch(STATE.learned, text, 0.55);
+    if (learnedMatch) { answer = learnedMatch.item.a; source = 'learned'; }
+  }
+  
+  // 3. Seed
+  if (!answer) {
+    const seedResult = seedLookup(text);
+    if (seedResult) { answer = seedResult.answer; source = 'seed'; }
+  }
+  
+  // 4. LLM if available
+  if (!answer && STATE.apiConfig.key) {
+    answer = await callLLM(text, nlp, E0);
+    if (answer) {
+      source = 'llm';
+      // Store in learned for future reuse
+      STATE.learned.push({ q: text, a: answer, ts: Date.now() });
+      if (STATE.learned.length > 100) STATE.learned.shift();
+    }
+  }
+  
+  // 5. Fallback
+  if (!answer) {
+    answer = generateResponse(E0, nlp, dec);
+    source = 'engine';
+  }
+
+  updateBM(STATE.TM, nlp, E0, answer, source);
 
   updateUI(nlp, emo, dec, lt);
-  return { resp, emo, dec, nlp };
+  return { answer, source, emo, dec, nlp };
 }
 
 function updateUI(nlp, emo, dec, lt) {
@@ -1124,42 +1245,54 @@ function addMsg(role, text, meta) {
   div.innerHTML = `<div class="msg-avatar">${av}</div><div><div class="msg-bubble">${escapeHtml(text)}</div>${mh}</div>`;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
+  
+  // Auto voice if enabled
+  if (role === 'aura' && STATE.voiceOn) {
+    speakText(text);
+  }
+}
+
+function speakText(text) {
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 1; u.pitch = 1;
+    speechSynthesis.speak(u);
+  } catch (e) {}
 }
 
 function scrollChat() { const c = document.getElementById('chatMessages'); c.scrollTop = c.scrollHeight; }
 
 let typingTimer = null;
 async function sendMessage() {
-  const inp = document.getElementById('chatInput');
+  const inp = document.getElementById('userInput');
   let text = inp.value.trim();
-  if (!text && !STATE.pendingMedia) return;
+  const imageData = STATE.pendingImageData;
+  
+  if (!text && !imageData) return;
 
-  // If correcting, handle
+  // Correction mode
   if (STATE.correcting) {
     if (text && STATE.lastUserQ) {
       STATE.intelligence.push({ id: 'intel_' + Date.now(), q: STATE.lastUserQ, a: text, ts: Date.now() });
       saveAll();
-      addMsg('aura', '✓ Learned! I\'ll remember that answer.', null);
+      addMsg('aura', '✓ Learned! I\'ll remember that answer.', { emo: classifyEmotion(0), E0: STATE.E0 });
       STATE.correcting = false;
     }
-    inp.value = '';
+    inp.value = ''; inp.style.height = 'auto';
     return;
   }
 
-  const media = STATE.pendingMedia;
-  if (media) {
-    // Append media tag to text
-    const tag = ` [MEDIA:${media.kind}]`;
-    text += tag;
-    // For simplicity, just add a note in message
-    addMsg('user', text + (media.kind==='image'?' 🖼️':' 🎥'), null);
-    clearMedia();
+  // Show user message with optional image note
+  if (imageData) {
+    addMsg('user', text || '[Image attached]', null);
+    // In a real app, you could upload image, but here we just note
   } else {
     addMsg('user', text, null);
   }
-
-  inp.value = '';
-  STATE.lastUserQ = text;
+  
+  inp.value = ''; inp.style.height = 'auto';
+  clearAttachment();
+  STATE.lastUserQ = text || (imageData ? '[Image]' : '');
 
   // Show typing indicator
   const typing = document.createElement('div');
@@ -1169,14 +1302,14 @@ async function sendMessage() {
   document.getElementById('chatMessages').appendChild(typing);
   scrollChat();
 
-  // Simulate delay
+  // Simulate delay (or actual processing)
   await new Promise(r => setTimeout(r, 600 + Math.random() * 600));
 
-  const result = await processInput(text);
+  const result = await processInput(text || (imageData ? 'Image attached' : ''));
   document.getElementById('typing')?.remove();
-  addMsg('aura', result.resp, { emo: result.emo, E0: STATE.E0 });
-  STATE.lastAuraA = result.resp;
-  document.getElementById('behaviourBox').textContent = result.resp;
+  addMsg('aura', result.answer, { emo: result.emo, E0: STATE.E0 });
+  STATE.lastAuraA = result.answer;
+  document.getElementById('behaviourBox').textContent = result.answer;
   document.getElementById('behaviourBox').className = 'behaviour-box' + (STATE.E0 > 0.2 ? ' positive' : STATE.E0 < -0.2 ? ' negative' : '');
 }
 
@@ -1189,20 +1322,71 @@ function clearChat() {
   STATE.turnCount = 0;
   STATE.E0 = 0;
   updateStats();
-  addMsg('aura', 'System reset. Grand Emotional Continuity Equation re-initialised. E₀ = 0.', null);
+  addMsg('aura', 'System reset. Grand Emotional Continuity Equation re-initialised. E₀ = 0.', { emo: classifyEmotion(0), E0: 0 });
+}
+
+/* ==================== VOICE INPUT ==================== */
+function initVoiceInput() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { document.getElementById('micBtn').style.display = 'none'; return; }
+  STATE.recognition = new SR();
+  STATE.recognition.continuous = false;
+  STATE.recognition.interimResults = true;
+  STATE.recognition.lang = 'en-US';
+  
+  STATE.recognition.onresult = (e) => {
+    let final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+    }
+    document.getElementById('userInput').value = final;
+    // Optionally auto-send after voice? We'll let user press send
+  };
+  
+  STATE.recognition.onend = () => {
+    STATE.recording = false;
+    document.getElementById('micBtn').classList.remove('recording');
+  };
+  
+  STATE.recognition.onerror = (e) => {
+    STATE.recording = false;
+    document.getElementById('micBtn').classList.remove('recording');
+    toast('Voice error: ' + e.error);
+  };
+}
+
+function toggleMic() {
+  if (!STATE.recognition) { toast('Voice input not supported'); return; }
+  if (STATE.recording) {
+    STATE.recognition.stop();
+  } else {
+    STATE.recording = true;
+    document.getElementById('micBtn').classList.add('recording');
+    STATE.recognition.start();
+  }
 }
 
 /* ==================== MEDIA ATTACHMENT ==================== */
-document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+document.getElementById('attachFile').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    STATE.pendingImageData = ev.target.result;
+    STATE.pendingImageName = file.name;
+    document.getElementById('attachImg').src = ev.target.result;
+    document.getElementById('attachName').textContent = file.name;
+    document.getElementById('attachPreview').classList.add('show');
+  };
+  reader.readAsDataURL(file);
+});
 
-// Attach file button (you can add a button in UI if desired, but we'll use a simple button near input)
-// For simplicity, we'll add a hidden file input and a button in the chat input row.
-// Modify the chat-input-row in HTML: add a button for attach.
-// Actually we need to add that button manually in the HTML. Since we can't change HTML now, we'll just add a small button via JS? Better to include it in HTML.
-// We'll add a button programmatically? Let's just keep as is; user can paste images? We'll add a hidden file input and a button later in code? For now, we'll skip to keep length manageable.
-
-/* ==================== VOICE (optional) ==================== */
-// We'll add a simple voice toggle button in status bar maybe? Not included now.
+function clearAttachment() {
+  STATE.pendingImageData = null;
+  STATE.pendingImageName = '';
+  document.getElementById('attachPreview').classList.remove('show');
+  document.getElementById('attachFile').value = '';
+}
 
 /* ==================== PARAMETER UPDATE ==================== */
 function updateParam(k, v) {
@@ -1212,6 +1396,7 @@ function updateParam(k, v) {
   if (k === 'Ls') { STATE.ls = f; document.getElementById('pv-Ls').textContent = f.toFixed(2); }
   if (k === 'Lt') { STATE.lt = f; document.getElementById('pv-Lt').textContent = f.toFixed(2); }
   if (k === 'gamma') { STATE.gamma = f; document.getElementById('pv-gamma').textContent = f.toFixed(2); document.getElementById('gammaFill').style.width = (f * 100) + '%'; }
+  saveAll();
 }
 
 function feedback(sig) {
@@ -1224,8 +1409,6 @@ function feedback(sig) {
 function showTRC(msg) { const e = document.getElementById('trcAlert'); document.getElementById('trcMsg').textContent = msg; e.style.display = 'flex'; }
 function hideTRC() { document.getElementById('trcAlert').style.display = 'none'; }
 
-function clearMedia() { STATE.pendingMedia = null; }
-
 function exportBM() {
   const data = { bm: STATE.BM, personality: STATE.personality, stats: { totalUpdates: STATE.totalUpdates, bmAdaptations: STATE.bmAdaptations } };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1236,20 +1419,20 @@ function exportBM() {
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 
-// Faith chips
+/* Faith */
 function renderFaithChips() {
   const chips = document.getElementById('faithChips');
   chips.innerHTML = '';
   FAITH_OPTIONS.forEach(opt => {
     const chip = document.createElement('button');
-    chip.className = 'chip' + (STATE.faithSelection.includes(opt.id) ? ' active' : '');
+    chip.className = 'btn btn-ghost' + (STATE.faithSelection.includes(opt.id) ? ' active' : '');
     chip.textContent = opt.label;
     chip.addEventListener('click', () => {
       let newSel = [...STATE.faithSelection];
       if (opt.id === 'none') newSel = [];
       else {
         if (newSel.includes(opt.id)) newSel = newSel.filter(x => x !== opt.id);
-        else newSel = [opt.id]; // only one faith
+        else newSel = [opt.id];
       }
       STATE.faithSelection = newSel;
       renderFaithChips();
@@ -1261,7 +1444,7 @@ function renderFaithChips() {
   });
 }
 
-// Intelligence panel
+/* Intelligence panel */
 function renderIntelList(filter = '') {
   const list = document.getElementById('intelList');
   const f = norm(filter);
@@ -1280,7 +1463,7 @@ function addIntel() {
   document.getElementById('intelEditTitle').textContent = 'Add Q&A';
   document.getElementById('intelEditQ').value = '';
   document.getElementById('intelEditA').value = '';
-  openModal('modalIntelEdit');
+  openModal('intelEditModal');
 }
 
 function saveIntelEdit() {
@@ -1289,8 +1472,8 @@ function saveIntelEdit() {
   if (!q || !a) { toast('Both fields required'); return; }
   STATE.intelligence.push({ id: 'intel_' + Date.now(), q, a, ts: Date.now() });
   saveAll();
-  renderIntelList();
-  closeModal('modalIntelEdit');
+  renderIntelList(document.getElementById('intelSearch').value);
+  closeModal('intelEditModal');
   toast('Added');
 }
 
@@ -1309,13 +1492,13 @@ document.getElementById('importIntelFile').addEventListener('change', e => {
     try {
       const data = JSON.parse(ev.target.result);
       if (Array.isArray(data)) STATE.intelligence = STATE.intelligence.concat(data);
-      saveAll(); renderIntelList(); toast('Imported');
+      saveAll(); renderIntelList(document.getElementById('intelSearch').value); toast('Imported');
     } catch { toast('Invalid file'); }
   };
   reader.readAsText(file);
 });
 
-// LLM
+/* LLM */
 function connectLLM() {
   const prov = document.getElementById('apiProvider').value;
   const model = document.getElementById('apiModel').value;
@@ -1326,9 +1509,27 @@ function connectLLM() {
   sessionStorage.setItem(STORAGE_KEYS.API_MODEL, model);
   sessionStorage.setItem(STORAGE_KEYS.API_KEY, key);
   document.getElementById('apiStatus').textContent = 'Connected to ' + prov;
+  document.getElementById('disconnectLLM').style.display = 'block';
   toast('API connected');
-  setTimeout(() => closeModal('modalLLM'), 500);
+  setTimeout(() => closeModal('llmModal'), 500);
 }
+
+function disconnectLLM() {
+  STATE.apiConfig = { provider: 'openai', model: 'gpt-4o-mini', key: '' };
+  sessionStorage.removeItem(STORAGE_KEYS.API_KEY);
+  sessionStorage.removeItem(STORAGE_KEYS.API_PROVIDER);
+  sessionStorage.removeItem(STORAGE_KEYS.API_MODEL);
+  document.getElementById('apiStatus').textContent = '';
+  document.getElementById('disconnectLLM').style.display = 'none';
+  document.getElementById('apiKey').value = '';
+  toast('Disconnected');
+}
+
+/* Voice toggle (from header) - we'll add a button in header */
+// Add voice toggle button to status bar or header? Let's add a button in status bar.
+// We'll modify header HTML programmatically? Better to add it manually but since we are in code, we can just add a button in the status bar via JS.
+// Actually we already have a voice toggle in the header? In the HTML above we didn't include one. Let's add a simple button in status bar via JS after load.
+// But we can also add a small button in the status-bar. We'll do it quickly.
 
 /* ==================== INIT ==================== */
 function initFromStorage() {
@@ -1342,16 +1543,49 @@ function initFromStorage() {
   STATE.turnCount = stats.turnCount || 0;
   const cfg = loadJSON(STORAGE_KEYS.CFG, {});
   STATE.voiceOn = cfg.voiceOn || false;
-  STATE.faithSelection = cfg.faithSelection || [];
-  STATE.apiConfig = cfg.apiConfig || { provider: '', model: '', key: '' };
+  STATE.D = cfg.D || 0.30;
+  STATE.lf = cfg.lf || 0.10;
+  STATE.ls = cfg.ls || 0.10;
+  STATE.lt = cfg.lt || 0.00;
+  STATE.gamma = cfg.gamma || 0.30;
+  STATE.faithSelection = loadJSON(STORAGE_KEYS.FAITH, []);
   // Load session API
-  STATE.apiConfig.provider = sessionStorage.getItem(STORAGE_KEYS.API_PROVIDER) || STATE.apiConfig.provider;
-  STATE.apiConfig.model = sessionStorage.getItem(STORAGE_KEYS.API_MODEL) || STATE.apiConfig.model;
-  STATE.apiConfig.key = sessionStorage.getItem(STORAGE_KEYS.API_KEY) || STATE.apiConfig.key;
+  STATE.apiConfig.provider = sessionStorage.getItem(STORAGE_KEYS.API_PROVIDER) || 'openai';
+  STATE.apiConfig.model = sessionStorage.getItem(STORAGE_KEYS.API_MODEL) || 'gpt-4o-mini';
+  STATE.apiConfig.key = sessionStorage.getItem(STORAGE_KEYS.API_KEY) || '';
+  if (STATE.apiConfig.key) document.getElementById('disconnectLLM').style.display = 'block';
 }
 
 function init() {
   initFromStorage();
+  // Add voice toggle to status bar
+  const statusBar = document.querySelector('.status-bar');
+  const voicePill = document.createElement('div');
+  voicePill.className = 'status-pill';
+  voicePill.id = 'voiceToggle';
+  voicePill.innerHTML = `<div class="status-dot" style="background:${STATE.voiceOn ? 'var(--green)' : 'var(--muted)'};"></div>VOICE ${STATE.voiceOn ? 'ON' : 'OFF'}`;
+  voicePill.onclick = () => {
+    STATE.voiceOn = !STATE.voiceOn;
+    voicePill.innerHTML = `<div class="status-dot" style="background:${STATE.voiceOn ? 'var(--green)' : 'var(--muted)'};"></div>VOICE ${STATE.voiceOn ? 'ON' : 'OFF'}`;
+    saveAll();
+    toast('Auto voice ' + (STATE.voiceOn ? 'ON' : 'OFF'));
+  };
+  statusBar.appendChild(voicePill);
+  
+  // Add LLM button to status bar
+  const llmPill = document.createElement('div');
+  llmPill.className = 'status-pill';
+  llmPill.innerHTML = '<div class="status-dot" style="background:var(--purple);"></div>LLM';
+  llmPill.onclick = () => openModal('llmModal');
+  statusBar.appendChild(llmPill);
+  
+  // Add Faith button to status bar
+  const faithPill = document.createElement('div');
+  faithPill.className = 'status-pill';
+  faithPill.innerHTML = '<div class="status-dot" style="background:var(--gold);"></div>FAITH';
+  faithPill.onclick = () => openModal('faithModal');
+  statusBar.appendChild(faithPill);
+  
   renderFaithChips();
   renderPersonality();
   renderMemory();
@@ -1366,15 +1600,50 @@ function init() {
     l.setAttribute('stroke', 'rgba(0,210,255,0.2)'); l.setAttribute('stroke-width', '1');
     tg.appendChild(l);
   }
-  addMsg('aura', 'AURA-X Ω Ultimate online. Grand Emotional Continuity Equation initialised. Self-learning engine active. I am here — speak to me.', { emo: classifyEmotion(0), E0: 0 });
+  addMsg('aura', 'AURA-X Ω Ultimate online. Grand Emotional Continuity Equation initialised. Self-learning engine active. Voice/LLM/Image ready. Speak to me.', { emo: classifyEmotion(0), E0: 0 });
+  
   // Session timer
   setInterval(() => {
     const s = Math.floor((Date.now() - STATE.sessionStart) / 1000);
     document.getElementById('sessionPill').textContent = 'SESSION: ' + Math.floor(s / 60) + ':' + (s % 60).toString().padStart(2, '0');
   }, 1000);
+  
+  // Particle system (simplified)
+  const canvas = document.getElementById('particleCanvas');
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let w, h;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    window.addEventListener('resize', resize);
+    resize();
+    const particles = [];
+    for (let i = 0; i < 50; i++) {
+      particles.push({ x: Math.random() * w, y: Math.random() * h, vx: (Math.random()-0.5)*0.2, vy: (Math.random()-0.5)*0.2, r: Math.random()*2+1, a: Math.random()*0.3+0.1 });
+    }
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = 'rgba(0,210,255,0.1)';
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+        ctx.fillStyle = `rgba(0,210,255,${p.a})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
 }
 
 window.addEventListener('DOMContentLoaded', init);
+
+// Keyboard send
+document.getElementById('userInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+});
 </script>
 </body>
 </html>
