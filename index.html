@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ur">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>ڈاکٹر وحید زمان - فارمیسی مینجمنٹ</title>
+    <title>Dr. Wahid Zaman - Pharmacy Management</title>
     <style>
         * {
             margin: 0;
@@ -14,9 +14,14 @@
         
         body {
             background: #f0f2f5;
+            direction: ltr;
+            text-align: left;
+            padding: 10px;
+        }
+        
+        body.urdu-mode {
             direction: rtl;
             text-align: right;
-            padding: 10px;
         }
         
         .container {
@@ -25,7 +30,7 @@
             padding: 10px;
         }
         
-        /* ہیڈر */
+        /* Header */
         .header {
             background: linear-gradient(135deg, #2c3e50, #1e2b37);
             color: white;
@@ -68,7 +73,31 @@
             transform: scale(1.05);
         }
         
-        /* ڈیش بورڈ کارڈز */
+        /* Language Toggle */
+        .lang-toggle {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-flex;
+            gap: 5px;
+        }
+        
+        .lang-toggle button {
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .lang-toggle button.active {
+            background: white;
+            color: #2c3e50;
+        }
+        
+        /* Dashboard Cards */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -99,7 +128,7 @@
         .stat-card.credit .value { color: #e74c3c; }
         .stat-card.debit .value { color: #f39c12; }
         
-        /* نیویگیشن */
+        /* Navigation */
         .nav-tabs {
             display: flex;
             flex-wrap: wrap;
@@ -128,7 +157,7 @@
             color: white;
         }
         
-        /* سیکشنز */
+        /* Sections */
         .section {
             background: white;
             padding: 20px;
@@ -150,7 +179,7 @@
             padding-bottom: 10px;
         }
         
-        /* فارم */
+        /* Forms */
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -212,7 +241,7 @@
             font-size: 0.9rem;
         }
         
-        /* ٹیبل */
+        /* Tables */
         .table-responsive {
             overflow-x: auto;
         }
@@ -224,8 +253,13 @@
         
         th, td {
             padding: 12px;
-            text-align: right;
+            text-align: left;
             border-bottom: 1px solid #eee;
+        }
+        
+        body.urdu-mode th,
+        body.urdu-mode td {
+            text-align: right;
         }
         
         th {
@@ -255,7 +289,7 @@
             color: #155724;
         }
         
-        /* الرٹ */
+        /* Alerts */
         .alert {
             padding: 15px;
             border-radius: 8px;
@@ -264,20 +298,30 @@
         
         .alert-warning {
             background: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        body.urdu-mode .alert-warning {
+            border-left: none;
             border-right: 4px solid #ffc107;
         }
         
         .alert-danger {
             background: #f8d7da;
+            border-left: 4px solid #dc3545;
+        }
+        
+        body.urdu-mode .alert-danger {
+            border-left: none;
             border-right: 4px solid #dc3545;
         }
         
-        /* سرچ بار */
+        /* Search */
         .search-box {
             margin-bottom: 20px;
         }
         
-        /* موبائل فرینڈلی */
+        /* Mobile Friendly */
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -303,202 +347,207 @@
 </head>
 <body>
     <div class="container">
-        <!-- ہیڈر -->
+        <!-- Header -->
         <div class="header">
             <div class="pharmacy-name">
-                🏥 ڈاکٹر وحید زمان ہیلتھ کیئر اینڈ فارمیسی
-                <small>نسخہ شفا، خیرالشفاء</small>
+                <span id="pharmacyNameEn">👨‍⚕️ Dr. Wahid Zaman Health Clinic & Pharmacy</span>
+                <span id="pharmacyNameUr" style="display:none;">👨‍⚕️ ڈاکٹر واحد زمان ہیلتھ کلینک اینڈ فارمیسی</span>
+                <small id="taglineEn">Lajbok — Trusted Healthcare for Our Community</small>
+                <small id="taglineUr" style="display:none;">لاجبوک — ہماری کمیونٹی کے لیے قابلِ اعتماد طبی خدمات</small>
             </div>
-            <div>
-                <a href="https://wa.me/923459531125?text=Assalamualaikum%20Dr%20Waheed%20Zaman%20Pharmacy%20se%20rabtah%20hai" 
-                   target="_blank" class="whatsapp-btn">
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="lang-toggle">
+                    <button id="langEn" class="active" onclick="setLanguage('en')">EN</button>
+                    <button id="langUr" onclick="setLanguage('ur')">اردو</button>
+                </div>
+                <a href="#" id="whatsappLink" target="_blank" class="whatsapp-btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
                         <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.83 2.71 15.64 3.78 17.18L2.08 21.5L6.58 19.88C8.07 20.78 9.8 21.28 11.63 21.28H11.64C17.1 21.28 21.55 16.83 21.55 11.37C21.55 5.91 17.1 2 12.04 2ZM18.06 14.59C17.74 15.5 16.48 16.26 15.35 16.48C14.56 16.64 13.53 16.71 11.28 15.54C8.5 14.1 6.68 11.21 6.55 11.03C6.41 10.85 5.5 9.66 5.5 8.42C5.5 7.18 6.16 6.56 6.44 6.26C6.68 6 6.99 5.93 7.18 5.93C7.36 5.93 7.53 5.94 7.69 5.94C7.92 5.94 8.19 5.88 8.44 6.3C8.73 6.78 9.47 8.07 9.55 8.24C9.63 8.41 9.68 8.61 9.55 8.86C9.42 9.11 9.35 9.22 9.16 9.45C8.97 9.68 8.78 9.92 8.6 10.12C8.42 10.33 8.22 10.58 8.46 10.99C8.7 11.4 9.43 12.55 10.52 13.51C11.84 14.67 12.93 15.04 13.44 15.2C13.82 15.32 14.23 15.27 14.52 15.03C14.87 14.73 15.12 14.27 15.28 13.94C15.44 13.61 15.65 13.54 15.95 13.62C16.25 13.7 17.2 14.09 17.52 14.25C17.84 14.41 18.05 14.49 18.12 14.64C18.19 14.79 18.19 15.27 18.06 14.59Z"/>
                     </svg>
-                    📱 واٹس ایپ پر رابطہ
+                    <span id="whatsappBtnText">📱 WhatsApp</span>
                 </a>
             </div>
         </div>
         
-        <!-- ڈیش بورڈ کارڈز -->
+        <!-- Dashboard Cards -->
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>📦 کل دوائیں</h3>
+                <h3><span class="statLabel" data-en="📦 Total Medicines" data-ur="📦 کل دوائیں">📦 Total Medicines</span></h3>
                 <div class="value" id="totalMedicines">0</div>
             </div>
             <div class="stat-card">
-                <h3>💰 آج کی سیل</h3>
+                <h3><span class="statLabel" data-en="💰 Today's Sale" data-ur="💰 آج کی سیل">💰 Today's Sale</span></h3>
                 <div class="value" id="todaySale">0</div>
             </div>
             <div class="stat-card credit">
-                <h3>📋 گاہکوں پر بقایا</h3>
+                <h3><span class="statLabel" data-en="📋 Customer Credit" data-ur="📋 گاہکوں پر بقایا">📋 Customer Credit</span></h3>
                 <div class="value" id="totalCredit">0</div>
             </div>
             <div class="stat-card debit">
-                <h3>🏭 ہم پر بقایا</h3>
+                <h3><span class="statLabel" data-en="🏭 Supplier Due" data-ur="🏭 ہم پر بقایا">🏭 Supplier Due</span></h3>
                 <div class="value" id="totalDebit">0</div>
             </div>
             <div class="stat-card">
-                <h3>⚠ ختم ہونے والی</h3>
+                <h3><span class="statLabel" data-en="⚠ Expiring Soon" data-ur="⚠ ختم ہونے والی">⚠ Expiring Soon</span></h3>
                 <div class="value" id="expiringCount">0</div>
             </div>
         </div>
         
-        <!-- نیویگیشن ٹیبز -->
+        <!-- Navigation Tabs -->
         <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showSection('dashboard')">🏠 ڈیش بورڈ</button>
-            <button class="nav-tab" onclick="showSection('stock')">📦 سٹاک</button>
-            <button class="nav-tab" onclick="showSection('addMedicine')">➕ دوائی شامل</button>
-            <button class="nav-tab" onclick="showSection('sell')">💊 سیل/بل</button>
-            <button class="nav-tab" onclick="showSection('customers')">👥 گاہک</button>
-            <button class="nav-tab" onclick="showSection('suppliers')">🏢 ڈسٹری بیوٹرز</button>
-            <button class="nav-tab" onclick="showSection('reports')">📊 رپورٹس</button>
-            <button class="nav-tab" onclick="showSection('backup')">💾 بیک اپ</button>
+            <button class="nav-tab active" onclick="showSection('dashboard')"><span data-en="🏠 Dashboard" data-ur="🏠 ڈیش بورڈ">🏠 Dashboard</span></button>
+            <button class="nav-tab" onclick="showSection('stock')"><span data-en="📦 Stock" data-ur="📦 سٹاک">📦 Stock</span></button>
+            <button class="nav-tab" onclick="showSection('addMedicine')"><span data-en="➕ Add Medicine" data-ur="➕ دوائی شامل">➕ Add Medicine</span></button>
+            <button class="nav-tab" onclick="showSection('sell')"><span data-en="💊 Sale/Bill" data-ur="💊 سیل/بل">💊 Sale/Bill</span></button>
+            <button class="nav-tab" onclick="showSection('customers')"><span data-en="👥 Customers" data-ur="👥 گاہک">👥 Customers</span></button>
+            <button class="nav-tab" onclick="showSection('suppliers')"><span data-en="🏢 Suppliers" data-ur="🏢 ڈسٹری بیوٹرز">🏢 Suppliers</span></button>
+            <button class="nav-tab" onclick="showSection('reports')"><span data-en="📊 Reports" data-ur="📊 رپورٹس">📊 Reports</span></button>
+            <button class="nav-tab" onclick="showSection('backup')"><span data-en="💾 Backup" data-ur="💾 بیک اپ">💾 Backup</span></button>
         </div>
         
-        <!-- ڈیش بورڈ سیکشن -->
+        <!-- Dashboard Section -->
         <div id="dashboardSection" class="section active">
-            <h2 class="section-title">🏠 ڈیش بورڈ</h2>
+            <h2 class="section-title"><span data-en="🏠 Dashboard" data-ur="🏠 ڈیش بورڈ">🏠 Dashboard</span></h2>
             
-            <!-- الرٹس -->
+            <!-- Alerts -->
             <div id="expiryAlerts" class="alert alert-warning" style="display:none;">
-                <strong>⏰ ایکسپائری الرٹ:</strong> <span id="expiryAlertText"></span>
+                <strong><span data-en="⏰ Expiry Alert:" data-ur="⏰ ایکسپائری الرٹ:">⏰ Expiry Alert:</span></strong> <span id="expiryAlertText"></span>
             </div>
             
             <div id="stockAlerts" class="alert alert-danger" style="display:none;">
-                <strong>⚠ کم سٹاک الرٹ:</strong> <span id="stockAlertText"></span>
+                <strong><span data-en="⚠ Low Stock Alert:" data-ur="⚠ کم سٹاک الرٹ:">⚠ Low Stock Alert:</span></strong> <span id="stockAlertText"></span>
             </div>
             
-            <!-- فوری کارروائیاں -->
+            <!-- Quick Actions -->
             <div style="margin-top:20px;">
-                <h3>⚡ فوری کارروائیاں</h3>
+                <h3><span data-en="⚡ Quick Actions" data-ur="⚡ فوری کارروائیاں">⚡ Quick Actions</span></h3>
                 <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:15px;">
-                    <button class="btn btn-success" onclick="showSection('addMedicine')">➕ نئی دوائی شامل</button>
-                    <button class="btn btn-primary" onclick="showSection('sell')">💊 نیا بل بنائیں</button>
-                    <button class="btn btn-warning" onclick="exportData()">⬇ بیک اپ ڈاؤن لوڈ</button>
+                    <button class="btn btn-success" onclick="showSection('addMedicine')"><span data-en="➕ Add Medicine" data-ur="➕ نئی دوائی شامل">➕ Add Medicine</span></button>
+                    <button class="btn btn-primary" onclick="showSection('sell')"><span data-en="💊 New Bill" data-ur="💊 نیا بل بنائیں">💊 New Bill</span></button>
+                    <button class="btn btn-warning" onclick="exportData()"><span data-en="⬇ Download Backup" data-ur="⬇ بیک اپ ڈاؤن لوڈ">⬇ Download Backup</span></button>
                 </div>
             </div>
             
-            <!-- آج کی سیلز -->
+            <!-- Today's Sales -->
             <div style="margin-top:30px;">
-                <h3>📅 آج کی سیلز</h3>
+                <h3><span data-en="📅 Today's Sales" data-ur="📅 آج کی سیلز">📅 Today's Sales</span></h3>
                 <div class="table-responsive">
                     <table id="todaySalesTable">
                         <thead>
                             <tr>
-                                <th>وقت</th>
-                                <th>گاہک</th>
-                                <th>دوائی</th>
-                                <th>رقم</th>
-                                <th>ادھار</th>
+                                <th><span data-en="Time" data-ur="وقت">Time</span></th>
+                                <th><span data-en="Customer" data-ur="گاہک">Customer</span></th>
+                                <th><span data-en="Medicine" data-ur="دوائی">Medicine</span></th>
+                                <th><span data-en="Amount" data-ur="رقم">Amount</span></th>
+                                <th><span data-en="Credit" data-ur="ادھار">Credit</span></th>
                             </tr>
                         </thead>
                         <tbody id="todaySalesBody">
-                            <tr><td colspan="5" style="text-align:center;">آج کوئی سیل نہیں ہوئی</td></tr>
+                            <tr><td colspan="5" style="text-align:center;"><span data-en="No sales today" data-ur="آج کوئی سیل نہیں ہوئی">No sales today</span></td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
         
-        <!-- سٹاک سیکشن -->
+        <!-- Stock Section -->
         <div id="stockSection" class="section">
-            <h2 class="section-title">📦 سٹاک کی فہرست</h2>
+            <h2 class="section-title"><span data-en="📦 Stock List" data-ur="📦 سٹاک کی فہرست">📦 Stock List</span></h2>
             
             <div class="search-box">
-                <input type="text" class="form-control" id="stockSearch" placeholder="دوائی تلاش کریں..." onkeyup="filterStock()">
+                <input type="text" class="form-control" id="stockSearch" placeholder="Search medicine..." onkeyup="filterStock()">
             </div>
             
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>نام</th>
-                            <th>بیچ نمبر</th>
-                            <th>مقدار</th>
-                            <th>قیمت</th>
-                            <th>ایکسپائری</th>
-                            <th>کارروائی</th>
+                            <th><span data-en="Name" data-ur="نام">Name</span></th>
+                            <th><span data-en="Batch No" data-ur="بیچ نمبر">Batch No</span></th>
+                            <th><span data-en="Quantity" data-ur="مقدار">Quantity</span></th>
+                            <th><span data-en="Price" data-ur="قیمت">Price</span></th>
+                            <th><span data-en="Expiry" data-ur="ایکسپائری">Expiry</span></th>
+                            <th><span data-en="Action" data-ur="کارروائی">Action</span></th>
                         </tr>
                     </thead>
                     <tbody id="stockTableBody">
-                        <!-- یہاں JavaScript ڈیٹا دکھائے گا -->
+                        <!-- JavaScript will populate this -->
                     </tbody>
                 </table>
             </div>
         </div>
         
-        <!-- دوائی شامل سیکشن -->
+        <!-- Add Medicine Section -->
         <div id="addMedicineSection" class="section">
-            <h2 class="section-title">➕ نئی دوائی شامل کریں</h2>
+            <h2 class="section-title"><span data-en="➕ Add New Medicine" data-ur="➕ نئی دوائی شامل کریں">➕ Add New Medicine</span></h2>
             
             <form onsubmit="event.preventDefault(); addMedicine();">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>دوائی کا نام *</label>
+                        <label><span data-en="Medicine Name *" data-ur="دوائی کا نام *">Medicine Name *</span></label>
                         <input type="text" class="form-control" id="medName" required>
                     </div>
                     <div class="form-group">
-                        <label>بیچ نمبر *</label>
+                        <label><span data-en="Batch Number *" data-ur="بیچ نمبر *">Batch Number *</span></label>
                         <input type="text" class="form-control" id="medBatch" required>
                     </div>
                     <div class="form-group">
-                        <label>مقدار *</label>
+                        <label><span data-en="Quantity *" data-ur="مقدار *">Quantity *</span></label>
                         <input type="number" class="form-control" id="medQty" required min="1">
                     </div>
                     <div class="form-group">
-                        <label>خرید قیمت *</label>
+                        <label><span data-en="Purchase Price *" data-ur="خرید قیمت *">Purchase Price *</span></label>
                         <input type="number" class="form-control" id="medPurchasePrice" required min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label>فروخت قیمت *</label>
+                        <label><span data-en="Sale Price *" data-ur="فروخت قیمت *">Sale Price *</span></label>
                         <input type="number" class="form-control" id="medSalePrice" required min="0" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label>ایکسپائری تاریخ *</label>
+                        <label><span data-en="Expiry Date *" data-ur="ایکسپائری تاریخ *">Expiry Date *</span></label>
                         <input type="date" class="form-control" id="medExpiry" required>
                     </div>
                     <div class="form-group">
-                        <label>ڈسٹری بیوٹر</label>
+                        <label><span data-en="Supplier" data-ur="ڈسٹری بیوٹر">Supplier</span></label>
                         <select class="form-control" id="medSupplier">
-                            <option value="">کوئی نہیں</option>
+                            <option value=""><span data-en="None" data-ur="کوئی نہیں">None</span></option>
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">محفوظ کریں</button>
+                <button type="submit" class="btn btn-primary"><span data-en="Save" data-ur="محفوظ کریں">Save</span></button>
             </form>
         </div>
         
-        <!-- سیل/بل سیکشن -->
+        <!-- Sell/Bill Section -->
         <div id="sellSection" class="section">
-            <h2 class="section-title">💊 نیا بل بنائیں</h2>
+            <h2 class="section-title"><span data-en="💊 Create New Bill" data-ur="💊 نیا بل بنائیں">💊 Create New Bill</span></h2>
             
             <div class="form-grid">
                 <div class="form-group">
-                    <label>گاہک کا نام (ادھار کے لیے)</label>
-                    <input type="text" class="form-control" id="customerName" placeholder="گاہک کا نام">
+                    <label><span data-en="Customer Name (for credit)" data-ur="گاہک کا نام (ادھار کے لیے)">Customer Name (for credit)</span></label>
+                    <input type="text" class="form-control" id="customerName" placeholder="Customer name">
                 </div>
                 <div class="form-group">
-                    <label>گاہک کا فون</label>
-                    <input type="text" class="form-control" id="customerPhone" placeholder="فون نمبر">
+                    <label><span data-en="Customer Phone" data-ur="گاہک کا فون">Customer Phone</span></label>
+                    <input type="text" class="form-control" id="customerPhone" placeholder="Phone number">
                 </div>
             </div>
             
             <div style="margin:20px 0;">
-                <h4>دوائی شامل کریں</h4>
+                <h4><span data-en="Add Medicine" data-ur="دوائی شامل کریں">Add Medicine</span></h4>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>دوائی منتخب کریں</label>
+                        <label><span data-en="Select Medicine" data-ur="دوائی منتخب کریں">Select Medicine</span></label>
                         <select class="form-control" id="sellMedicine">
-                            <option value="">پہلے دوائی منتخب کریں</option>
+                            <option value=""><span data-en="Select medicine first" data-ur="پہلے دوائی منتخب کریں">Select medicine first</span></option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>مقدار</label>
+                        <label><span data-en="Quantity" data-ur="مقدار">Quantity</span></label>
                         <input type="number" class="form-control" id="sellQty" min="1" value="1">
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-success" style="margin-top:24px;" onclick="addToCart()">🛒 شامل کریں</button>
+                        <button class="btn btn-success" style="margin-top:24px;" onclick="addToCart()"><span data-en="🛒 Add" data-ur="🛒 شامل کریں">🛒 Add</span></button>
                     </div>
                 </div>
             </div>
@@ -507,196 +556,196 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>دوائی</th>
-                            <th>مقدار</th>
-                            <th>قیمت</th>
-                            <th>کل</th>
-                            <th>کارروائی</th>
+                            <th><span data-en="Medicine" data-ur="دوائی">Medicine</span></th>
+                            <th><span data-en="Qty" data-ur="مقدار">Qty</span></th>
+                            <th><span data-en="Price" data-ur="قیمت">Price</span></th>
+                            <th><span data-en="Total" data-ur="کل">Total</span></th>
+                            <th><span data-en="Action" data-ur="کارروائی">Action</span></th>
                         </tr>
                     </thead>
                     <tbody id="cartTable">
-                        <tr><td colspan="5" style="text-align:center;">کارٹ خالی ہے</td></tr>
+                        <tr><td colspan="5" style="text-align:center;"><span data-en="Cart is empty" data-ur="کارٹ خالی ہے">Cart is empty</span></td></tr>
                     </tbody>
                 </table>
             </div>
             
-            <div style="margin:20px 0; text-align:left;">
-                <h3>کل رقم: <span id="cartTotal">0</span> روپے</h3>
+            <div style="margin:20px 0; text-align:right;">
+                <h3><span data-en="Total:" data-ur="کل رقم:">Total:</span> <span id="cartTotal">0</span> <span data-en="Rs" data-ur="روپے">Rs</span></h3>
             </div>
             
             <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                <button class="btn btn-success" onclick="completeSale('cash')">💰 نقد بل بنائیں</button>
-                <button class="btn btn-warning" onclick="completeSale('credit')">📋 ادھار بل بنائیں</button>
-                <button class="btn btn-danger" onclick="clearCart()">🔄 کارٹ خالی کریں</button>
+                <button class="btn btn-success" onclick="completeSale('cash')"><span data-en="💰 Cash Bill" data-ur="💰 نقد بل بنائیں">💰 Cash Bill</span></button>
+                <button class="btn btn-warning" onclick="completeSale('credit')"><span data-en="📋 Credit Bill" data-ur="📋 ادھار بل بنائیں">📋 Credit Bill</span></button>
+                <button class="btn btn-danger" onclick="clearCart()"><span data-en="🔄 Clear Cart" data-ur="🔄 کارٹ خالی کریں">🔄 Clear Cart</span></button>
             </div>
             
             <div style="margin-top:20px;">
-                <small>ادھار بل بنانے کے لیے گاہک کا نام لازمی ہے</small>
+                <small><span data-en="For credit bill, customer name is required" data-ur="ادھار بل کے لیے گاہک کا نام لازمی ہے">For credit bill, customer name is required</span></small>
             </div>
         </div>
         
-        <!-- گاہک سیکشن -->
+        <!-- Customers Section -->
         <div id="customersSection" class="section">
-            <h2 class="section-title">👥 گاہکوں کا ادھار</h2>
+            <h2 class="section-title"><span data-en="👥 Customer Credit" data-ur="👥 گاہکوں کا ادھار">👥 Customer Credit</span></h2>
             
             <div class="search-box">
-                <input type="text" class="form-control" id="customerSearch" placeholder="گاہک تلاش کریں..." onkeyup="filterCustomers()">
+                <input type="text" class="form-control" id="customerSearch" placeholder="Search customer..." onkeyup="filterCustomers()">
             </div>
             
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>نام</th>
-                            <th>فون</th>
-                            <th>بقایا رقم</th>
-                            <th>کارروائی</th>
+                            <th><span data-en="Name" data-ur="نام">Name</span></th>
+                            <th><span data-en="Phone" data-ur="فون">Phone</span></th>
+                            <th><span data-en="Credit" data-ur="بقایا رقم">Credit</span></th>
+                            <th><span data-en="Action" data-ur="کارروائی">Action</span></th>
                         </tr>
                     </thead>
                     <tbody id="customersTableBody">
-                        <!-- یہاں JavaScript ڈیٹا دکھائے گا -->
+                        <!-- JavaScript will populate this -->
                     </tbody>
                 </table>
             </div>
             
             <div style="margin-top:20px;">
-                <h3>ادھار وصول کریں</h3>
+                <h3><span data-en="Receive Payment" data-ur="ادھار وصول کریں">Receive Payment</span></h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>گاہک منتخب کریں</label>
+                        <label><span data-en="Select Customer" data-ur="گاہک منتخب کریں">Select Customer</span></label>
                         <select class="form-control" id="paymentCustomer">
-                            <option value="">گاہک منتخب کریں</option>
+                            <option value=""><span data-en="Select customer" data-ur="گاہک منتخب کریں">Select customer</span></option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>رقم</label>
+                        <label><span data-en="Amount" data-ur="رقم">Amount</span></label>
                         <input type="number" class="form-control" id="paymentAmount" min="1">
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-success" style="margin-top:24px;" onclick="receivePayment()">💰 رقم وصول کی</button>
+                        <button class="btn btn-success" style="margin-top:24px;" onclick="receivePayment()"><span data-en="💰 Receive" data-ur="💰 رقم وصول کی">💰 Receive</span></button>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- ڈسٹری بیوٹرز سیکشن -->
+        <!-- Suppliers Section -->
         <div id="suppliersSection" class="section">
-            <h2 class="section-title">🏢 ڈسٹری بیوٹرز کا قرضہ</h2>
+            <h2 class="section-title"><span data-en="🏢 Supplier Due" data-ur="🏢 ڈسٹری بیوٹرز کا قرضہ">🏢 Supplier Due</span></h2>
             
             <div class="search-box">
-                <input type="text" class="form-control" id="supplierSearch" placeholder="ڈسٹری بیوٹر تلاش کریں..." onkeyup="filterSuppliers()">
+                <input type="text" class="form-control" id="supplierSearch" placeholder="Search supplier..." onkeyup="filterSuppliers()">
             </div>
             
             <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
-                            <th>نام</th>
-                            <th>کمپنی</th>
-                            <th>فون</th>
-                            <th>ہم پر بقایا</th>
-                            <th>کارروائی</th>
+                            <th><span data-en="Name" data-ur="نام">Name</span></th>
+                            <th><span data-en="Company" data-ur="کمپنی">Company</span></th>
+                            <th><span data-en="Phone" data-ur="فون">Phone</span></th>
+                            <th><span data-en="Due" data-ur="ہم پر بقایا">Due</span></th>
+                            <th><span data-en="Action" data-ur="کارروائی">Action</span></th>
                         </tr>
                     </thead>
                     <tbody id="suppliersTableBody">
-                        <!-- یہاں JavaScript ڈیٹا دکھائے گا -->
+                        <!-- JavaScript will populate this -->
                     </tbody>
                 </table>
             </div>
             
             <div style="margin-top:20px;">
-                <button class="btn btn-primary" onclick="showAddSupplier()">➕ نیا ڈسٹری بیوٹر شامل</button>
+                <button class="btn btn-primary" onclick="showAddSupplier()"><span data-en="➕ Add Supplier" data-ur="➕ نیا ڈسٹری بیوٹر شامل">➕ Add Supplier</span></button>
             </div>
             
-            <!-- نیا ڈسٹری بیوٹر فارم (چھپا ہوا) -->
+            <!-- Add Supplier Form (hidden) -->
             <div id="addSupplierForm" style="display:none; margin-top:20px;">
-                <h3>نیا ڈسٹری بیوٹر</h3>
+                <h3><span data-en="New Supplier" data-ur="نیا ڈسٹری بیوٹر">New Supplier</span></h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>نام</label>
+                        <label><span data-en="Name" data-ur="نام">Name</span></label>
                         <input type="text" class="form-control" id="supplierName">
                     </div>
                     <div class="form-group">
-                        <label>کمپنی</label>
+                        <label><span data-en="Company" data-ur="کمپنی">Company</span></label>
                         <input type="text" class="form-control" id="supplierCompany">
                     </div>
                     <div class="form-group">
-                        <label>فون</label>
+                        <label><span data-en="Phone" data-ur="فون">Phone</span></label>
                         <input type="text" class="form-control" id="supplierPhone">
                     </div>
                 </div>
-                <button class="btn btn-success" onclick="addSupplier()">محفوظ کریں</button>
-                <button class="btn btn-danger" onclick="hideAddSupplier()">منسوخ</button>
+                <button class="btn btn-success" onclick="addSupplier()"><span data-en="Save" data-ur="محفوظ کریں">Save</span></button>
+                <button class="btn btn-danger" onclick="hideAddSupplier()"><span data-en="Cancel" data-ur="منسوخ">Cancel</span></button>
             </div>
             
             <div style="margin-top:20px;">
-                <h3>ادائیگی کریں (ڈسٹری بیوٹر کو)</h3>
+                <h3><span data-en="Make Payment (to Supplier)" data-ur="ادائیگی کریں (ڈسٹری بیوٹر کو)">Make Payment (to Supplier)</span></h3>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>ڈسٹری بیوٹر</label>
+                        <label><span data-en="Select Supplier" data-ur="ڈسٹری بیوٹر">Select Supplier</span></label>
                         <select class="form-control" id="paymentSupplier">
-                            <option value="">ڈسٹری بیوٹر منتخب کریں</option>
+                            <option value=""><span data-en="Select supplier" data-ur="ڈسٹری بیوٹر منتخب کریں">Select supplier</span></option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>رقم</label>
+                        <label><span data-en="Amount" data-ur="رقم">Amount</span></label>
                         <input type="number" class="form-control" id="supplierPaymentAmount" min="1">
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-warning" style="margin-top:24px;" onclick="paySupplier()">💰 ادائیگی کریں</button>
+                        <button class="btn btn-warning" style="margin-top:24px;" onclick="paySupplier()"><span data-en="💰 Pay" data-ur="💰 ادائیگی کریں">💰 Pay</span></button>
                     </div>
                 </div>
             </div>
         </div>
         
-        <!-- رپورٹس سیکشن -->
+        <!-- Reports Section -->
         <div id="reportsSection" class="section">
-            <h2 class="section-title">📊 رپورٹس</h2>
+            <h2 class="section-title"><span data-en="📊 Reports" data-ur="📊 رپورٹس">📊 Reports</span></h2>
             
             <div style="margin-bottom:20px;">
                 <select class="form-control" id="reportType" onchange="loadReport()" style="width:200px;">
-                    <option value="daily">روزانہ رپورٹ</option>
-                    <option value="monthly">ماہانہ رپورٹ</option>
-                    <option value="yearly">سالانہ رپورٹ</option>
-                    <option value="customers">گاہک وار رپورٹ</option>
-                    <option value="suppliers">ڈسٹری بیوٹر وار رپورٹ</option>
+                    <option value="daily"><span data-en="Daily Report" data-ur="روزانہ رپورٹ">Daily Report</span></option>
+                    <option value="monthly"><span data-en="Monthly Report" data-ur="ماہانہ رپورٹ">Monthly Report</span></option>
+                    <option value="yearly"><span data-en="Yearly Report" data-ur="سالانہ رپورٹ">Yearly Report</span></option>
+                    <option value="customers"><span data-en="Customer Report" data-ur="گاہک وار رپورٹ">Customer Report</span></option>
+                    <option value="suppliers"><span data-en="Supplier Report" data-ur="ڈسٹری بیوٹر وار رپورٹ">Supplier Report</span></option>
                 </select>
             </div>
             
             <div id="reportContent">
-                <!-- یہاں رپورٹ آئے گی -->
+                <!-- Report will appear here -->
             </div>
         </div>
         
-        <!-- بیک اپ سیکشن -->
+        <!-- Backup Section -->
         <div id="backupSection" class="section">
-            <h2 class="section-title">💾 ڈیٹا بیک اپ اور بحالی</h2>
+            <h2 class="section-title"><span data-en="💾 Data Backup & Restore" data-ur="💾 ڈیٹا بیک اپ اور بحالی">💾 Data Backup & Restore</span></h2>
             
             <div style="margin:30px 0;">
-                <h3>📤 ڈیٹا ایکسپورٹ کریں</h3>
-                <p>اپنے تمام ڈیٹا کا بیک اپ JSON فائل میں ڈاؤن لوڈ کریں</p>
-                <button class="btn btn-success" onclick="exportData()">⬇ ڈاؤن لوڈ بیک اپ</button>
+                <h3><span data-en="📤 Export Data" data-ur="📤 ڈیٹا ایکسپورٹ کریں">📤 Export Data</span></h3>
+                <p><span data-en="Download all data as JSON file" data-ur="اپنے تمام ڈیٹا کا بیک اپ JSON فائل میں ڈاؤن لوڈ کریں">Download all data as JSON file</span></p>
+                <button class="btn btn-success" onclick="exportData()"><span data-en="⬇ Download Backup" data-ur="⬇ ڈاؤن لوڈ بیک اپ">⬇ Download Backup</span></button>
             </div>
             
             <div style="margin:30px 0;">
-                <h3>📥 ڈیٹا بحال کریں</h3>
-                <p>پہلے سے محفوظ بیک اپ فائل اپ لوڈ کریں</p>
+                <h3><span data-en="📥 Restore Data" data-ur="📥 ڈیٹا بحال کریں">📥 Restore Data</span></h3>
+                <p><span data-en="Upload previously saved backup file" data-ur="پہلے سے محفوظ بیک اپ فائل اپ لوڈ کریں">Upload previously saved backup file</span></p>
                 <input type="file" id="restoreFile" accept=".json" style="margin:10px 0;">
-                <button class="btn btn-warning" onclick="restoreData()">↻ بحال کریں</button>
+                <button class="btn btn-warning" onclick="restoreData()"><span data-en="↻ Restore" data-ur="↻ بحال کریں">↻ Restore</span></button>
             </div>
             
             <div style="margin:30px 0;">
-                <h3>📱 واٹس ایپ انوائس</h3>
-                <p>بل کو واٹس ایپ پر بھیجیں</p>
-                <a href="https://wa.me/923459531125" target="_blank" class="btn btn-primary">
-                    📱 ڈاکٹر صاحب سے رابطہ
+                <h3><span data-en="📱 WhatsApp Invoice" data-ur="📱 واٹس ایپ انوائس">📱 WhatsApp Invoice</span></h3>
+                <p><span data-en="Send bill on WhatsApp" data-ur="بل کو واٹس ایپ پر بھیجیں">Send bill on WhatsApp</span></p>
+                <a href="#" id="whatsappContactBtn" target="_blank" class="btn btn-primary">
+                    📱 <span data-en="Contact Dr. Wahid Zaman" data-ur="ڈاکٹر واحد زمان سے رابطہ">Contact Dr. Wahid Zaman</span>
                 </a>
             </div>
         </div>
     </div>
     
     <script>
-        // ڈیٹا بیس
+        // Database
         let db = {
             medicines: [],
             batches: [],
@@ -706,14 +755,59 @@
             payments: []
         };
         
-        // شروع میں ڈیٹا لوڈ کریں
+        // Language setting
+        let currentLang = 'en';
+        
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // Update body class for RTL
+            if (lang === 'ur') {
+                document.body.classList.add('urdu-mode');
+            } else {
+                document.body.classList.remove('urdu-mode');
+            }
+            
+            // Update toggle buttons
+            document.getElementById('langEn').classList.toggle('active', lang === 'en');
+            document.getElementById('langUr').classList.toggle('active', lang === 'ur');
+            
+            // Update pharmacy name and tagline
+            document.getElementById('pharmacyNameEn').style.display = lang === 'en' ? 'block' : 'none';
+            document.getElementById('pharmacyNameUr').style.display = lang === 'ur' ? 'block' : 'none';
+            document.getElementById('taglineEn').style.display = lang === 'en' ? 'block' : 'none';
+            document.getElementById('taglineUr').style.display = lang === 'ur' ? 'block' : 'none';
+            
+            // Update WhatsApp button text
+            document.getElementById('whatsappBtnText').innerText = lang === 'en' ? '📱 WhatsApp' : '📱 واٹس ایپ';
+            
+            // Update WhatsApp link with appropriate message
+            const whatsappMsg = lang === 'en' 
+                ? "👋 Welcome to Dr. Wahid Zaman Health Clinic in Lajbok — providing trusted healthcare services for our community."
+                : "ڈاکٹر واحد زمان ہیلتھ کلینک، لاجبوک میں خوش آمدید — جہاں ہماری کمیونٹی کے لیے قابلِ اعتماد طبی خدمات فراہم کی جاتی ہیں۔";
+            
+            document.getElementById('whatsappLink').href = `https://wa.me/923459531125?text=${encodeURIComponent(whatsappMsg)}`;
+            document.getElementById('whatsappContactBtn').href = `https://wa.me/923459531125?text=${encodeURIComponent(whatsappMsg)}`;
+            
+            // Update all text elements with data-en/data-ur attributes
+            document.querySelectorAll('[data-en][data-ur]').forEach(el => {
+                el.innerText = el.getAttribute(`data-${lang}`);
+            });
+            
+            // Update placeholders
+            document.querySelectorAll('[data-placeholder-en][data-placeholder-ur]').forEach(el => {
+                el.placeholder = el.getAttribute(`data-placeholder-${lang}`);
+            });
+        }
+        
+        // Load data from localStorage
         function loadData() {
-            const saved = localStorage.getItem('drWaheedPharmacy');
+            const saved = localStorage.getItem('drWahidZamanPharmacy');
             if (saved) {
                 try {
                     db = JSON.parse(saved);
                 } catch (e) {
-                    console.error('ڈیٹا لوڈ کرنے میں خرابی', e);
+                    console.error('Error loading data', e);
                     initializeSampleData();
                 }
             } else {
@@ -723,22 +817,22 @@
             updateAllLists();
         }
         
-        // نمونہ ڈیٹا
+        // Sample data
         function initializeSampleData() {
-            // ڈسٹری بیوٹرز
+            // Suppliers
             db.suppliers = [
-                { id: 's1', name: 'شرکت گھر لمیٹڈ', company: 'Abbott', phone: '021-1234567', balance: 0 },
-                { id: 's2', name: 'دوائی ڈسٹری بیوٹرز', company: 'GSK', phone: '021-7654321', balance: 0 }
+                { id: 's1', name: 'Shaheen Traders', company: 'Abbott', phone: '021-1234567', balance: 0 },
+                { id: 's2', name: 'Medical Distributors', company: 'GSK', phone: '021-7654321', balance: 0 }
             ];
             
-            // دوائیاں
+            // Medicines
             db.medicines = [
                 { id: 'm1', name: 'Panadol Extra', company: 'GSK', category: 'Pain Killer' },
                 { id: 'm2', name: 'Brufen', company: 'Abbott', category: 'Pain Killer' },
                 { id: 'm3', name: 'Augmentin', company: 'GSK', category: 'Antibiotic' }
             ];
             
-            // بیچز
+            // Batches
             const today = new Date();
             const nextMonth = new Date(today);
             nextMonth.setMonth(today.getMonth() + 1);
@@ -751,13 +845,13 @@
                 { id: 'b3', medicine_id: 'm3', batch_no: 'B2025C', quantity: 30, purchase_price: 200, sale_price: 280, expiry_date: nextMonth.toISOString().split('T')[0], supplier_id: 's1' }
             ];
             
-            // گاہک
+            // Customers
             db.customers = [
-                { id: 'c1', name: 'محمد علی', phone: '03001234567', address: 'گلشن اقبال', credit: 2500 },
-                { id: 'c2', name: 'احمد خان', phone: '03007654321', address: 'لیاقت آباد', credit: 1200 }
+                { id: 'c1', name: 'Muhammad Ali', phone: '03001234567', address: 'Gulshan', credit: 2500 },
+                { id: 'c2', name: 'Ahmed Khan', phone: '03007654321', address: 'Liqatabad', credit: 1200 }
             ];
             
-            // سیلز
+            // Sales
             const todayStr = today.toISOString().split('T')[0];
             db.sales = [
                 { 
@@ -785,12 +879,12 @@
             saveData();
         }
         
-        // ڈیٹا محفوظ کریں
+        // Save data
         function saveData() {
-            localStorage.setItem('drWaheedPharmacy', JSON.stringify(db));
+            localStorage.setItem('drWahidZamanPharmacy', JSON.stringify(db));
         }
         
-        // سیکشن دکھائیں
+        // Show section
         function showSection(section) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.getElementById(section + 'Section').classList.add('active');
@@ -805,27 +899,27 @@
             if (section === 'sell') updateSellDropdown();
         }
         
-        // ڈیش بورڈ اپ ڈیٹ
+        // Update dashboard
         function updateDashboard() {
-            // کل دوائیں
+            // Total medicines
             const totalMeds = db.batches.reduce((sum, b) => sum + b.quantity, 0);
             document.getElementById('totalMedicines').innerText = totalMeds;
             
-            // آج کی سیل
+            // Today's sale
             const today = new Date().toISOString().split('T')[0];
             const todaySales = db.sales.filter(s => s.date === today);
             const todayTotal = todaySales.reduce((sum, s) => sum + s.total, 0);
             document.getElementById('todaySale').innerText = todayTotal;
             
-            // گاہکوں پر بقایا
-            const totalCredit = db.customers.reduce((sum, c) => sum + c.credit, 0);
+            // Customer credit
+            const totalCredit = db.customers.reduce((sum, c) => sum + (c.credit || 0), 0);
             document.getElementById('totalCredit').innerText = totalCredit;
             
-            // ہم پر بقایا
-            const totalDebit = db.suppliers.reduce((sum, s) => sum + s.balance, 0);
+            // Supplier due
+            const totalDebit = db.suppliers.reduce((sum, s) => sum + (s.balance || 0), 0);
             document.getElementById('totalDebit').innerText = totalDebit;
             
-            // ختم ہونے والی دوائیں
+            // Expiring soon
             const today2 = new Date();
             const next30Days = new Date(today2);
             next30Days.setDate(today2.getDate() + 30);
@@ -836,38 +930,38 @@
             });
             document.getElementById('expiringCount').innerText = expiring.length;
             
-            // ایکسپائری الرٹ
+            // Expiry alert
             if (expiring.length > 0) {
                 document.getElementById('expiryAlerts').style.display = 'block';
-                document.getElementById('expiryAlertText').innerText = `${expiring.length} دوائیاں اگلے 30 دنوں میں ختم ہو رہی ہیں`;
+                document.getElementById('expiryAlertText').innerText = `${expiring.length} medicines expiring in next 30 days`;
             } else {
                 document.getElementById('expiryAlerts').style.display = 'none';
             }
             
-            // کم سٹاک الرٹ
+            // Low stock alert
             const lowStock = db.batches.filter(b => b.quantity < 20);
             if (lowStock.length > 0) {
                 document.getElementById('stockAlerts').style.display = 'block';
                 document.getElementById('stockAlertText').innerHTML = lowStock.map(b => {
                     const med = db.medicines.find(m => m.id === b.medicine_id);
-                    return `${med?.name || 'دوا'} (صرف ${b.quantity} باقی)`;
+                    return `${med?.name || 'Medicine'} (only ${b.quantity} left)`;
                 }).join(', ');
             } else {
                 document.getElementById('stockAlerts').style.display = 'none';
             }
             
-            // آج کی سیلز ٹیبل
+            // Today's sales table
             const tbody = document.getElementById('todaySalesBody');
             if (todaySales.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">آج کوئی سیل نہیں ہوئی</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No sales today</td></tr>';
             } else {
                 tbody.innerHTML = todaySales.map(sale => {
                     const customer = sale.customer_id ? db.customers.find(c => c.id === sale.customer_id) : null;
-                    const customerName = customer ? customer.name : 'نقد گاہک';
+                    const customerName = customer ? customer.name : 'Cash Customer';
                     const items = sale.items.map(item => {
                         const batch = db.batches.find(b => b.id === item.batch_id);
                         const med = batch ? db.medicines.find(m => m.id === batch.medicine_id) : null;
-                        return med ? med.name : 'دوا';
+                        return med ? med.name : 'Medicine';
                     }).join(', ');
                     
                     return `<tr>
@@ -881,17 +975,17 @@
             }
         }
         
-        // سٹاک لسٹ اپ ڈیٹ
+        // Update stock list
         function updateStockList() {
             const tbody = document.getElementById('stockTableBody');
             if (db.batches.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">کوئی دوا نہیں</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No medicines</td></tr>';
                 return;
             }
             
             tbody.innerHTML = db.batches.map(batch => {
                 const medicine = db.medicines.find(m => m.id === batch.medicine_id);
-                const medName = medicine ? medicine.name : 'نامعلوم';
+                const medName = medicine ? medicine.name : 'Unknown';
                 const today = new Date();
                 const expDate = new Date(batch.expiry_date);
                 const isExpiring = expDate <= new Date(today.setDate(today.getDate() + 30));
@@ -905,13 +999,13 @@
                         <span class="badge ${isExpiring ? 'badge-warning' : 'badge-success'}">${batch.expiry_date}</span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-danger" onclick="deleteBatch('${batch.id}')">حذف</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteBatch('${batch.id}')">Delete</button>
                     </td>
                 </tr>`;
             }).join('');
         }
         
-        // دوائی شامل کریں
+        // Add medicine
         function addMedicine() {
             const name = document.getElementById('medName').value;
             const batchNo = document.getElementById('medBatch').value;
@@ -922,11 +1016,11 @@
             const supplierId = document.getElementById('medSupplier').value;
             
             if (!name || !batchNo || !qty || !purchasePrice || !salePrice || !expiry) {
-                alert('براہ کرم تمام فیلڈز بھریں');
+                alert(currentLang === 'en' ? 'Please fill all fields' : 'براہ کرم تمام فیلڈز بھریں');
                 return;
             }
             
-            // پہلے دوا چیک کریں
+            // Check if medicine exists
             let medicine = db.medicines.find(m => m.name.toLowerCase() === name.toLowerCase());
             if (!medicine) {
                 medicine = {
@@ -938,7 +1032,7 @@
                 db.medicines.push(medicine);
             }
             
-            // بیچ شامل کریں
+            // Add batch
             const batch = {
                 id: 'b' + Date.now() + Math.random(),
                 medicine_id: medicine.id,
@@ -951,7 +1045,7 @@
             };
             db.batches.push(batch);
             
-            // ڈسٹری بیوٹر کا بقایہ اپ ڈیٹ
+            // Update supplier balance
             if (supplierId) {
                 const supplier = db.suppliers.find(s => s.id === supplierId);
                 if (supplier) {
@@ -960,9 +1054,9 @@
             }
             
             saveData();
-            alert('دوائی کامیابی سے شامل ہو گئی');
+            alert(currentLang === 'en' ? 'Medicine added successfully' : 'دوائی کامیابی سے شامل ہو گئی');
             
-            // فارم خالی کریں
+            // Clear form
             document.getElementById('medName').value = '';
             document.getElementById('medBatch').value = '';
             document.getElementById('medQty').value = '';
@@ -974,10 +1068,10 @@
             updateStockList();
         }
         
-        // سیل ڈراپ ڈاؤن اپ ڈیٹ
+        // Update sell dropdown
         function updateSellDropdown() {
             const select = document.getElementById('sellMedicine');
-            select.innerHTML = '<option value="">دوائی منتخب کریں</option>';
+            select.innerHTML = '<option value="">Select medicine</option>';
             
             db.batches.forEach(batch => {
                 if (batch.quantity > 0) {
@@ -985,14 +1079,14 @@
                     if (medicine) {
                         const option = document.createElement('option');
                         option.value = batch.id;
-                        option.textContent = `${medicine.name} (بیچ: ${batch.batch_no}) - قیمت: ${batch.sale_price} - باقی: ${batch.quantity}`;
+                        option.textContent = `${medicine.name} (Batch: ${batch.batch_no}) - Price: ${batch.sale_price} - Stock: ${batch.quantity}`;
                         select.appendChild(option);
                     }
                 }
             });
         }
         
-        // کارٹ
+        // Cart
         let cart = [];
         
         function addToCart() {
@@ -1000,7 +1094,7 @@
             const qty = parseInt(document.getElementById('sellQty').value);
             
             if (!batchId) {
-                alert('دوائی منتخب کریں');
+                alert(currentLang === 'en' ? 'Select medicine' : 'دوائی منتخب کریں');
                 return;
             }
             
@@ -1008,7 +1102,7 @@
             if (!batch) return;
             
             if (qty > batch.quantity) {
-                alert(`صرف ${batch.quantity} باقی ہیں`);
+                alert(currentLang === 'en' ? `Only ${batch.quantity} left` : `صرف ${batch.quantity} باقی ہیں`);
                 return;
             }
             
@@ -1029,7 +1123,7 @@
         function updateCart() {
             const tbody = document.getElementById('cartTable');
             if (cart.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">کارٹ خالی ہے</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Cart is empty</td></tr>';
                 document.getElementById('cartTotal').innerText = '0';
                 return;
             }
@@ -1042,7 +1136,7 @@
                     <td>${item.qty}</td>
                     <td>${item.price}</td>
                     <td>${item.total}</td>
-                    <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">حذف</button></td>
+                    <td><button class="btn btn-sm btn-danger" onclick="removeFromCart(${index})">Remove</button></td>
                 </tr>`;
             }).join('');
             
@@ -1061,7 +1155,7 @@
         
         function completeSale(type) {
             if (cart.length === 0) {
-                alert('کارٹ خالی ہے');
+                alert(currentLang === 'en' ? 'Cart is empty' : 'کارٹ خالی ہے');
                 return;
             }
             
@@ -1069,11 +1163,11 @@
             const customerPhone = document.getElementById('customerPhone').value;
             
             if (type === 'credit' && !customerName) {
-                alert('ادھار بل کے لیے گاہک کا نام لازمی ہے');
+                alert(currentLang === 'en' ? 'Customer name is required for credit bill' : 'ادھار بل کے لیے گاہک کا نام لازمی ہے');
                 return;
             }
             
-            // گاہک تلاش کریں یا نیا بنائیں
+            // Find or create customer
             let customerId = null;
             if (customerName) {
                 let customer = db.customers.find(c => c.name.toLowerCase() === customerName.toLowerCase());
@@ -1090,7 +1184,7 @@
                 customerId = customer.id;
             }
             
-            // سیل کا ریکارڈ
+            // Create sale record
             const now = new Date();
             const sale = {
                 id: 'sale' + Date.now(),
@@ -1109,7 +1203,7 @@
             
             db.sales.push(sale);
             
-            // سٹاک میں کمی کریں
+            // Reduce stock
             cart.forEach(item => {
                 const batch = db.batches.find(b => b.id === item.batch_id);
                 if (batch) {
@@ -1117,7 +1211,7 @@
                 }
             });
             
-            // اگر ادھار ہے تو گاہک کا بقایہ بڑھائیں
+            // Update customer credit
             if (type === 'credit' && customerId) {
                 const customer = db.customers.find(c => c.id === customerId);
                 if (customer) {
@@ -1127,9 +1221,9 @@
             
             saveData();
             
-            // واٹس ایپ میسج
-            if (confirm('کیا آپ واٹس ایپ پر انوائس بھیجنا چاہتے ہیں؟')) {
-                const message = `*ڈاکٹر وحید زمان فارمیسی*\nتاریخ: ${sale.date}\nوقت: ${sale.time}\nگاہک: ${customerName || 'نقد گاہک'}\n\n${cart.map(item => `${item.medicine_name} x${item.qty} = ${item.total}`).join('\n')}\n\n*کل رقم: ${sale.total} روپے*\nادائیگی: ${type === 'credit' ? 'ادھار' : 'نقد'}`;
+            // WhatsApp invoice
+            if (confirm(currentLang === 'en' ? 'Do you want to send invoice on WhatsApp?' : 'کیا آپ واٹس ایپ پر انوائس بھیجنا چاہتے ہیں؟')) {
+                const message = `*Dr. Wahid Zaman Pharmacy*\nDate: ${sale.date}\nTime: ${sale.time}\nCustomer: ${customerName || 'Cash Customer'}\n\n${cart.map(item => `${item.medicine_name} x${item.qty} = ${item.total}`).join('\n')}\n\n*Total: ${sale.total} Rs*\nPayment: ${type === 'credit' ? 'Credit' : 'Cash'}`;
                 
                 window.open(`https://wa.me/923459531125?text=${encodeURIComponent(message)}`, '_blank');
             }
@@ -1138,16 +1232,16 @@
             document.getElementById('customerName').value = '';
             document.getElementById('customerPhone').value = '';
             
-            alert('بل کامیابی سے بن گیا');
+            alert(currentLang === 'en' ? 'Bill created successfully' : 'بل کامیابی سے بن گیا');
             updateDashboard();
             updateSellDropdown();
         }
         
-        // گاہک لسٹ
+        // Customer list
         function updateCustomersList() {
             const tbody = document.getElementById('customersTableBody');
             if (db.customers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">کوئی گاہک نہیں</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">No customers</td></tr>';
                 return;
             }
             
@@ -1158,29 +1252,29 @@
                     <td>${customer.phone || '—'}</td>
                     <td><span class="badge badge-warning">${totalCredit}</span></td>
                     <td>
-                        <a href="https://wa.me/${customer.phone?.replace(/[^0-9]/g, '')}" target="_blank" class="btn btn-sm btn-success">واٹس ایپ</a>
+                        <a href="https://wa.me/${customer.phone?.replace(/[^0-9]/g, '')}" target="_blank" class="btn btn-sm btn-success">WhatsApp</a>
                     </td>
                 </tr>`;
             }).join('');
             
-            // ادھار وصول کرنے والے ڈراپ ڈاؤن میں بھی گاہک دکھائیں
+            // Update payment dropdown
             const select = document.getElementById('paymentCustomer');
-            select.innerHTML = '<option value="">گاہک منتخب کریں</option>';
+            select.innerHTML = '<option value="">Select customer</option>';
             db.customers.forEach(customer => {
                 if (customer.credit > 0) {
                     const option = document.createElement('option');
                     option.value = customer.id;
-                    option.textContent = `${customer.name} (بقایا: ${customer.credit})`;
+                    option.textContent = `${customer.name} (Due: ${customer.credit})`;
                     select.appendChild(option);
                 }
             });
         }
         
-        // ڈسٹری بیوٹر لسٹ
+        // Supplier list
         function updateSuppliersList() {
             const tbody = document.getElementById('suppliersTableBody');
             if (db.suppliers.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">کوئی ڈسٹری بیوٹر نہیں</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No suppliers</td></tr>';
                 return;
             }
             
@@ -1192,26 +1286,26 @@
                     <td>${supplier.phone || '—'}</td>
                     <td><span class="badge ${balance > 0 ? 'badge-warning' : 'badge-success'}">${balance}</span></td>
                     <td>
-                        <button class="btn btn-sm btn-primary" onclick="editSupplier('${supplier.id}')">ترمیم</button>
+                        <button class="btn btn-sm btn-primary" onclick="editSupplier('${supplier.id}')">Edit</button>
                     </td>
                 </tr>`;
             }).join('');
             
-            // ڈسٹری بیوٹر ڈراپ ڈاؤن
+            // Update payment dropdown
             const select = document.getElementById('paymentSupplier');
-            select.innerHTML = '<option value="">ڈسٹری بیوٹر منتخب کریں</option>';
+            select.innerHTML = '<option value="">Select supplier</option>';
             db.suppliers.forEach(supplier => {
                 if (supplier.balance > 0) {
                     const option = document.createElement('option');
                     option.value = supplier.id;
-                    option.textContent = `${supplier.name} (بقایا: ${supplier.balance})`;
+                    option.textContent = `${supplier.name} (Due: ${supplier.balance})`;
                     select.appendChild(option);
                 }
             });
             
-            // دوائی شامل کرنے والے ڈراپ ڈاؤن میں بھی
+            // Update medicine supplier dropdown
             const medSupplier = document.getElementById('medSupplier');
-            medSupplier.innerHTML = '<option value="">کوئی نہیں</option>';
+            medSupplier.innerHTML = '<option value="">None</option>';
             db.suppliers.forEach(supplier => {
                 const option = document.createElement('option');
                 option.value = supplier.id;
@@ -1220,7 +1314,7 @@
             });
         }
         
-        // ڈسٹری بیوٹر شامل کریں
+        // Show add supplier form
         function showAddSupplier() {
             document.getElementById('addSupplierForm').style.display = 'block';
         }
@@ -1235,7 +1329,7 @@
             const phone = document.getElementById('supplierPhone').value;
             
             if (!name) {
-                alert('نام لکھیں');
+                alert(currentLang === 'en' ? 'Enter name' : 'نام لکھیں');
                 return;
             }
             
@@ -1255,16 +1349,16 @@
             document.getElementById('supplierCompany').value = '';
             document.getElementById('supplierPhone').value = '';
             
-            alert('ڈسٹری بیوٹر شامل ہو گیا');
+            alert(currentLang === 'en' ? 'Supplier added' : 'ڈسٹری بیوٹر شامل ہو گیا');
         }
         
-        // ادائیگی وصول کریں
+        // Receive payment from customer
         function receivePayment() {
             const customerId = document.getElementById('paymentCustomer').value;
             const amount = parseFloat(document.getElementById('paymentAmount').value);
             
             if (!customerId || !amount || amount <= 0) {
-                alert('گاہک اور رقم منتخب کریں');
+                alert(currentLang === 'en' ? 'Select customer and amount' : 'گاہک اور رقم منتخب کریں');
                 return;
             }
             
@@ -1273,7 +1367,7 @@
                 customer.credit = (customer.credit || 0) - amount;
                 if (customer.credit < 0) customer.credit = 0;
                 
-                // پیمنٹ کا ریکارڈ
+                // Record payment
                 db.payments.push({
                     id: 'p' + Date.now(),
                     date: new Date().toISOString().split('T')[0],
@@ -1287,17 +1381,17 @@
                 updateDashboard();
                 
                 document.getElementById('paymentAmount').value = '';
-                alert('رقم وصول ہو گئی');
+                alert(currentLang === 'en' ? 'Payment received' : 'رقم وصول ہو گئی');
             }
         }
         
-        // ڈسٹری بیوٹر کو ادائیگی
+        // Pay supplier
         function paySupplier() {
             const supplierId = document.getElementById('paymentSupplier').value;
             const amount = parseFloat(document.getElementById('supplierPaymentAmount').value);
             
             if (!supplierId || !amount || amount <= 0) {
-                alert('ڈسٹری بیوٹر اور رقم منتخب کریں');
+                alert(currentLang === 'en' ? 'Select supplier and amount' : 'ڈسٹری بیوٹر اور رقم منتخب کریں');
                 return;
             }
             
@@ -1319,11 +1413,11 @@
                 updateDashboard();
                 
                 document.getElementById('supplierPaymentAmount').value = '';
-                alert('ادائیگی کر دی گئی');
+                alert(currentLang === 'en' ? 'Payment made' : 'ادائیگی کر دی گئی');
             }
         }
         
-        // رپورٹس
+        // Reports
         function loadReport() {
             const type = document.getElementById('reportType').value;
             const content = document.getElementById('reportContent');
@@ -1333,19 +1427,19 @@
                 const sales = db.sales.filter(s => s.date === today);
                 const total = sales.reduce((sum, s) => sum + s.total, 0);
                 
-                let html = `<h3>📅 روزانہ رپورٹ (${today})</h3>`;
-                html += `<p>کل سیلز: ${sales.length}</p>`;
-                html += `<p>کل رقم: ${total} روپے</p>`;
+                let html = `<h3>📅 Daily Report (${today})</h3>`;
+                html += `<p>Total Sales: ${sales.length}</p>`;
+                html += `<p>Total Amount: ${total} Rs</p>`;
                 
                 if (sales.length > 0) {
-                    html += '<table><tr><th>وقت</th><th>گاہک</th><th>رقم</th><th>ادائیگی</th></tr>';
+                    html += '<table><tr><th>Time</th><th>Customer</th><th>Amount</th><th>Payment</th></tr>';
                     sales.forEach(s => {
                         const customer = s.customer_id ? db.customers.find(c => c.id === s.customer_id) : null;
                         html += `<tr>
                             <td>${s.time}</td>
-                            <td>${customer ? customer.name : 'نقد'}</td>
+                            <td>${customer ? customer.name : 'Cash'}</td>
                             <td>${s.total}</td>
-                            <td>${s.payment_type === 'credit' ? 'ادھار' : 'نقد'}</td>
+                            <td>${s.payment_type === 'credit' ? 'Credit' : 'Cash'}</td>
                         </tr>`;
                     });
                     html += '</table>';
@@ -1362,21 +1456,21 @@
                 const sales = db.sales.filter(s => s.date.startsWith(monthStr));
                 const total = sales.reduce((sum, s) => sum + s.total, 0);
                 
-                content.innerHTML = `<h3>📆 ماہانہ رپورٹ (${month}/${year})</h3>
-                    <p>کل سیلز: ${sales.length}</p>
-                    <p>کل رقم: ${total} روپے</p>`;
+                content.innerHTML = `<h3>📆 Monthly Report (${month}/${year})</h3>
+                    <p>Total Sales: ${sales.length}</p>
+                    <p>Total Amount: ${total} Rs</p>`;
                 
             } else if (type === 'yearly') {
                 const year = new Date().getFullYear();
                 const sales = db.sales.filter(s => s.date.startsWith(year));
                 const total = sales.reduce((sum, s) => sum + s.total, 0);
                 
-                content.innerHTML = `<h3>📈 سالانہ رپورٹ (${year})</h3>
-                    <p>کل سیلز: ${sales.length}</p>
-                    <p>کل رقم: ${total} روپے</p>`;
+                content.innerHTML = `<h3>📈 Yearly Report (${year})</h3>
+                    <p>Total Sales: ${sales.length}</p>
+                    <p>Total Amount: ${total} Rs</p>`;
                 
             } else if (type === 'customers') {
-                let html = '<h3>👥 گاہک وار رپورٹ</h3><table><tr><th>گاہک</th><th>کل ادھار</th></tr>';
+                let html = '<h3>👥 Customer Report</h3><table><tr><th>Customer</th><th>Total Due</th></tr>';
                 db.customers.forEach(c => {
                     if (c.credit > 0) {
                         html += `<tr><td>${c.name}</td><td>${c.credit}</td></tr>`;
@@ -1386,7 +1480,7 @@
                 content.innerHTML = html;
                 
             } else if (type === 'suppliers') {
-                let html = '<h3>🏢 ڈسٹری بیوٹر وار رپورٹ</h3><table><tr><th>ڈسٹری بیوٹر</th><th>ہم پر بقایا</th></tr>';
+                let html = '<h3>🏢 Supplier Report</h3><table><tr><th>Supplier</th><th>Due</th></tr>';
                 db.suppliers.forEach(s => {
                     if (s.balance > 0) {
                         html += `<tr><td>${s.name}</td><td>${s.balance}</td></tr>`;
@@ -1397,21 +1491,21 @@
             }
         }
         
-        // بیک اپ
+        // Backup
         function exportData() {
             const dataStr = JSON.stringify(db, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `drWaheedPharmacy_${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `drWahidZamanPharmacy_${new Date().toISOString().split('T')[0]}.json`;
             a.click();
         }
         
         function restoreData() {
             const file = document.getElementById('restoreFile').files[0];
             if (!file) {
-                alert('فائل منتخب کریں');
+                alert(currentLang === 'en' ? 'Select file' : 'فائل منتخب کریں');
                 return;
             }
             
@@ -1419,20 +1513,20 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (confirm('کیا آپ واقعی ڈیٹا بحال کرنا چاہتے ہیں؟ موجودہ ڈیٹا ختم ہو جائے گا۔')) {
+                    if (confirm(currentLang === 'en' ? 'Are you sure you want to restore data? Current data will be lost.' : 'کیا آپ واقعی ڈیٹا بحال کرنا چاہتے ہیں؟ موجودہ ڈیٹا ختم ہو جائے گا۔')) {
                         db = data;
                         saveData();
                         loadData();
-                        alert('ڈیٹا بحال ہو گیا');
+                        alert(currentLang === 'en' ? 'Data restored' : 'ڈیٹا بحال ہو گیا');
                     }
                 } catch (err) {
-                    alert('غلط فائل ہے');
+                    alert(currentLang === 'en' ? 'Invalid file' : 'غلط فائل ہے');
                 }
             };
             reader.readAsText(file);
         }
         
-        // فلٹر
+        // Filters
         function filterStock() {
             const search = document.getElementById('stockSearch').value.toLowerCase();
             const rows = document.querySelectorAll('#stockTableBody tr');
@@ -1460,9 +1554,9 @@
             });
         }
         
-        // بیچ ڈیلیٹ
+        // Delete batch
         function deleteBatch(batchId) {
-            if (confirm('کیا آپ واقعی یہ دوا ڈیلیٹ کرنا چاہتے ہیں؟')) {
+            if (confirm(currentLang === 'en' ? 'Are you sure you want to delete this medicine?' : 'کیا آپ واقعی یہ دوا ڈیلیٹ کرنا چاہتے ہیں؟')) {
                 db.batches = db.batches.filter(b => b.id !== batchId);
                 saveData();
                 updateStockList();
@@ -1470,9 +1564,17 @@
             }
         }
         
-        // شروع میں لوڈ کریں
+        // Update all lists
+        function updateAllLists() {
+            updateStockList();
+            updateCustomersList();
+            updateSuppliersList();
+        }
+        
+        // Initialize
         loadData();
         updateSellDropdown();
+        setLanguage('en'); // Default to English
     </script>
 </body>
 </html>
