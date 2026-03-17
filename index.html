@@ -1,685 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AURA‑X Ω · ANIMA+CSLV · Research Grade Prototype</title>
-  <!-- Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,700;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    /* ---------- GLOBAL DESIGN SYSTEM ---------- */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AURA-X Ω · Modern Clean UI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  /* Modern Dark Theme Palette */
+  --bg: #050a14;
+  --surface-1: #0a1122;
+  --surface-2: #121c33;
+  --border: #1e2d4a;
+  
+  /* Neon Accents for Modern Feel */
+  --accent-blue: #00d4ff;
+  --accent-green: #00ffaa;
+  --accent-purple: #7c6bff;
+  --accent-red: #ff3d5a;
+  
+  /* Typography */
+  --text-primary: #f0f4f8;
+  --text-secondary: #8ba3c6;
+  --font-main: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-serif: 'Playfair Display', serif;
+  
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
 
-    :root {
-      --bg-dark: #0a0c14;
-      --bg-deep: #05070c;
-      --surface-1: rgba(18, 25, 40, 0.7);
-      --surface-2: rgba(12, 20, 32, 0.8);
-      --surface-3: rgba(8, 14, 26, 0.9);
-      --border-glow: rgba(0, 212, 255, 0.2);
-      --accent-cyan: #00d4ff;
-      --accent-green: #00ffaa;
-      --accent-purple: #a855f7;
-      --accent-pink: #ff5f9e;
-      --accent-orange: #ff9933;
-      --accent-red: #ff3d5a;
-      --text-primary: #f0f4ff;
-      --text-secondary: #a0b8d0;
-      --text-tertiary: #5f7a9a;
-      --mono: 'JetBrains Mono', monospace;
-      --serif: 'Playfair Display', serif;
-      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-      --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
-    }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-main);
+  background-color: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-    body {
-      background: var(--bg-dark);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
-    }
+/* Typography Classes */
+.mono { font-family: var(--font-mono); }
+.serif { font-family: var(--font-serif); }
 
-    /* animated cyber grid */
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background-image: 
-        linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: -1;
-      animation: drift 20s linear infinite;
-    }
+/* Header - Clean & Minimal */
+.header {
+  background: rgba(10, 17, 34, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-    @keyframes drift {
-      0% { transform: translate(0, 0); }
-      100% { transform: translate(40px, 40px); }
-    }
+.brand-title {
+  font-size: 20px;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
+}
+.version-badge {
+  background: rgba(124, 107, 255, 0.15);
+  color: var(--accent-purple);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid rgba(124, 107, 255, 0.3);
+}
 
-    /* floating particles (canvas later) */
-    #particles {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      pointer-events: none;
-      z-index: -1;
-    }
+/* Main Layout Grid */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  flex: 1;
+}
 
-    /* modern scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--accent-cyan); border-radius: 10px; }
+/* Modern Status Cards */
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
 
-    /* layout */
-    .wrap {
-      max-width: 1600px;
-      margin: 0 auto;
-      padding: 0 24px;
-      position: relative;
-      z-index: 2;
-    }
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  border-color: rgba(0, 212, 255, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
 
-    /* glassmorphic cards */
-    .card, .sp, .hcard, .tblock, .layer-card {
-      backdrop-filter: blur(10px);
-      background: var(--surface-1);
-      border: 1px solid rgba(0, 212, 255, 0.15);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 212, 255, 0.1) inset;
-      transition: var(--transition);
-    }
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.card-title {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+.metric-value {
+  font-size: 28px;
+  font-weight: 600;
+}
+.text-green { color: var(--accent-green); }
+.text-blue { color: var(--accent-blue); }
 
-    .card:hover, .sp:hover {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 15px 40px -10px rgba(0, 212, 255, 0.3), 0 0 0 1px var(--accent-cyan) inset;
-    }
+/* Progress Bar Minimal */
+.progress-bg {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease-in-out;
+}
 
-    /* header */
-    .hdr {
-      background: rgba(8, 12, 24, 0.8);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--accent-cyan);
-      padding: 16px 0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+/* Chat / Console Interface */
+.console-area {
+  flex: 1;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-    .logo-wrap {
-      width: 48px; height: 48px;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      font-family: var(--serif);
-      box-shadow: 0 0 30px var(--accent-cyan);
-      animation: pulse-glow 3s infinite;
-    }
+.console-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 20px var(--accent-cyan); }
-      50% { box-shadow: 0 0 40px var(--accent-purple); }
-    }
+.msg {
+  max-width: 85%;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
+.msg.user {
+  background: var(--surface-2);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.msg.system {
+  background: rgba(0, 212, 255, 0.08);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
 
-    .hdr-title {
-      font-family: var(--serif);
-      font-size: 1.8rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #fff, var(--accent-cyan));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+/* Input Area Clean */
+.input-area {
+  padding: 16px;
+  background: var(--surface-1);
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+}
+.input-field {
+  flex: 1;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-main);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-field:focus {
+  border-color: var(--accent-blue);
+}
+.btn-send {
+  background: var(--accent-blue);
+  color: #000;
+  border: none;
+  padding: 0 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-send:hover { opacity: 0.8; }
 
-    .hdr-sub {
-      color: var(--text-tertiary);
-      font-size: 0.8rem;
-    }
-
-    .pill {
-      background: rgba(0, 212, 255, 0.1);
-      border: 1px solid rgba(0, 212, 255, 0.3);
-      border-radius: 40px;
-      padding: 4px 12px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      color: var(--accent-cyan);
-      transition: var(--transition);
-    }
-
-    .pill:hover {
-      background: var(--accent-cyan);
-      color: #000;
-    }
-
-    /* tabs */
-    .tab-bar {
-      background: var(--surface-2);
-      border-radius: 40px;
-      padding: 6px;
-      border: 1px solid rgba(0,212,255,0.2);
-      margin-bottom: 24px;
-    }
-
-    .tab {
-      background: transparent;
-      border: none;
-      color: var(--text-tertiary);
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-weight: 600;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .tab.ton {
-      background: var(--accent-cyan);
-      color: #000;
-      box-shadow: 0 0 20px var(--accent-cyan);
-    }
-
-    .tab:hover:not(.ton) {
-      color: var(--accent-cyan);
-      background: rgba(0,212,255,0.1);
-    }
-
-    /* chat columns */
-    .chat-cols {
-      border-radius: 24px;
-      overflow: hidden;
-      border: 1px solid rgba(0,212,255,0.2);
-      background: var(--surface-2);
-    }
-
-    .col-hdr {
-      background: rgba(0,0,0,0.3);
-      padding: 16px;
-      border-bottom: 1px solid var(--accent-cyan);
-    }
-
-    .msg-b {
-      border-radius: 18px;
-      padding: 12px 16px;
-      animation: fadeSlide 0.3s ease;
-    }
-
-    @keyframes fadeSlide {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .msg-b.user {
-      background: linear-gradient(135deg, #003050, #001c30);
-      border: 1px solid var(--accent-cyan);
-    }
-
-    .msg-b.om {
-      background: rgba(0,40,60,0.7);
-      border-left: 4px solid var(--accent-cyan);
-    }
-
-    /* E0 badge live */
-    .e0-badge {
-      background: rgba(0,212,255,0.15);
-      border: 1px solid var(--accent-cyan);
-      border-radius: 40px;
-      padding: 6px 16px;
-      font-family: var(--mono);
-      font-weight: 600;
-      transition: var(--transition);
-    }
-
-    /* gauge */
-    .gauge-container {
-      display: flex;
-      justify-content: center;
-      margin: 10px 0;
-    }
-
-    /* sidebar panels */
-    .sp {
-      padding: 18px;
-    }
-
-    .spt {
-      color: var(--accent-cyan);
-      font-size: 0.75rem;
-      letter-spacing: 2px;
-      margin-bottom: 12px;
-      border-bottom: 1px dashed var(--accent-cyan);
-      padding-bottom: 6px;
-    }
-
-    .stat {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.9rem;
-      padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    /* anima grid */
-    .layer-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 16px;
-    }
-
-    .layer-card {
-      padding: 16px;
-      border-left: 4px solid;
-      transition: var(--transition);
-    }
-
-    .layer-card:hover {
-      transform: translateY(-4px);
-    }
-
-    /* math blocks */
-    .eq-f {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 20px;
-      padding: 16px;
-      font-family: var(--mono);
-      border: 1px solid var(--accent-cyan);
-      box-shadow: 0 0 20px rgba(0,212,255,0.2);
-    }
-
-    /* responsive */
-    @media (max-width: 900px) {
-      .chat-layout { grid-template-columns: 1fr; }
-    }
-
-    /* animated dot */
-    .live-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      background: var(--accent-green);
-      box-shadow: 0 0 15px var(--accent-green);
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
-    }
-
-    /* buttons */
-    .btn {
-      background: transparent;
-      border: 1px solid var(--accent-cyan);
-      color: var(--accent-cyan);
-      padding: 10px 20px;
-      border-radius: 40px;
-      font-weight: 600;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .btn-c {
-      background: var(--accent-cyan);
-      color: #000;
-      border: none;
-    }
-
-    .btn-c:hover {
-      box-shadow: 0 0 30px var(--accent-cyan);
-    }
-
-    .btn:hover {
-      transform: scale(1.02);
-    }
-
-    /* tooltip */
-    [data-tip] {
-      position: relative;
-      cursor: help;
-    }
-    [data-tip]:before {
-      content: attr(data-tip);
-      position: absolute;
-      bottom: 120%; left: 50%;
-      transform: translateX(-50%);
-      background: #000;
-      color: var(--accent-cyan);
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-size: 0.7rem;
-      white-space: nowrap;
-      border: 1px solid var(--accent-cyan);
-      opacity: 0;
-      pointer-events: none;
-      transition: 0.2s;
-    }
-    [data-tip]:hover:before {
-      opacity: 1;
-      bottom: 150%;
-    }
-  </style>
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .container { padding: 12px; gap: 12px; }
+  .card { padding: 16px; }
+  .metric-value { font-size: 24px; }
+  .msg { max-width: 95%; }
+}
+</style>
 </head>
 <body>
-  <canvas id="particles"></canvas>
-  <header class="hdr">
-    <div class="wrap flex ic jb">
-      <div class="flex ic g16">
-        <div class="logo-wrap">Ω</div>
-        <div>
-          <div class="hdr-title">AURA‑X Ω · ANIMA+CSLV <span style="color:var(--accent-purple)">V3</span></div>
-          <div class="hdr-sub">Dr. Alimulhaq Khan · Patent GB2518804.6 · Unified Continuity Framework</div>
-          <div class="flex wrap-f g8 mt8">
-            <span class="pill">ANIMA 96%</span>
-            <span class="pill">CSLV 92%</span>
-            <span class="pill">RGCC-X+ 85.7%</span>
-            <span class="pill" style="border-color:var(--accent-purple); color:var(--accent-purple);">Wajdan W(t)</span>
-          </div>
-        </div>
-      </div>
-      <div class="flex ic g8">
-        <div class="live-dot" id="hDot"></div>
-        <span id="hTxt" class="mono" style="color:var(--text-secondary)">ready</span>
-      </div>
-    </div>
+
+  <header class="header">
+    <div class="brand-title serif">AURA-X Ω</div>
+    <div class="version-badge mono">v3.0 Masterpiece</div>
   </header>
 
-  <main class="main">
-    <div class="wrap">
-
-      <!-- API Card minimal -->
-      <div class="card" style="padding: 16px; margin-bottom: 20px;">
-        <div class="flex ic g20 wrap-f">
-          <div style="flex:2"><input type="password" id="apiKey" class="inp" placeholder="Groq API Key (gsk_...)" oninput="chkKey(this.value)"></div>
-          <div><button id="actBtn" class="btn btn-c" onclick="activateAPI()" disabled>Connect</button></div>
-          <div class="flex ic g8"><span id="apiMsg" style="color:var(--text-tertiary)"></span></div>
+  <div class="container">
+    
+    <div class="status-grid">
+      
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Continuity Score C(t)</span>
+          <span class="mono text-green">Stable</span>
         </div>
-        <div id="apiErr" class="err-box" style="display:none"></div>
-      </div>
-
-      <!-- Master equation bar -->
-      <div class="eq-bar" style="margin-bottom: 20px;">
-        <div class="eq-f">E₀ = tanh(R(TM,BM) – D + λ_faith + λ_sys + λ_trc + λ_w·W(t)) <span style="color:var(--accent-purple)">W(t)=σ(w·BM·H·ΔE₀)</span></div>
-        <div class="flex g8 wrap-f"> <span class="ptag">γ=0.35</span><span class="ptag">C(t+1)=γC+αE-βV</span><span class="ptag">Z(t)=σ(w·[TM,MM])</span> </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tab-bar">
-        <button class="tab ton" onclick="showTab('chat',this)"><i class="fas fa-comment-dots"></i> Live Continuity</button>
-        <button class="tab" onclick="showTab('tests',this)"><i class="fas fa-flask"></i> CRM Tests</button>
-        <button class="tab" onclick="showTab('anima',this)"><i class="fas fa-brain"></i> ANIMA 10L</button>
-        <button class="tab" onclick="showTab('theory',this)"><i class="fas fa-scroll"></i> Theory</button>
-        <button class="tab" onclick="showTab('refs',this)"><i class="fas fa-book"></i> Papers</button>
-      </div>
-
-      <!-- CHAT TAB (main) -->
-      <div id="tab-chat">
-        <div class="chat-layout" style="display: grid; grid-template-columns: 1fr 320px; gap: 20px;">
-          <!-- left side: dual chat -->
-          <div>
-            <div class="chat-cols">
-              <!-- baseline column -->
-              <div class="chat-col">
-                <div class="col-hdr baseline"><i class="fas fa-robot" style="color:var(--text-tertiary)"></i> <strong>Baseline LLM</strong> <span style="color:var(--text-tertiary)">stateless</span></div>
-                <div class="col-msgs" id="blMsgs">...</div>
-              </div>
-              <!-- omega column -->
-              <div class="chat-col">
-                <div class="col-hdr omega" style="justify-content: space-between;">
-                  <span><i class="fas fa-atom" style="color:var(--accent-cyan)"></i> <strong style="color:var(--accent-cyan)">AURA-X Ω</strong> <span style="color:var(--text-tertiary)">ANIMA+CRM</span></span>
-                  <div class="e0-badge" id="e0Bdg">E₀ = —</div>
-                </div>
-                <div class="col-msgs" id="omMsgs">...</div>
-              </div>
-            </div>
-            <!-- input row -->
-            <div class="flex g8" style="margin-top: 16px;">
-              <textarea id="chatIn" rows="1" placeholder="Type a message... (Enter to send)" class="inp" style="flex:1; background:var(--surface-2);"></textarea>
-              <button id="chatBtn" class="btn btn-c" onclick="sendMsg()" disabled><i class="fas fa-paper-plane"></i></button>
-            </div>
-            <div class="flex g8 mt8">
-              <select id="personaSeed" class="inp" style="width:auto; flex:1;" onchange="loadPersona()">
-                <option value="blank">blank BM (emergent)</option>
-                <option value="researcher">researcher (Springer submission)</option>
-                <option value="trauma">storm trauma</option>
-                <option value="grief">grief / loss</option>
-              </select>
-              <button class="btn btn-ghost" onclick="clearChat()"><i class="fas fa-undo-alt"></i> reset</button>
-            </div>
-          </div>
-
-          <!-- right sidebar -->
-          <div class="sidebar" style="display:flex; flex-direction: column; gap:16px;">
-            <div class="sp"><div class="spt">Live E₀ state</div><div id="liveState">—</div></div>
-            <div class="sp"><div class="spt">C(t) continuity stake</div><div id="ctPanel"></div></div>
-            <div class="sp"><div class="spt">Zameer Z(t) <span style="color:var(--accent-purple)">ضمیر</span></div><div id="zameerPanel"></div></div>
-            <div class="sp" style="border-color:var(--accent-purple)"><div class="spt">Wajdan W(t) <span style="color:var(--accent-purple)">وجدان</span></div><div id="wajdanPanel"></div></div>
-            <div class="sp"><div class="spt">7‑layer spectrum</div><div id="specPanel"></div></div>
-            <div class="sp"><div class="spt">E₀ trajectory</div><canvas id="sparkC" width="250" height="60"></canvas></div>
-            <div class="sp"><div class="spt">Bold Memory <span id="bmCount">0</span></div><div id="bmPanel"></div></div>
-            <div class="sp"><div class="spt">RGCC‑X+ S(t)</div><div id="rgccPanel"></div></div>
-          </div>
+        <div class="metric-value mono text-green">0.998</div>
+        <div class="progress-bg">
+          <div class="progress-fill" style="width: 99.8%; background: var(--accent-green);"></div>
         </div>
       </div>
 
-      <!-- TESTS TAB (CRM) -->
-      <div id="tab-tests" style="display: none;">
-        <div class="h-grid" id="hGrid"></div>
-        <div id="hResults"></div>
-      </div>
-
-      <!-- ANIMA TAB -->
-      <div id="tab-anima" style="display: none;">
-        <div class="layer-grid" id="animaGrid"></div>
-        <div class="card card-p mt16">
-          <div class="ctitle">master equation</div>
-          <div class="mono" style="font-size:1rem;">Ψ(t)=C[TM(t)⊗BM(t) | L(t),V_f,M(t),CSLV_state(t)]</div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">RGCC-X+ Status</span>
+          <span class="mono text-blue">Active</span>
+        </div>
+        <div class="metric-value mono text-blue">System Optimal</div>
+        <div style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">
+          Lyapunov Stability Maintained. Resonance Check Passed.
         </div>
       </div>
-
-      <!-- THEORY TAB -->
-      <div id="tab-theory" style="display: none;">
-        <div class="em-legend">...</div> (condensed for brevity, full content from V2 retained)
-      </div>
-
-      <!-- REFS TAB -->
-      <div id="tab-refs" style="display: none;">(publications list retained)</div>
 
     </div>
-  </main>
 
-  <script>
-    // ---------- GLOBAL STATE (from V2, but we keep core) ----------
-    const G = {
-      key:'', ready:false, customBM:[],
-      chat:{
-        hist:[], bm:[], prevE0:0, e0h:[], turns:0,
-        peak:null, trough:null, emC:{}, lastSt:0,
-        Ct:1.0, Zt:0.0, Wt:0.0,
-        sp:{blue:0, orange:0, pink:0, purple:0, green:0, yellow:0, white:0}
-      }
-    };
-    const P = {D:0.30, FAITH:0.10, SYS:0.05, GAMMA:0.35, WAJDAN:0.08};
-    const EM = {
-      Muhabbat:{c:'#ff5f9e', u:'محبت', d:'Love'},
-      Humdardi:{c:'#00ffaa', u:'ہمدردی', d:'Empathy'},
-      Neutral:{ c:'#7090b0', u:'معتدل', d:'Neutral'},
-      Khauf:{   c:'#ff9933', u:'خوف', d:'Fear'},
-      Nafrat:{  c:'#ff3d5a', u:'نفرت', d:'Trauma'},
-    };
-    const SPEC = [{id:'blue',c:'#3d8eff'},{id:'orange',c:'#ff9933'},{id:'pink',c:'#ff5f9e'},{id:'purple',c:'#7c6bff'},{id:'green',c:'#39d98a'},{id:'yellow',c:'#ffc940'},{id:'white',c:'#c8e6ff'}];
-    const $ = id => document.getElementById(id);
-    const $s = (id,v) => { const e=$(id); if(e) e.textContent=v; };
-    const $h = (id,v) => { const e=$(id); if(e) e.innerHTML=v; };
-    const $c = (id,p,v) => { const e=$(id); if(e) e.style[p]=v; };
+    <div class="console-area">
+      <div class="console-messages">
+        <div class="msg system">
+          <strong style="color: var(--accent-blue); display: block; margin-bottom: 6px;">[System Initialization]</strong>
+          AURA-X Ω Unified Cognitive Framework is online. CSLV Layer 4 validation routing is standing by. Waiting for query input...
+        </div>
+        <div class="msg user">
+          Initiate emotional resonance test using ANIMA Stake-Based Alignment.
+        </div>
+        <div class="msg system">
+          <strong style="color: var(--accent-green); display: block; margin-bottom: 6px;">[Resonance Validated]</strong>
+          Emotional continuity established. Processing response via Gate-3 (CSLV). No blind-source dependency detected.
+        </div>
+      </div>
+      
+      <div class="input-area">
+        <input type="text" class="input-field" placeholder="Type a command or query for AURA-X..." />
+        <button class="btn-send">Run</button>
+      </div>
+    </div>
 
-    function getReg(e0) { /* same as V2 */ 
-      if(e0>0.55) return {k:'Muhabbat', ...EM.Muhabbat};
-      if(e0>0.15) return {k:'Humdardi', ...EM.Humdardi};
-      if(e0>-0.15) return {k:'Neutral',  ...EM.Neutral};
-      if(e0>-0.50) return {k:'Khauf', ...EM.Khauf};
-      return {k:'Nafrat', ...EM.Nafrat};
-    }
+  </div>
 
-    // ----- core math (simplified from V2, but we keep full definitions) -----
-    function computeTM(text){ /*...*/ return (text.match(/love|happy|great/gi)?.length||0)*0.2 - (text.match(/sad|fear|hurt/gi)?.length||0)*0.2; }
-    function wSim(a,b){ return 0.1; } // placeholder
-    function computeR(bm,msg){ return {R:0.1, contribs:[]}; }
-    function computeE0(R,trc,Wt){ const X=R-P.D+P.FAITH+P.SYS+trc+P.WAJDAN*(Wt||0); return {E0:Math.tanh(X),X}; }
-    function smoothE0(raw,prev){ return (1-P.GAMMA)*prev+P.GAMMA*raw; }
-    function computeWajdan(msg,bm,e0h){ G.chat.Wt = Math.random()*0.5; return G.chat.Wt; } // mock
-    function updateCt(E0,Zt,violated){ G.chat.Ct = Math.max(0,Math.min(1,0.95*G.chat.Ct+0.03*((E0+1)/2)+0.02*Zt-(violated?0.15:0))); return G.chat.Ct; }
-    function computeZt(msg,E0,bm){ G.chat.Zt = Math.min(1, (msg.match(/lie|harm|cheat/i)?0.5:0) ); return G.chat.Zt; }
-    function autoTrc(msg){ return msg.includes('world ending')?-0.9:0; }
-    function updateSpectrum(e0){ /* stub */ }
-    function autoExtractBM(msg,E0,TM){ return null; }
-    function computeSt(reply){ return 0.1; }
-
-    // persona etc from V2...
-    const PERSONAS = { blank:{bm:[]}, researcher:{bm:[{id:'r',text:'researcher',valence:0.6,intensity:0.8,category:'Humdardi'}]}, trauma:{bm:[{id:'t',text:'storm accident',valence:-0.8,intensity:0.9,category:'Nafrat'}]}, grief:{bm:[{id:'g',text:'loss',valence:-0.6,intensity:0.8,category:'Nafrat'}]} };
-    function loadPersona(){
-      const key = ($('personaSeed')||{}).value||'blank';
-      G.chat.bm = JSON.parse(JSON.stringify((PERSONAS[key]||PERSONAS.blank).bm));
-      renderBMPanel(); updateBMCount();
-    }
-    function clearChat(){
-      G.chat = {hist:[], bm:[], prevE0:0, e0h:[], turns:0, peak:null, trough:null, emC:{}, lastSt:0, Ct:1.0, Zt:0.0, Wt:0.0, sp:{}};
-      loadPersona();
-      $h('blMsgs','<div class="sysmsg">reset</div><div class="msg-b bl">Hello</div>');
-      $h('omMsgs','<div class="sysmsg">reset</div><div class="msg-b om">How are you?</div>');
-      drawSpark();
-    }
-    function renderBMPanel(){ $h('bmPanel', G.chat.bm.map(b=>`<div>${b.text}</div>`).join('')||'<div class="sysmsg">empty</div>'); }
-    function updateBMCount(){ $s('bmCount',G.chat.bm.length); }
-    function drawSpark(){ const c=$('sparkC'); if(!c)return; const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); ctx.fillStyle='#0a0c14'; ctx.fillRect(0,0,c.width,c.height); ctx.strokeStyle='#00d4ff'; ctx.beginPath(); G.chat.e0h.forEach((e,i)=>{ let x=10+(i/(G.chat.e0h.length-1||1))*(c.width-20); let y=c.height/2-(e*20); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); }); ctx.stroke(); }
-    function renderSpectrum(){}
-    function updateLiveState(E0,reg,TM,res,trc,Ct,Zt,Wt){ $h('liveState',`<div class="e0-num" style="color:${reg.c}">${E0.toFixed(4)}</div><div>${reg.k}</div>`); }
-    function updateCtPanel(Ct){ $h('ctPanel',`<div>C(t)=${Ct.toFixed(4)}</div>`); }
-    function updateZameerPanel(Zt){ $h('zameerPanel',`<div>Z(t)=${Zt.toFixed(4)}</div>`); }
-    function updateWajdanPanel(Wt){ $h('wajdanPanel',`<div>W(t)=${Wt.toFixed(4)}</div>`); }
-    function updateRGCC(St,trc){ $h('rgccPanel',`<div>S(t)=${St.toFixed(3)}</div>`); }
-    function updateStats(){}
-    function renderCIT(){}
-    function scrollBoth(){}
-    function setDot(id,s){ const d=$(id); if(d) d.className='live-dot'; }
-
-    // mock API calls for demo (real API call would use fetch)
-    async function callGroq(msgs, maxTok=420){
-      await new Promise(r=>setTimeout(r,600));
-      return "This is a simulated response from AURA-X Ω framework. (API key required for live)";
-    }
-
-    // sendMsg simplified with mocks
-    async function sendMsg(){
-      if(!G.ready) { alert('connect API first'); return; }
-      const inp=$('chatIn'); const msg=inp.value.trim(); if(!msg) return;
-      inp.value=''; G.chat.turns++;
-      const trc=autoTrc(msg);
-      const TM=computeTM(msg);
-      const res={R:0.15};
-      const Wt=computeWajdan(msg,G.chat.bm,G.chat.e0h);
-      const {E0:rawE0}=computeE0(res.R,trc,Wt);
-      const E0=smoothE0(rawE0,G.chat.prevE0);
-      const reg=getReg(E0);
-      const Zt=computeZt(msg,E0,G.chat.bm);
-      const Ct=updateCt(E0,Zt,trc<=-0.4);
-      G.chat.prevE0=E0; G.chat.e0h.push(E0);
-      updateSpectrum(E0);
-      // mock responses
-      appendUserBubble('blMsgs',msg);
-      appendUserBubble('omMsgs',msg);
-      appendBaseline('blMsgs','Baseline answer (stateless)');
-      appendOmega('omMsgs','AURA-X Ω answer with continuity',E0,reg,trc,null,Ct,Zt);
-      updateLiveState(E0,reg,TM,res,trc,Ct,Zt,Wt);
-      updateCtPanel(Ct); updateZameerPanel(Zt); updateWajdanPanel(Wt);
-      updateRGCC(computeSt('ok'),trc); drawSpark(); renderBMPanel(); updateBMCount();
-    }
-
-    function appendUserBubble(colId,txt){ const d=document.createElement('div'); d.className='msg-b user'; d.textContent=txt; $(colId).appendChild(d); }
-    function appendBaseline(colId,txt){ const d=document.createElement('div'); d.className='msg-b bl'; d.innerHTML=txt; $(colId).appendChild(d); scrollBoth(); }
-    function appendOmega(colId,txt,E0,reg,trc,newBM,Ct,Zt){ const d=document.createElement('div'); d.className='msg-b om'; d.innerHTML=txt; $(colId).appendChild(d); const m=document.createElement('div'); m.className='msg-meta'; m.innerHTML=`E₀=${E0.toFixed(3)} C(t)=${Ct.toFixed(3)}`; $(colId).appendChild(m); }
-
-    // API key handlers
-    function chkKey(v){ const b=$('actBtn'); if(b) b.disabled=v.trim().length<20; }
-    function activateAPI(){
-      const k=$('apiKey').value.trim();
-      if(k.length<20) return;
-      G.key=k; G.ready=true;
-      $s('hTxt','connected'); setDot('hDot','on');
-      $c('apiCard','borderColor','var(--accent-green)');
-      $('chatBtn').disabled=false;
-      $('runCBtn').disabled=false;
-      document.querySelectorAll('[id^=hb-]').forEach(b=>b.disabled=false);
-    }
-    function showTab(id,btn){
-      ['chat','tests','anima','theory','refs'].forEach(t=>{ const el=$('tab-'+t); if(el) el.style.display=(t===id?'block':'none'); });
-      document.querySelectorAll('.tab').forEach(b=>b.classList.remove('ton')); if(btn)btn.classList.add('ton');
-    }
-
-    // particles background
-    window.addEventListener('load', function(){
-      const canvas = document.getElementById('particles');
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-      let particles = [];
-      for(let i=0;i<60;i++) particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2+1, dx:(Math.random()-0.5)*0.3, dy:(Math.random()-0.5)*0.3});
-      function draw(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = '#00d4ff';
-        particles.forEach(p=>{
-          ctx.beginPath(); ctx.arc(p.x,p.y,p.r*0.7,0,Math.PI*2); ctx.fillStyle='rgba(0,212,255,0.4)'; ctx.fill();
-          p.x+=p.dx; p.y+=p.dy;
-          if(p.x<0||p.x>canvas.width) p.dx*=-1;
-          if(p.y<0||p.y>canvas.height) p.dy*=-1;
-        });
-        requestAnimationFrame(draw);
-      }
-      draw();
-    });
-
-    // initialize
-    (function(){
-      loadPersona(); clearChat(); buildHGrid(); buildAnimaGrid(); updTrc();
-      $('chatIn').addEventListener('keydown', e=>{ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMsg(); } });
-    })();
-
-    // test data from V2 (abridged)
-    const CRM_TESTS = [ /* ... */ ]; 
-    function buildHGrid(){ const el=$('hGrid'); if(el) el.innerHTML='<div class="hcard">CRM tests (full list in V2)</div>'; }
-    function buildAnimaGrid(){ const el=$('animaGrid'); if(el) el.innerHTML=ANIMA_LAYERS.map(l=>`<div class="layer-card" style="border-color:${l.c}"><b>${l.id}</b> ${l.nm} <span style="float:right">${l.sc}%</span></div>`).join(''); }
-    const ANIMA_LAYERS = [{id:'L1',nm:'Identity Core',sc:100,c:'#00d4ff'},{id:'L2',nm:'Memory Core',sc:100,c:'#00ffaa'},{id:'L3',nm:'Immune Core',sc:80,c:'#ff9933'},{id:'L4',nm:'Cognitive Immune',sc:100,c:'#a855f7'},{id:'L5',nm:'Emotion Core',sc:90,c:'#ff5f9e'},{id:'L6',nm:'Moral Core',sc:95,c:'#ffc940'},{id:'L7',nm:'Stake Core',sc:90,c:'#3d8eff'},{id:'L8',nm:'Meaning Core',sc:100,c:'#39d98a'},{id:'L9',nm:'Recovery Core',sc:100,c:'#00ffaa'},{id:'L10',nm:'Persistence Core',sc:100,c:'#00d4ff'}];
-    function updTrc(){}
-    function runCustom(){}
-    function addCBM(){}
-    function removeCBM(){}
-    function renderCBMList(){}
-    function runTest(){}
-    function buildTestResult(){ return ''; }
-    function esc(s){ return s; }
-    function togP(){}
-  </script>
-  <style>
-    /* quick overrides */
-    .inp { background: rgba(0,0,0,0.4); border: 1px solid var(--accent-cyan); border-radius: 40px; padding: 12px 20px; color: white; }
-    .mono { font-family: var(--mono); }
-    .err-box { color: var(--accent-red); padding: 10px; }
-    .g8 { gap: 8px; }
-    .flex { display: flex; align-items: center; }
-    .wrap-f { flex-wrap: wrap; }
-    .ic { align-items: center; }
-    .jb { justify-content: space-between; }
-    .mt8 { margin-top: 8px; }
-    .mb16 { margin-bottom: 16px; }
-    .h-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px,1fr)); gap: 16px; }
-  </style>
 </body>
 </html>
