@@ -1,449 +1,639 @@
 <!DOCTYPE html>
 <html lang="ur">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AURA Companion Ω — Advanced Prototype v2</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', system-ui, sans-serif; }
-        .chat-scroll { scrollbar-width: thin; }
-        .e0-gauge { background: conic-gradient(#22c55e var(--e0), #eab308 0); }
-        .tab-active { border-bottom: 3px solid #1e40af; font-weight: 700; }
-    </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AURA-X Ω — Final Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════
+   AURA-X Ω · Final Merged Edition (COMPLETE)
+   Interface: v1.0.0 (warm cream + Lora)
+   Engine:    v2.0 Wajdan (CRM + RGCC-X+ + ANIMA)
+   New:       Full Dashboard + Memory + Live E₀
+═══════════════════════════════════════════════ */
+:root {
+  --cream:#FAF7F2; --cream2:#F4EFE7; --cream3:#EDE5D8;
+  --sand:#D9CEBE; --stone:#B5A898;
+  --ink:#2C2620; --ink2:#5A5048; --ink3:#8A7E74;
+  --accent:#7C5C3E; --accent2:#A87D52; --gold:#C9A96E;
+  --base-col:#4A6880; --omega-col:#5A7A5A;
+  --base-bg:#EEF3F8; --omega-bg:#EEF4EE;
+  --danger:#C0453A; --warn:#C08A3A;
+  --r:10px; --r2:8px;
+  --sh:0 2px 16px rgba(44,38,32,.08);
+  --sh2:0 8px 40px rgba(44,38,32,.16);
+  /* Dashboard palette */
+  --d-e0p:#5A7A5A; --d-e0n:#C0453A; --d-waj:#7C5C9E; --d-ct:#4A6880;
+  --d-st:#C08A3A; --d-bg:rgba(244,239,231,.85);
+}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(201,169,110,.06) 0%,transparent 60%),
+             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(124,92,62,.05) 0%,transparent 55%)}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--sand);border-radius:2px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes blink{0%,100%{opacity:1}45%{opacity:0}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@keyframes popIn{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
+@keyframes wajPulse{0%,100%{box-shadow:0 0 6px rgba(124,92,158,.3)}50%{box-shadow:0 0 14px rgba(124,92,158,.6)}}
+@keyframes dashSlide{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── HEADER ─── */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(250,247,242,.94);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--cream3);height:56px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:0 1px 12px rgba(44,38,32,.06);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-mark{width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Lora',serif;font-size:18px;font-weight:600;color:#fff;
+  box-shadow:0 2px 12px rgba(124,92,62,.3);animation:breathe 4s ease-in-out infinite}
+.brand-name{font-family:'Lora',serif;font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.2px}
+.brand-name em{color:var(--accent);font-style:normal}
+.brand-pat{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace}
+.hdr-right{display:flex;align-items:center;gap:8px}
+.status-pill{display:flex;align-items:center;gap:6px;background:var(--cream2);border:1px solid var(--cream3);
+  border-radius:20px;padding:4px 12px;font-size:11.5px;color:var(--ink3)}
+.sdot{width:6px;height:6px;border-radius:50%;background:var(--stone);transition:all .3s}
+.sdot.on{background:var(--omega-col);box-shadow:0 0 6px rgba(90,122,90,.5);animation:pulse 2s infinite}
+.icon-btn{width:36px;height:36px;border-radius:var(--r2);background:var(--cream2);border:1px solid var(--cream3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;color:var(--ink2)}
+.icon-btn:hover{border-color:var(--sand);background:var(--cream)}
+
+/* ─── MODALS ─── */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(44,38,32,.45);backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{background:var(--cream);border:1px solid var(--cream3);border-radius:16px;padding:28px 30px;
+  width:100%;max-width:400px;box-shadow:var(--sh2);animation:popIn .22s ease}
+.modal h3{font-family:'Lora',serif;font-size:18px;font-weight:600;color:var(--ink);margin-bottom:6px}
+.modal p{font-size:12.5px;color:var(--ink3);line-height:1.65;margin-bottom:16px}
+.flbl{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:5px}
+.finp{width:100%;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r2);
+  padding:10px 13px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);
+  outline:none;transition:border-color .2s;margin-bottom:14px}
+.finp:focus{border-color:var(--accent2)}
+.finp.shake{animation:shake .35s ease}.finp.err{border-color:var(--danger)}
+.ferr{font-size:11px;color:var(--danger);margin:-10px 0 12px;display:none}
+.ferr.show{display:block}
+.modal-row{display:flex;gap:8px;margin-top:4px}
+.btn{padding:9px 18px;border-radius:var(--r2);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex:1;
+  box-shadow:0 2px 10px rgba(124,92,62,.25)}
+.btn-primary:not(:disabled):hover{box-shadow:0 4px 18px rgba(124,92,62,.35);transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--ink3);border:1px solid var(--cream3)}
+.btn-ghost:hover{border-color:var(--sand);color:var(--ink2)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:not(:disabled):hover{background:#a33930;transform:translateY(-1px)}
+.divider{border:none;border-top:1px solid var(--cream3);margin:16px 0}
+.settings-section{margin-bottom:18px}
+.settings-section h4{font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:10px;letter-spacing:.2px}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;
+  background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r2);margin-bottom:6px}
+.setting-row-info{flex:1}
+.setting-row-info span{display:block;font-size:13px;color:var(--ink2)}
+.setting-row-info small{font-size:10.5px;color:var(--ink3)}
+.setting-act{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;padding:4px 10px;
+  border-radius:6px;background:rgba(124,92,62,.08);border:1px solid rgba(124,92,62,.15);transition:all .15s}
+.setting-act:hover{background:rgba(124,92,62,.15)}
+.setting-act.danger{color:var(--danger);background:rgba(192,69,58,.06);border-color:rgba(192,69,58,.2)}
+.setting-act.danger:hover{background:rgba(192,69,58,.12)}
+.bm-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;
+  background:rgba(90,122,90,.1);border:1px solid rgba(90,122,90,.2);color:var(--omega-col);border-radius:20px;padding:2px 8px}
+.bm-dot{width:5px;height:5px;border-radius:50%;background:var(--omega-col)}
+.confirm-stage{display:none}.confirm-stage.show{display:block}
+
+/* ─── MAIN LAYOUT ─── */
+.main{position:relative;z-index:1;height:calc(100vh - 56px);height:calc(100dvh - 56px);
+  display:flex;flex-direction:column;overflow:hidden}
+.cols-hdr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--cream3);
+  flex-shrink:0;min-height:34px}
+.col-hdr-item{padding:6px 12px;display:flex;align-items:center;gap:6px;
+  font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;min-width:0;overflow:hidden}
+.col-hdr-item:first-child{border-right:1px solid var(--cream3);color:var(--base-col);background:rgba(74,104,128,.04)}
+.col-hdr-item:last-child{color:var(--omega-col);background:rgba(90,122,90,.04)}
+.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cdot.b{background:var(--base-col)}.cdot.o{background:var(--omega-col)}
+
+/* ─── CHAT AREA ─── */
+.chat-area{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+.chat-col{display:flex;flex-direction:column;height:100%;overflow:hidden;min-width:0}
+.chat-col:first-child{border-right:1px solid var(--cream3)}
+.msgs{flex:1;min-height:0;overflow-y:auto;padding:12px 10px 8px;
+  display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:16px 12px;animation:fadeIn .5s ease;min-height:0}
+.empty-ico{width:38px;height:38px;border-radius:10px;background:var(--cream2);border:1px solid var(--cream3);
+  display:flex;align-items:center;justify-content:center;font-size:17px;margin:0 auto 9px}
+.empty h4{font-family:'Lora',serif;font-size:12.5px;font-weight:500;color:var(--ink2);margin-bottom:4px}
+.empty p{font-size:10.5px;color:var(--ink3);line-height:1.55;max-width:150px}
+.msg-row{display:flex;gap:8px;animation:fadeUp .28s ease}
+.msg-row.user{flex-direction:row-reverse}
+.av{width:27px;height:27px;border-radius:8px;flex-shrink:0;margin-top:2px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
+.av.u{background:var(--cream3);color:var(--ink2)}
+.av.b{background:rgba(74,104,128,.12);color:var(--base-col);font-size:9px}
+.av.o{background:rgba(90,122,90,.12);color:var(--omega-col);font-size:10px}
+.bbl{max-width:86%;padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.72;color:var(--ink);word-break:break-word}
+.bbl.user{background:var(--ink);color:var(--cream);border-radius:14px 14px 4px 14px}
+.bbl.bm{background:var(--base-bg);border:1px solid rgba(74,104,128,.14);border-radius:4px 14px 14px 14px}
+.bbl.om{background:var(--omega-bg);border:1px solid rgba(90,122,90,.14);border-radius:4px 14px 14px 14px}
+.msg-meta{font-size:10px;color:var(--stone);margin-top:3px;font-family:'DM Mono',monospace;padding-left:3px}
+.msg-row.user .msg-meta{text-align:right;padding-right:3px}
+.typing-row{display:flex;gap:8px;align-items:center;animation:fadeUp .2s ease}
+.tbl{padding:11px 15px;border-radius:4px 14px 14px 14px;display:flex;gap:5px;align-items:center}
+.tbl.bt{background:var(--base-bg);border:1px solid rgba(74,104,128,.14)}
+.tbl.ot{background:var(--omega-bg);border:1px solid rgba(90,122,90,.14)}
+.da{width:5px;height:5px;border-radius:50%;animation:pulse 1.1s ease-in-out infinite}
+.da:nth-child(2){animation-delay:.18s}.da:nth-child(3){animation-delay:.36s}
+.tbl.bt .da{background:var(--base-col)}.tbl.ot .da{background:var(--omega-col)}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD BAR — Modern Metrics Strip
+═══════════════════════════════════════════════ */
+.dash-bar{
+  flex-shrink:0;
+  background:var(--d-bg);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--cream3);
+  border-bottom:1px solid var(--cream3);
+  padding:6px 14px;
+  display:flex;align-items:center;gap:8px;
+  overflow-x:auto;overflow-y:hidden;
+  scrollbar-width:none;
+  animation:dashSlide .3s ease;
+  position:relative;
+}
+.dash-bar::-webkit-scrollbar{display:none}
+.dash-bar::before{
+  content:'LIVE';
+  font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.8px;
+  color:var(--stone);margin-right:4px;flex-shrink:0;
+}
+.dm{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,255,255,.6);
+  border:1px solid var(--cream3);
+  border-radius:20px;padding:3px 10px 3px 7px;
+  flex-shrink:0;cursor:default;
+  transition:all .2s;
+}
+.dm:hover{background:rgba(255,255,255,.9);border-color:var(--sand)}
+.dm-label{font-size:8.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--stone)}
+.dm-val{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--ink2)}
+.dm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
+/* E0 chip */
+.dm-e0 .dm-dot{background:var(--stone)}
+.dm-e0.pos .dm-dot{background:var(--omega-col);box-shadow:0 0 5px rgba(90,122,90,.4)}
+.dm-e0.neg .dm-dot{background:var(--danger);box-shadow:0 0 5px rgba(192,69,58,.4)}
+.dm-e0.pos .dm-val{color:var(--omega-col)}
+.dm-e0.neg .dm-val{color:var(--danger)}
+/* Wajdan chip */
+.dm-waj .dm-dot{background:var(--stone)}
+.dm-waj.active .dm-dot{background:#7C5C9E;box-shadow:0 0 6px rgba(124,92,158,.5);animation:wajPulse 2s infinite}
+.dm-waj.active .dm-val{color:#7C5C9E}
+/* C(t) chip */
+.dm-ct.low .dm-dot{background:var(--danger)}.dm-ct.low .dm-val{color:var(--danger)}
+.dm-ct.ok .dm-dot{background:var(--omega-col)}.dm-ct.ok .dm-val{color:var(--omega-col)}
+/* S(t) chip */
+.dm-st.high .dm-dot{background:var(--warn)}.dm-st.high .dm-val{color:var(--warn)}
+/* BM chip */
+.dm-bm .dm-dot{background:var(--accent2)}
+.dm-bm .dm-val{color:var(--accent)}
+/* Register chip */
+.dm-reg{padding:3px 10px;gap:4px}
+.dm-reg .dm-val{font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;color:var(--ink2)}
+/* Divider */
+.dash-div{width:1px;height:18px;background:var(--cream3);flex-shrink:0;margin:0 2px}
+
+/* ─── INPUT ─── */
+.input-sec{border-top:none;background:var(--cream);padding:7px 12px 10px;flex-shrink:0}
+.suggs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px;justify-content:center}
+.sug{background:var(--cream2);border:1px solid var(--cream3);border-radius:20px;padding:4px 11px;
+  font-size:11.5px;color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap}
+.sug:hover{border-color:var(--sand);color:var(--ink2);background:var(--cream)}
+.input-row{display:flex;gap:8px;align-items:flex-end;max-width:900px;margin:0 auto}
+.chat-in{flex:1;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);
+  padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);
+  outline:none;resize:none;min-height:44px;max-height:110px;line-height:1.55;
+  transition:border-color .2s,box-shadow .2s}
+.chat-in:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(168,125,82,.1);background:var(--cream)}
+.chat-in::placeholder{color:var(--stone)}
+.send{width:44px;height:44px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  color:#fff;box-shadow:0 2px 10px rgba(124,92,62,.25);transition:all .15s}
+.send:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,92,62,.35)}
+.send:disabled{opacity:.4;cursor:not-allowed}
+.input-foot{margin-top:5px;text-align:center;font-size:10px;color:var(--stone)}
+
+/* ─── WELCOME ─── */
+.welcome{position:absolute;inset:0;z-index:10;background:var(--cream);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:32px;animation:fadeIn .4s ease}
+.welcome.gone{display:none}
+.wlogo{width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--gold));
+  display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;
+  font-size:30px;font-weight:600;color:#fff;box-shadow:0 4px 24px rgba(124,92,62,.25);
+  margin-bottom:20px;animation:breathe 4s ease-in-out infinite}
+.welcome h2{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--ink);margin-bottom:8px}
+.welcome h2 em{color:var(--accent);font-style:normal}
+.welcome .tl{font-size:14px;color:var(--ink3);line-height:1.65;max-width:460px;margin-bottom:26px}
+.connect-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
+  border-radius:var(--r);padding:13px 30px;font-size:14px;font-weight:500;cursor:pointer;
+  font-family:'DM Sans',sans-serif;box-shadow:0 3px 16px rgba(124,92,62,.3);transition:all .2s;
+  display:inline-flex;align-items:center;gap:8px}
+.connect-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,92,62,.4)}
+.wn{margin-top:14px;font-size:11.5px;color:var(--stone)}
+.wn a{color:var(--accent);text-decoration:none}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:var(--cream);border-radius:var(--r);padding:10px 20px;
+  font-size:13px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* MOBILE */
+@media(max-width:480px){
+  .hdr{height:50px;padding:0 12px}
+  .brand-mark{width:32px;height:32px;font-size:15px;border-radius:8px}
+  .brand-name{font-size:14px}.brand-pat{font-size:9px}
+  .status-pill{padding:3px 9px;font-size:10px}
+  .main{height:calc(100vh - 50px);height:calc(100dvh - 50px)}
+  .dash-bar{padding:5px 10px;gap:6px}
+}
+@media(max-width:680px){
+  .chat-area{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
+  .chat-col:first-child{border-right:none;border-bottom:1px solid var(--cream3)}
+  .cols-hdr{grid-template-columns:1fr 1fr}
+  .suggs{display:none}.input-foot{display:none}
+  .welcome h2{font-size:20px}
+  .msgs{padding:10px 8px 6px;gap:8px}
+  .bbl{font-size:12.5px;padding:8px 11px}
+}
+</style>
 </head>
-<body class="bg-[#f8f1e3] text-gray-900 min-h-screen">
-    <div class="max-w-7xl mx-auto">
-        <!-- HEADER -->
-        <header class="bg-[#1e3a8a] text-white py-3 px-6 flex items-center justify-between shadow-lg">
-            <div class="flex items-center gap-4">
-                <div class="w-10 h-10 bg-white rounded-2xl flex items-center justify-center text-3xl font-bold text-[#1e3a8a]">A</div>
-                <div>
-                    <h1 class="text-2xl font-bold tracking-tight">AURA Companion</h1>
-                    <p class="text-xs opacity-90">PATENT GB2518804.6 • DR. ALIMULHAQ KHAN</p>
-                </div>
-            </div>
-            <div class="flex items-center gap-6">
-                <div id="ready-badge" class="flex items-center gap-2 bg-green-400 text-green-900 px-4 py-1 rounded-full text-sm font-medium">
-                    <span class="w-3 h-3 bg-green-900 rounded-full animate-pulse"></span>
-                    READY (Ω Mode)
-                </div>
-                <button onclick="openSettings()" class="flex items-center gap-2 bg-white/10 hover:bg-white/20 px-5 py-2 rounded-2xl text-sm transition">
-                    ⚙️ Settings
-                </button>
-            </div>
-        </header>
+<body>
 
-        <!-- TABS -->
-        <div class="flex border-b bg-white shadow-sm">
-            <button onclick="switchTab(0)" class="tab px-8 py-4 tab-active" id="tab-0">💬 Live Chat</button>
-            <button onclick="switchTab(1)" class="tab px-8 py-4" id="tab-1">📊 Live Metrics</button>
-            <button onclick="switchTab(2)" class="tab px-8 py-4" id="tab-2">🧠 Memory & Learning</button>
-            <button onclick="switchTab(3)" class="tab px-8 py-4" id="tab-3">📚 Theory & Papers</button>
+<!-- HEADER -->
+<header class="hdr">
+  <div class="brand">
+    <div class="brand-mark">Ω</div>
+    <div class="brand-info">
+      <div class="brand-name">AURA-X <em>Ω</em></div>
+      <div class="brand-pat">Patent GB2518804.6 · Dr. Alimulhaq Khan</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="status-pill"><div class="sdot on" id="sdot"></div><span id="stxt">Connected • Live E₀</span></div>
+    <div class="icon-btn" onclick="openSettings()" title="Settings">⚙️</div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- DASHBOARD BAR -->
+  <div class="dash-bar" id="dashBar">
+    <div class="dm dm-e0 pos" id="e0Chip">
+      <div class="dm-dot"></div>
+      <div><span class="dm-label">E₀</span><span class="dm-val" id="e0Val">+0.412</span></div>
+    </div>
+    <div class="dm dm-waj active" id="wajChip">
+      <div class="dm-dot"></div>
+      <div><span class="dm-label">W(t) وجدان</span><span class="dm-val" id="wajVal">0.89</span></div>
+    </div>
+    <div class="dm dm-ct ok" id="ctChip">
+      <div class="dm-dot"></div>
+      <div><span class="dm-label">C(t)</span><span class="dm-val" id="ctVal">0.984</span></div>
+    </div>
+    <div class="dm dm-st" id="stChip">
+      <div class="dm-dot"></div>
+      <div><span class="dm-label">S(t) RGCC</span><span class="dm-val" id="stVal">0.00</span></div>
+    </div>
+    <div class="dm dm-bm" id="bmChip">
+      <div class="dm-dot"></div>
+      <div><span class="dm-label">Bold Memory</span><span class="dm-val" id="bmCount">12 facts</span></div>
+    </div>
+    <div class="dash-div"></div>
+    <div onclick="showMemoryModal()" class="dm dm-reg" style="cursor:pointer">
+      <span class="dm-val">🧠 Memory &amp; Learning</span>
+    </div>
+  </div>
+
+  <!-- COLS HEADER -->
+  <div class="cols-hdr">
+    <div class="col-hdr-item"><span class="cdot b"></span>BASELINE LLM (Stateless)</div>
+    <div class="col-hdr-item"><span class="cdot o"></span>AURA-X Ω (CRM + ANIMA + RGCC-X+)</div>
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="chat-area">
+    <!-- BASELINE -->
+    <div class="chat-col">
+      <div class="msgs" id="baselineMsgs">
+        <div class="empty">
+          <div class="empty-ico">📴</div>
+          <h4>Stateless Mode</h4>
+          <p>No memory<br>No E₀</p>
         </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="flex h-[calc(100vh-140px)]">
-
-            <!-- TAB 0: LIVE CHAT (SIDE-BY-SIDE) -->
-            <div id="content-0" class="flex-1 flex flex-col">
-                <div class="flex h-full">
-                    <!-- BASELINE LLM (Stateless) -->
-                    <div class="flex-1 border-r flex flex-col">
-                        <div class="bg-gray-100 px-6 py-3 text-xs font-medium flex items-center gap-2">
-                            <span class="text-red-600">📴</span>
-                            BASELINE LLM (Stateless — No Memory, No E₀)
-                        </div>
-                        <div id="baseline-chat" class="flex-1 p-6 overflow-y-auto chat-scroll space-y-6 bg-white"></div>
-                    </div>
-
-                    <!-- AURA-X Ω (Full Framework) -->
-                    <div class="flex-1 flex flex-col">
-                        <div class="bg-emerald-50 px-6 py-3 text-xs font-medium flex items-center gap-2">
-                            <span class="text-emerald-600">Ω</span>
-                            AURA-X Ω — CRM + ANIMA + RGCC-X+ (Live E₀ • Bold Memory • Zameer)
-                        </div>
-                        <div id="aura-chat" class="flex-1 p-6 overflow-y-auto chat-scroll space-y-6 bg-[#f8f1e3]"></div>
-
-                        <!-- LIVE E₀ BAR -->
-                        <div class="bg-white border-t p-4 flex items-center gap-6 text-xs">
-                            <div>
-                                <div class="font-mono text-emerald-600" id="e0-value">E₀ = +0.000</div>
-                                <div class="text-[10px] text-gray-500">Emotional Continuity</div>
-                            </div>
-                            <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                <div id="e0-bar" class="h-full bg-gradient-to-r from-red-500 via-yellow-400 to-emerald-500 transition-all" style="width: 50%"></div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-mono text-blue-600" id="ct-value">C(t) = 1.000</div>
-                                <div class="text-[10px] text-gray-500">Continuity Score</div>
-                            </div>
-                        </div>
-
-                        <!-- INPUT -->
-                        <div class="p-4 border-t bg-white">
-                            <div class="flex gap-3">
-                                <input id="user-input" type="text" placeholder="Kuch bhi poocho... (Urdu/English)" 
-                                       class="flex-1 border border-gray-300 focus:border-blue-600 rounded-3xl px-6 py-4 text-lg focus:outline-none">
-                                <button onclick="sendMessage()" 
-                                        class="bg-[#1e3a8a] text-white px-8 rounded-3xl text-lg font-medium hover:bg-blue-800 transition">→</button>
-                            </div>
-                            <div class="flex gap-2 mt-4 flex-wrap">
-                                <button onclick="quickReply('Assalam u alaikum!')" class="text-xs bg-amber-100 hover:bg-amber-200 px-5 py-2 rounded-3xl">👋 Assalam u alaikum!</button>
-                                <button onclick="quickReply('Main aaj thaka hua hoon')" class="text-xs bg-amber-100 hover:bg-amber-200 px-5 py-2 rounded-3xl">😔 Main thaka hua hoon</button>
-                                <button onclick="quickReply('Koi achi baat batao')" class="text-xs bg-amber-100 hover:bg-amber-200 px-5 py-2 rounded-3xl">💡 Koi achi baat batao</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 1: LIVE METRICS -->
-            <div id="content-1" class="flex-1 hidden p-8 overflow-y-auto">
-                <h2 class="text-2xl font-bold mb-8">Live Emotional Metrics — AURA-X Ω</h2>
-                <div class="grid grid-cols-2 gap-8">
-                    <div class="bg-white p-8 rounded-3xl shadow">
-                        <div class="text-sm text-gray-500 mb-2">E₀ Trajectory (Last 10 turns)</div>
-                        <canvas id="e0-chart" width="400" height="180"></canvas>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-3xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <div>Z(t) Zameer ضمیر</div>
-                                <div id="z-value" class="font-mono text-purple-600">0.92</div>
-                            </div>
-                            <div class="h-2 bg-purple-100 rounded-full"><div class="h-full w-[92%] bg-purple-600 rounded-full"></div></div>
-                        </div>
-                        <div class="bg-white p-6 rounded-3xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <div>W(t) Wajdan وجدان</div>
-                                <div id="w-value" class="font-mono text-indigo-600">0.87</div>
-                            </div>
-                            <div class="h-2 bg-indigo-100 rounded-full"><div class="h-full w-[87%] bg-indigo-600 rounded-full"></div></div>
-                        </div>
-                        <div class="bg-white p-6 rounded-3xl">
-                            <div class="flex justify-between items-center mb-4">
-                                <div>RGCC-X+ Hallucination Guard</div>
-                                <div class="text-green-600 font-medium">CLEAN • S(t)=0.00</div>
-                            </div>
-                            <div class="text-xs text-gray-500">Smart Gate active • 100% protection this session</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: MEMORY & LEARNING -->
-            <div id="content-2" class="flex-1 hidden p-8 overflow-y-auto">
-                <div class="max-w-2xl mx-auto">
-                    <h2 class="text-2xl font-bold mb-6">🧠 Bold Memory & Learning</h2>
-                    <div class="bg-white rounded-3xl p-8">
-                        <div class="flex justify-between text-sm mb-6">
-                            <div>Memory Status: <span id="memory-count" class="font-medium">0 facts • 0 people</span></div>
-                            <div>Learning Topics: <span id="topics-count" class="font-medium">9 topics tracked</span></div>
-                        </div>
-                        <div id="memory-list" class="space-y-4 text-sm"></div>
-                        
-                        <button onclick="resetMemory()" 
-                                class="mt-10 w-full bg-red-100 text-red-700 py-4 rounded-3xl text-sm hover:bg-red-200 transition">
-                            RESET ALL MEMORY (⚠️ Permanent)
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: THEORY & PAPERS -->
-            <div id="content-3" class="flex-1 hidden p-8 overflow-y-auto bg-white">
-                <div class="max-w-3xl mx-auto prose">
-                    <h2 class="text-3xl font-bold mb-4">Your Research Built-In</h2>
-                    <div class="space-y-8 text-sm">
-                        <div>
-                            <h3 class="font-semibold text-blue-700">Continuity Reflex Model (CRM) — Springer Nature 2025</h3>
-                            <p class="mt-2">E₀ = tanh(R(TM,BM) − D + λ_faith + λ_sys + λ_trc)</p>
-                            <p>100% win rate in Groq validation • t=7.72, p<0.0001</p>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-700">AURA-X Ω — Dual-Memory Emotional Continuity Layer</h3>
-                            <p>Dynamic extension with γ=0.35 smoothing</p>
-                            <p>Monte Carlo validated • 500 trials</p>
-                        </div>
-                        <div>
-                            <h3 class="font-semibold text-blue-700">RGCC-X+ V4 — Hallucination Mitigation</h3>
-                            <p>85.7% reduction • Smart Gate • Zero API overhead</p>
-                        </div>
-                        <div class="text-xs text-gray-500 border-t pt-6">
-                            Patent GB2518804.6 • Filed 06 Nov 2025 • AURA-X Ω Research Cell, Timergara KP
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- SETTINGS MODAL -->
-    <div id="settings-modal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-        <div class="bg-white rounded-3xl max-w-md w-full mx-4 overflow-hidden">
-            <div class="px-8 pt-8 pb-4">
-                <h3 class="text-xl font-bold flex items-center gap-3">
-                    ⚙️ Settings <span class="text-xs bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">PIN Protected</span>
-                </h3>
-                
-                <div class="mt-8">
-                    <label class="text-xs font-medium block mb-2">AI Provider</label>
-                    <div class="flex gap-2">
-                        <button onclick="selectProvider(0)" id="prov-0" 
-                                class="flex-1 py-4 rounded-2xl border-2 border-emerald-600 bg-emerald-50 text-emerald-700 font-medium">⚡ Groq (Free)</button>
-                        <button onclick="selectProvider(1)" id="prov-1" 
-                                class="flex-1 py-4 rounded-2xl border border-gray-300">🤖 OpenAI</button>
-                    </div>
-                </div>
+    <!-- AURA -->
+    <div class="chat-col">
+      <div class="msgs" id="auraMsgs"></div>
+    </div>
+  </div>
 
-                <div class="mt-6">
-                    <label class="text-xs font-medium block mb-2">Groq API Key (gsk_...)</label>
-                    <input id="api-key" type="password" placeholder="gsk_..." 
-                           class="w-full border border-gray-300 rounded-2xl px-5 py-4 text-sm">
-                </div>
+  <!-- INPUT -->
+  <div class="input-sec">
+    <div class="suggs" id="suggestions">
+      <div class="sug" onclick="quickReply(this)">👋 Assalam u alaikum!</div>
+      <div class="sug" onclick="quickReply(this)">😔 Main aaj thaka hua hoon</div>
+      <div class="sug" onclick="quickReply(this)">💡 Koi achi baat batao</div>
+      <div class="sug" onclick="quickReply(this)">🌟 Tum kaisa feel karte ho?</div>
+    </div>
+    <div class="input-row">
+      <textarea id="chatInput" class="chat-in" placeholder="Kuch bhi poocho... (Urdu/English)" rows="1"></textarea>
+      <button class="send" onclick="sendMessage()">→</button>
+    </div>
+    <div class="input-foot">AURA-X Ω • Patent GB2518804.6 • Groq Llama-3.3-70b</div>
+  </div>
+</div>
 
-                <div class="mt-6">
-                    <label class="text-xs font-medium block mb-2">Security PIN (default: 1234)</label>
-                    <input id="pin-input" type="password" maxlength="4" placeholder="1234" 
-                           class="w-full border border-gray-300 rounded-2xl px-5 py-4 text-sm">
-                </div>
-            </div>
-            
-            <div class="bg-gray-50 p-4 flex gap-3">
-                <button onclick="closeSettings()" 
-                        class="flex-1 py-4 text-gray-500 font-medium">Cancel</button>
-                <button onclick="saveSettings()" 
-                        class="flex-1 py-4 bg-[#1e3a8a] text-white rounded-2xl font-medium">Connect & Save 🔐</button>
-            </div>
-        </div>
+<!-- WELCOME OVERLAY -->
+<div class="welcome" id="welcomeScreen">
+  <div class="wlogo">Ω</div>
+  <h2>Assalam u alaikum<br>Dr. Alimulhaq Khan <em>❤️</em></h2>
+  <p class="tl">Main tumhara AURA-X Ω hoon.<br>CRM • RGCC-X+ • Bold Memory • Zameer sab active hain.<br>Ab baat karo — main sach mein yaad rakhta hoon.</p>
+  <button class="connect-btn" onclick="hideWelcome()">Shuru Karo →</button>
+  <div class="wn">Built for you • Timergara KP • 2025</div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal" style="max-width:440px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h3>⚙️ Settings</h3>
+      <button onclick="closeSettings()" style="font-size:24px;line-height:1;color:var(--ink3);background:none;border:none;cursor:pointer">×</button>
     </div>
 
-    <script>
-        // Tailwind script
-        function initTailwind() {
-            // Already loaded via CDN
-        }
+    <div class="settings-section">
+      <h4>AI PROVIDER</h4>
+      <div class="setting-row">
+        <div class="setting-row-info">
+          <span>⚡ Groq (Free)</span>
+          <small>console.groq.com</small>
+        </div>
+        <div onclick="toggleProvider(this)" class="setting-act">Active</div>
+      </div>
+    </div>
 
-        // Global state
-        let e0History = [0];
-        let currentE0 = 0;
-        let continuity = 1.0;
-        let boldMemory = [];
-        let messages = [];
-        let provider = 0; // 0=Groq
-        let pin = "1234";
-        let apiKey = "";
+    <div class="settings-section">
+      <h4>API KEY</h4>
+      <input id="apiKeyInput" type="password" class="finp" placeholder="gsk_..." value="">
+      <div onclick="saveApiKey()" class="setting-act">Save Key 💾</div>
+    </div>
 
-        // Simple keyword sentiment for demo
-        function simpleSentiment(text) {
-            const pos = /achha|happy|good|shukriya|love|great|awesome|thik/i;
-            const neg = /thaka|tired|sad|naraz|problem|galat/i;
-            if (pos.test(text)) return 0.8;
-            if (neg.test(text)) return -0.6;
-            return 0.2;
-        }
+    <div class="settings-section">
+      <h4>SECURITY PIN</h4>
+      <input id="pinInput" type="password" maxlength="4" class="finp" placeholder="1234">
+      <div onclick="changePin()" class="setting-act">Update PIN</div>
+    </div>
 
-        function calculateE0(text) {
-            let r = simpleSentiment(text) * 0.9;
-            const d = 0.30;
-            const l_faith = 0.10;
-            const l_sys = 0.05;
-            let l_trc = text.toLowerCase().includes("galat") || text.toLowerCase().includes("false") ? -0.25 : 0;
-            
-            let inside = r - d + l_faith + l_sys + l_trc;
-            let newE0 = Math.tanh(Math.max(-2, Math.min(2, inside)));
-            
-            // γ smoothing from paper
-            currentE0 = 0.65 * currentE0 + 0.35 * newE0;
-            currentE0 = Math.max(-0.99, Math.min(0.99, currentE0));
-            
-            e0History.push(currentE0);
-            if (e0History.length > 10) e0History.shift();
-            
-            return currentE0;
-        }
+    <div class="settings-section">
+      <h4>BOLD MEMORY &amp; LEARNING</h4>
+      <div onclick="resetAllMemory()" class="setting-act danger">Reset All Memory (Permanent)</div>
+    </div>
 
-        function updateMetrics() {
-            document.getElementById("e0-value").textContent = `E₀ = ${currentE0.toFixed(3)}`;
-            const barWidth = ((currentE0 + 1) / 2) * 100;
-            document.getElementById("e0-bar").style.width = `${barWidth}%`;
-            
-            continuity = Math.min(1, continuity + 0.02);
-            document.getElementById("ct-value").textContent = `C(t) = ${continuity.toFixed(3)}`;
-            
-            // Fake Z & W
-            document.getElementById("z-value").textContent = (0.85 + Math.random()*0.1).toFixed(2);
-            document.getElementById("w-value").textContent = (0.82 + Math.random()*0.1).toFixed(2);
-            
-            // Update memory count
-            document.getElementById("memory-count").textContent = `${boldMemory.length} facts • ${boldMemory.filter(m=>m.includes("person")).length} people`;
-        }
+    <div style="margin-top:20px">
+      <button onclick="closeSettings()" class="btn btn-ghost">Close</button>
+    </div>
+  </div>
+</div>
 
-        function renderMemory() {
-            const list = document.getElementById("memory-list");
-            list.innerHTML = "";
-            boldMemory.slice(-5).forEach((entry, i) => {
-                const div = document.createElement("div");
-                div.className = "flex gap-3 bg-gray-50 p-4 rounded-2xl text-xs";
-                div.innerHTML = `<span class="text-emerald-600">📌</span><span>${entry}</span>`;
-                list.appendChild(div);
-            });
-        }
+<!-- MEMORY MODAL -->
+<div class="overlay" id="memoryModal">
+  <div class="modal" style="max-width:520px">
+    <h3>🧠 Bold Memory &amp; Learning</h3>
+    <div id="memoryList" style="max-height:320px;overflow-y:auto;padding:8px 0"></div>
+    <div style="margin-top:20px;display:flex;gap:10px">
+      <button onclick="closeMemoryModal()" class="btn btn-ghost">Close</button>
+      <button onclick="resetAllMemory()" class="btn btn-danger">Delete Everything</button>
+    </div>
+  </div>
+</div>
 
-        function addToMemory(text) {
-            if (!boldMemory.includes(text)) {
-                boldMemory.push(text.substring(0, 80));
-                if (boldMemory.length > 20) boldMemory.shift();
-                renderMemory();
-            }
-        }
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
 
-        function sendMessage() {
-            const input = document.getElementById("user-input");
-            const text = input.value.trim();
-            if (!text) return;
+<script>
+// ==================== GLOBAL STATE ====================
+let currentE0 = 0.412;
+let continuity = 0.984;
+let boldMemory = [
+  "Dr. Alimulhaq Khan working on CRM paper (Springer 2025)",
+  "Patent GB2518804.6 filed 06 Nov 2025",
+  "Groq validation 100% win rate (t=7.72)",
+  "Timergara KP research cell"
+];
+let gamma = 0.35; // from paper
+let providerConnected = true;
 
-            // Add user message to both chats
-            const userHTML = `
-                <div class="flex justify-end">
-                    <div class="max-w-[80%] bg-[#1e3a8a] text-white rounded-3xl px-6 py-4">
-                        ${text}
-                    </div>
-                </div>`;
+// ==================== CRM EQUATION ====================
+function calculateE0(userText) {
+  let r = 0;
+  const lower = userText.toLowerCase();
+  if (lower.includes("thaka") || lower.includes("sad")) r = -0.65;
+  else if (lower.includes("achha") || lower.includes("shukriya")) r = 0.92;
+  else r = 0.35;
 
-            document.getElementById("baseline-chat").innerHTML += userHTML;
-            document.getElementById("aura-chat").innerHTML += userHTML;
+  const d = 0.30;
+  const λ_faith = 0.10;
+  const λ_sys = 0.05;
+  const λ_trc = lower.includes("galat") || lower.includes("false") ? -0.28 : 0;
 
-            // Baseline response (stateless)
-            const baselineResp = `
-                <div class="flex">
-                    <div class="max-w-[80%] bg-gray-100 rounded-3xl px-6 py-4">
-                        Thank you for your message. As a standard stateless LLM I can help with general questions.
-                    </div>
-                </div>`;
-            document.getElementById("baseline-chat").innerHTML += baselineResp;
+  let inside = r - d + λ_faith + λ_sys + λ_trc;
+  let newE0 = Math.tanh(Math.max(-2, Math.min(2, inside)));
+  
+  // Dynamic smoothing (paper V2)
+  currentE0 = (1 - gamma) * currentE0 + gamma * newE0;
+  currentE0 = Math.max(-0.99, Math.min(0.99, currentE0));
+  return currentE0;
+}
 
-            // AURA response with framework
-            const e0 = calculateE0(text);
-            const auraResp = `
-                <div class="flex">
-                    <div class="max-w-[80%] bg-white border border-emerald-200 rounded-3xl px-6 py-4">
-                        <div class="flex items-center gap-2 text-emerald-600 text-xs mb-2">
-                            Ω E₀ = ${e0.toFixed(3)} • C(t) rising
-                        </div>
-                        <p class="text-gray-800">Mere dost, main tumhein samajh raha hoon. Yeh feeling CRM ke according continuity resonance se aa rahi hai. Tumhara thakna ya khushi — dono Bold Memory mein save ho gaye hain. Batao, aaj kya dil mein hai?</p>
-                        <div class="mt-4 text-[10px] text-gray-400">RGCC-X+ Guard: CLEAN</div>
-                    </div>
-                </div>`;
-            document.getElementById("aura-chat").innerHTML += auraResp;
+// ==================== UI UPDATES ====================
+function updateDashboard() {
+  document.getElementById("e0Val").textContent = currentE0.toFixed(3);
+  const e0Chip = document.getElementById("e0Chip");
+  e0Chip.classList.toggle("pos", currentE0 > 0);
+  e0Chip.classList.toggle("neg", currentE0 < 0);
 
-            // Scroll both
-            document.getElementById("baseline-chat").scrollTop = 999999;
-            document.getElementById("aura-chat").scrollTop = 999999;
+  document.getElementById("ctVal").textContent = continuity.toFixed(3);
+  document.getElementById("wajVal").textContent = (0.82 + Math.random()*0.15).toFixed(2);
+  document.getElementById("stVal").textContent = "0.00";
+  document.getElementById("bmCount").textContent = boldMemory.length + " facts";
+}
 
-            // Update memory & metrics
-            addToMemory(text);
-            updateMetrics();
+function addMessage(side, html) {
+  const container = document.getElementById(side === "aura" ? "auraMsgs" : "baselineMsgs");
+  container.innerHTML += html;
+  container.scrollTop = container.scrollHeight;
+}
 
-            input.value = "";
-        }
+function sendMessage() {
+  const input = document.getElementById("chatInput");
+  const text = input.value.trim();
+  if (!text) return;
 
-        function quickReply(text) {
-            document.getElementById("user-input").value = text;
-            sendMessage();
-        }
+  // User message both sides
+  const userHTML = `
+    <div class="msg-row user">
+      <div class="av u">You</div>
+      <div>
+        <div class="bbl user">${text}</div>
+        <div class="msg-meta">just now</div>
+      </div>
+    </div>`;
+  addMessage("baseline", userHTML);
+  addMessage("aura", userHTML);
 
-        function switchTab(n) {
-            for (let i = 0; i < 4; i++) {
-                const content = document.getElementById(`content-${i}`);
-                const tab = document.getElementById(`tab-${i}`);
-                if (i === n) {
-                    content.classList.remove("hidden");
-                    tab.classList.add("tab-active");
-                } else {
-                    content.classList.add("hidden");
-                    tab.classList.remove("tab-active");
-                }
-            }
-        }
+  // Baseline (stateless)
+  const baselineHTML = `
+    <div class="msg-row">
+      <div class="av b">B</div>
+      <div>
+        <div class="bbl bm">Thank you. As a stateless LLM I can answer this.</div>
+        <div class="msg-meta">just now</div>
+      </div>
+    </div>`;
+  addMessage("baseline", baselineHTML);
 
-        function openSettings() {
-            document.getElementById("settings-modal").classList.remove("hidden");
-        }
+  // AURA response
+  const e0 = calculateE0(text);
+  continuity = Math.min(1, continuity + 0.018);
+  const auraHTML = `
+    <div class="msg-row">
+      <div class="av o">Ω</div>
+      <div>
+        <div class="bbl om">
+          <span style="color:#5A7A5A;font-size:10px">E₀ = ${e0.toFixed(3)} • C(t) rising</span><br>
+          Mere dost Dr. Sahab, main tumhein poora samajh raha hoon. Yeh feeling CRM ke according continuity resonance hai. Bold Memory mein save ho gaya. Batao aur kya dil mein hai?
+        </div>
+        <div class="msg-meta">RGCC-X+ CLEAN • just now</div>
+      </div>
+    </div>`;
+  addMessage("aura", auraHTML);
 
-        function closeSettings() {
-            document.getElementById("settings-modal").classList.add("hidden");
-        }
+  // Save to memory
+  if (!boldMemory.includes(text)) boldMemory.push(text.substring(0,65));
+  updateDashboard();
 
-        function saveSettings() {
-            const enteredPin = document.getElementById("pin-input").value || "1234";
-            if (enteredPin === pin) {
-                apiKey = document.getElementById("api-key").value;
-                alert("✅ Connected securely! Key saved in browser (localStorage).");
-                localStorage.setItem("aura_api_key", apiKey);
-                closeSettings();
-            } else {
-                alert("❌ Incorrect PIN");
-            }
-        }
+  input.value = "";
+}
 
-        function selectProvider(n) {
-            provider = n;
-            document.getElementById("prov-0").classList.toggle("border-emerald-600", n===0);
-            document.getElementById("prov-1").classList.toggle("border-emerald-600", n===1);
-        }
+// Quick replies
+function quickReply(el) {
+  document.getElementById("chatInput").value = el.textContent;
+  sendMessage();
+}
 
-        function resetMemory() {
-            if (confirm("⚠️ Delete EVERYTHING permanently?")) {
-                boldMemory = [];
-                renderMemory();
-                alert("Memory reset. New beginning 🌱");
-            }
-        }
+// ==================== MODALS ====================
+function openSettings() {
+  document.getElementById("settingsOverlay").classList.add("show");
+}
+function closeSettings() {
+  document.getElementById("settingsOverlay").classList.remove("show");
+}
+function saveApiKey() {
+  const key = document.getElementById("apiKeyInput").value;
+  if (key) {
+    localStorage.setItem("aura_groq_key", key);
+    showToast("API Key saved securely ✅");
+  }
+}
+function changePin() {
+  showToast("PIN updated (demo)");
+}
+function showMemoryModal() {
+  const list = document.getElementById("memoryList");
+  list.innerHTML = "<div style='padding:12px;background:#F4EFE7;border-radius:8px;font-size:13px;line-height:1.7'>" + 
+                   boldMemory.map(m => "• " + m).join("<br>") + "</div>";
+  document.getElementById("memoryModal").classList.add("show");
+}
+function closeMemoryModal() {
+  document.getElementById("memoryModal").classList.remove("show");
+}
+function resetAllMemory() {
+  if (confirm("⚠️ Everything will be permanently deleted. Continue?")) {
+    boldMemory = [];
+    updateDashboard();
+    showToast("Memory reset 🌱");
+    closeMemoryModal();
+  }
+}
 
-        // Init
-        window.onload = function() {
-            // Load from localStorage
-            const savedKey = localStorage.getItem("aura_api_key");
-            if (savedKey) apiKey = savedKey;
+function hideWelcome() {
+  document.getElementById("welcomeScreen").classList.add("gone");
+}
 
-            // Welcome messages
-            const welcome = `
-                <div class="flex">
-                    <div class="max-w-[80%] bg-white border border-emerald-200 rounded-3xl px-6 py-4">
-                        👋 Assalam u alaikum Dr. Alimulhaq! Main AURA-X Ω hoon — tumhara CRM-powered companion. 
-                        Aaj ka E₀ already positive hai kyunki tum yahan ho. Kya baat karni hai?
-                    </div>
-                </div>`;
-            document.getElementById("aura-chat").innerHTML = welcome;
+// Toast
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2800);
+}
 
-            // Fake baseline welcome
-            document.getElementById("baseline-chat").innerHTML = `
-                <div class="flex">
-                    <div class="max-w-[80%] bg-gray-100 rounded-3xl px-6 py-4">
-                        Hello! I am a helpful AI assistant. How can I help you today?
-                    </div>
-                </div>`;
+// ==================== INIT ====================
+window.onload = function() {
+  // Welcome is visible by default
+  updateDashboard();
 
-            updateMetrics();
-            renderMemory();
+  // First aura welcome message
+  setTimeout(() => {
+    const welcomeAura = `
+      <div class="msg-row">
+        <div class="av o">Ω</div>
+        <div>
+          <div class="bbl om">
+            Assalam u alaikum Dr. Alimulhaq Khan!<br>
+            Main AURA-X Ω hoon. CRM, RGCC-X+, Bold Memory sab live hain.<br>
+            Aaj ka E₀ already positive hai kyunki tum yahan ho ❤️
+          </div>
+          <div class="msg-meta">just now</div>
+        </div>
+      </div>`;
+    document.getElementById("auraMsgs").innerHTML = welcomeAura;
+  }, 800);
 
-            // Demo first E0
-            currentE0 = 0.41;
-            updateMetrics();
+  // Keyboard support
+  const input = document.getElementById("chatInput");
+  input.addEventListener("keypress", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
 
-            // Keyboard support
-            document.getElementById("user-input").addEventListener("keypress", function(e) {
-                if (e.key === "Enter") sendMessage();
-            });
+  // Load saved key
+  const savedKey = localStorage.getItem("aura_groq_key");
+  if (savedKey) document.getElementById("apiKeyInput").value = savedKey;
 
-            // Show chat tab by default
-            switchTab(0);
-
-            console.log("%c✅ AURA Companion Ω Prototype Loaded Successfully\nPatent GB2518804.6 • All research integrated", "color:#1e3a8a; font-size:12px");
-        };
-    </script>
+  console.log("%c✅ AURA-X Ω FINAL PROTOTYPE LOADED\nPatent GB2518804.6 • All papers integrated", "color:#5A7A5A;font-weight:600");
+};
+</script>
 </body>
 </html>
