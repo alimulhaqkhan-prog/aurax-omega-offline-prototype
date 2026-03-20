@@ -1,639 +1,221 @@
-<!DOCTYPE html>
-<html lang="ur">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>AURA-X Ω — Final Edition</title>
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-/* ═══════════════════════════════════════════════
-   AURA-X Ω · Final Merged Edition (COMPLETE)
-   Interface: v1.0.0 (warm cream + Lora)
-   Engine:    v2.0 Wajdan (CRM + RGCC-X+ + ANIMA)
-   New:       Full Dashboard + Memory + Live E₀
-═══════════════════════════════════════════════ */
-:root {
-  --cream:#FAF7F2; --cream2:#F4EFE7; --cream3:#EDE5D8;
-  --sand:#D9CEBE; --stone:#B5A898;
-  --ink:#2C2620; --ink2:#5A5048; --ink3:#8A7E74;
-  --accent:#7C5C3E; --accent2:#A87D52; --gold:#C9A96E;
-  --base-col:#4A6880; --omega-col:#5A7A5A;
-  --base-bg:#EEF3F8; --omega-bg:#EEF4EE;
-  --danger:#C0453A; --warn:#C08A3A;
-  --r:10px; --r2:8px;
-  --sh:0 2px 16px rgba(44,38,32,.08);
-  --sh2:0 8px 40px rgba(44,38,32,.16);
-  /* Dashboard palette */
-  --d-e0p:#5A7A5A; --d-e0n:#C0453A; --d-waj:#7C5C9E; --d-ct:#4A6880;
-  --d-st:#C08A3A; --d-bg:rgba(244,239,231,.85);
-}
-*,::before,::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse 80% 50% at 20% 0%,rgba(201,169,110,.06) 0%,transparent 60%),
-             radial-gradient(ellipse 60% 40% at 80% 100%,rgba(124,92,62,.05) 0%,transparent 55%)}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--sand);border-radius:2px}
+import os import time import json import hmac import math import queue import hashlib import threading from dataclasses import dataclass, asdict from datetime import datetime from pathlib import Path from typing import Optional, Dict, Any, List
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-@keyframes blink{0%,100%{opacity:1}45%{opacity:0}}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.015)}}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
-@keyframes popIn{0%{opacity:0;transform:scale(.92)}100%{opacity:1;transform:scale(1)}}
-@keyframes wajPulse{0%,100%{box-shadow:0 0 6px rgba(124,92,158,.3)}50%{box-shadow:0 0 14px rgba(124,92,158,.6)}}
-@keyframes dashSlide{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+import pandas as pd import streamlit as st
 
-/* ─── HEADER ─── */
-.hdr{position:sticky;top:0;z-index:100;background:rgba(250,247,242,.94);backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--cream3);height:56px;padding:0 16px;
-  display:flex;align-items:center;justify-content:space-between;
-  box-shadow:0 1px 12px rgba(44,38,32,.06);flex-shrink:0}
-.brand{display:flex;align-items:center;gap:11px}
-.brand-mark{width:38px;height:38px;border-radius:10px;
-  background:linear-gradient(135deg,var(--accent),var(--gold));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Lora',serif;font-size:18px;font-weight:600;color:#fff;
-  box-shadow:0 2px 12px rgba(124,92,62,.3);animation:breathe 4s ease-in-out infinite}
-.brand-name{font-family:'Lora',serif;font-size:16px;font-weight:600;color:var(--ink);letter-spacing:-.2px}
-.brand-name em{color:var(--accent);font-style:normal}
-.brand-pat{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace}
-.hdr-right{display:flex;align-items:center;gap:8px}
-.status-pill{display:flex;align-items:center;gap:6px;background:var(--cream2);border:1px solid var(--cream3);
-  border-radius:20px;padding:4px 12px;font-size:11.5px;color:var(--ink3)}
-.sdot{width:6px;height:6px;border-radius:50%;background:var(--stone);transition:all .3s}
-.sdot.on{background:var(--omega-col);box-shadow:0 0 6px rgba(90,122,90,.5);animation:pulse 2s infinite}
-.icon-btn{width:36px;height:36px;border-radius:var(--r2);background:var(--cream2);border:1px solid var(--cream3);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s;color:var(--ink2)}
-.icon-btn:hover{border-color:var(--sand);background:var(--cream)}
+try: import ccxt except Exception: ccxt = None
 
-/* ─── MODALS ─── */
-.overlay{position:fixed;inset:0;z-index:200;background:rgba(44,38,32,.45);backdrop-filter:blur(6px);
-  display:none;align-items:center;justify-content:center;padding:20px}
-.overlay.show{display:flex}
-.modal{background:var(--cream);border:1px solid var(--cream3);border-radius:16px;padding:28px 30px;
-  width:100%;max-width:400px;box-shadow:var(--sh2);animation:popIn .22s ease}
-.modal h3{font-family:'Lora',serif;font-size:18px;font-weight:600;color:var(--ink);margin-bottom:6px}
-.modal p{font-size:12.5px;color:var(--ink3);line-height:1.65;margin-bottom:16px}
-.flbl{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:5px}
-.finp{width:100%;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r2);
-  padding:10px 13px;font-family:'DM Mono',monospace;font-size:13px;color:var(--ink);
-  outline:none;transition:border-color .2s;margin-bottom:14px}
-.finp:focus{border-color:var(--accent2)}
-.finp.shake{animation:shake .35s ease}.finp.err{border-color:var(--danger)}
-.ferr{font-size:11px;color:var(--danger);margin:-10px 0 12px;display:none}
-.ferr.show{display:block}
-.modal-row{display:flex;gap:8px;margin-top:4px}
-.btn{padding:9px 18px;border-radius:var(--r2);border:none;cursor:pointer;font-family:'DM Sans',sans-serif;
-  font-size:13px;font-weight:500;transition:all .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex:1;
-  box-shadow:0 2px 10px rgba(124,92,62,.25)}
-.btn-primary:not(:disabled):hover{box-shadow:0 4px 18px rgba(124,92,62,.35);transform:translateY(-1px)}
-.btn-ghost{background:transparent;color:var(--ink3);border:1px solid var(--cream3)}
-.btn-ghost:hover{border-color:var(--sand);color:var(--ink2)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-danger:not(:disabled):hover{background:#a33930;transform:translateY(-1px)}
-.divider{border:none;border-top:1px solid var(--cream3);margin:16px 0}
-.settings-section{margin-bottom:18px}
-.settings-section h4{font-size:11.5px;font-weight:600;color:var(--ink2);margin-bottom:10px;letter-spacing:.2px}
-.setting-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;
-  background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r2);margin-bottom:6px}
-.setting-row-info{flex:1}
-.setting-row-info span{display:block;font-size:13px;color:var(--ink2)}
-.setting-row-info small{font-size:10.5px;color:var(--ink3)}
-.setting-act{font-size:12px;color:var(--accent);cursor:pointer;font-weight:500;padding:4px 10px;
-  border-radius:6px;background:rgba(124,92,62,.08);border:1px solid rgba(124,92,62,.15);transition:all .15s}
-.setting-act:hover{background:rgba(124,92,62,.15)}
-.setting-act.danger{color:var(--danger);background:rgba(192,69,58,.06);border-color:rgba(192,69,58,.2)}
-.setting-act.danger:hover{background:rgba(192,69,58,.12)}
-.bm-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:600;
-  background:rgba(90,122,90,.1);border:1px solid rgba(90,122,90,.2);color:var(--omega-col);border-radius:20px;padding:2px 8px}
-.bm-dot{width:5px;height:5px;border-radius:50%;background:var(--omega-col)}
-.confirm-stage{display:none}.confirm-stage.show{display:block}
+try: from groq import Groq except Exception: Groq = None
 
-/* ─── MAIN LAYOUT ─── */
-.main{position:relative;z-index:1;height:calc(100vh - 56px);height:calc(100dvh - 56px);
-  display:flex;flex-direction:column;overflow:hidden}
-.cols-hdr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--cream3);
-  flex-shrink:0;min-height:34px}
-.col-hdr-item{padding:6px 12px;display:flex;align-items:center;gap:6px;
-  font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;min-width:0;overflow:hidden}
-.col-hdr-item:first-child{border-right:1px solid var(--cream3);color:var(--base-col);background:rgba(74,104,128,.04)}
-.col-hdr-item:last-child{color:var(--omega-col);background:rgba(90,122,90,.04)}
-.cdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.cdot.b{background:var(--base-col)}.cdot.o{background:var(--omega-col)}
+APP_DIR = Path.home() / ".smart_binance_bot" APP_DIR.mkdir(parents=True, exist_ok=True) CONFIG_FILE = APP_DIR / "config.json" LOG_FILE = APP_DIR / "trades.csv"
 
-/* ─── CHAT AREA ─── */
-.chat-area{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
-.chat-col{display:flex;flex-direction:column;height:100%;overflow:hidden;min-width:0}
-.chat-col:first-child{border-right:1px solid var(--cream3)}
-.msgs{flex:1;min-height:0;overflow-y:auto;padding:12px 10px 8px;
-  display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}
-.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:16px 12px;animation:fadeIn .5s ease;min-height:0}
-.empty-ico{width:38px;height:38px;border-radius:10px;background:var(--cream2);border:1px solid var(--cream3);
-  display:flex;align-items:center;justify-content:center;font-size:17px;margin:0 auto 9px}
-.empty h4{font-family:'Lora',serif;font-size:12.5px;font-weight:500;color:var(--ink2);margin-bottom:4px}
-.empty p{font-size:10.5px;color:var(--ink3);line-height:1.55;max-width:150px}
-.msg-row{display:flex;gap:8px;animation:fadeUp .28s ease}
-.msg-row.user{flex-direction:row-reverse}
-.av{width:27px;height:27px;border-radius:8px;flex-shrink:0;margin-top:2px;
-  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
-.av.u{background:var(--cream3);color:var(--ink2)}
-.av.b{background:rgba(74,104,128,.12);color:var(--base-col);font-size:9px}
-.av.o{background:rgba(90,122,90,.12);color:var(--omega-col);font-size:10px}
-.bbl{max-width:86%;padding:10px 13px;border-radius:12px;font-size:13.5px;line-height:1.72;color:var(--ink);word-break:break-word}
-.bbl.user{background:var(--ink);color:var(--cream);border-radius:14px 14px 4px 14px}
-.bbl.bm{background:var(--base-bg);border:1px solid rgba(74,104,128,.14);border-radius:4px 14px 14px 14px}
-.bbl.om{background:var(--omega-bg);border:1px solid rgba(90,122,90,.14);border-radius:4px 14px 14px 14px}
-.msg-meta{font-size:10px;color:var(--stone);margin-top:3px;font-family:'DM Mono',monospace;padding-left:3px}
-.msg-row.user .msg-meta{text-align:right;padding-right:3px}
-.typing-row{display:flex;gap:8px;align-items:center;animation:fadeUp .2s ease}
-.tbl{padding:11px 15px;border-radius:4px 14px 14px 14px;display:flex;gap:5px;align-items:center}
-.tbl.bt{background:var(--base-bg);border:1px solid rgba(74,104,128,.14)}
-.tbl.ot{background:var(--omega-bg);border:1px solid rgba(90,122,90,.14)}
-.da{width:5px;height:5px;border-radius:50%;animation:pulse 1.1s ease-in-out infinite}
-.da:nth-child(2){animation-delay:.18s}.da:nth-child(3){animation-delay:.36s}
-.tbl.bt .da{background:var(--base-col)}.tbl.ot .da{background:var(--omega-col)}
+DEFAULTS = { "settings_password_hash": "", "exchange": "binance", "api_key": "", "api_secret": "", "testnet": True, "symbol": "BTC/USDT", "timeframe": "5m", "risk_per_trade_pct": 1.0, "daily_loss_limit_pct": 3.0, "stop_loss_pct": 1.0, "take_profit_pct": 2.0, "ema_fast": 20, "ema_slow": 50, "rsi_length": 14, "rsi_buy_max": 65, "rsi_sell_min": 35, "trade_amount_usdt": 50.0, "paper_mode": True, "enable_groq_notes": False, "groq_api_key": "", "groq_model": "openai/gpt-oss-20b", "refresh_sec": 10, }
 
-/* ═══════════════════════════════════════════════
-   DASHBOARD BAR — Modern Metrics Strip
-═══════════════════════════════════════════════ */
-.dash-bar{
-  flex-shrink:0;
-  background:var(--d-bg);
-  backdrop-filter:blur(10px);
-  border-top:1px solid var(--cream3);
-  border-bottom:1px solid var(--cream3);
-  padding:6px 14px;
-  display:flex;align-items:center;gap:8px;
-  overflow-x:auto;overflow-y:hidden;
-  scrollbar-width:none;
-  animation:dashSlide .3s ease;
-  position:relative;
-}
-.dash-bar::-webkit-scrollbar{display:none}
-.dash-bar::before{
-  content:'LIVE';
-  font-family:'DM Mono',monospace;font-size:8px;font-weight:600;letter-spacing:.8px;
-  color:var(--stone);margin-right:4px;flex-shrink:0;
-}
-.dm{
-  display:flex;align-items:center;gap:5px;
-  background:rgba(255,255,255,.6);
-  border:1px solid var(--cream3);
-  border-radius:20px;padding:3px 10px 3px 7px;
-  flex-shrink:0;cursor:default;
-  transition:all .2s;
-}
-.dm:hover{background:rgba(255,255,255,.9);border-color:var(--sand)}
-.dm-label{font-size:8.5px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;color:var(--stone)}
-.dm-val{font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:var(--ink2)}
-.dm-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;transition:background .4s}
-/* E0 chip */
-.dm-e0 .dm-dot{background:var(--stone)}
-.dm-e0.pos .dm-dot{background:var(--omega-col);box-shadow:0 0 5px rgba(90,122,90,.4)}
-.dm-e0.neg .dm-dot{background:var(--danger);box-shadow:0 0 5px rgba(192,69,58,.4)}
-.dm-e0.pos .dm-val{color:var(--omega-col)}
-.dm-e0.neg .dm-val{color:var(--danger)}
-/* Wajdan chip */
-.dm-waj .dm-dot{background:var(--stone)}
-.dm-waj.active .dm-dot{background:#7C5C9E;box-shadow:0 0 6px rgba(124,92,158,.5);animation:wajPulse 2s infinite}
-.dm-waj.active .dm-val{color:#7C5C9E}
-/* C(t) chip */
-.dm-ct.low .dm-dot{background:var(--danger)}.dm-ct.low .dm-val{color:var(--danger)}
-.dm-ct.ok .dm-dot{background:var(--omega-col)}.dm-ct.ok .dm-val{color:var(--omega-col)}
-/* S(t) chip */
-.dm-st.high .dm-dot{background:var(--warn)}.dm-st.high .dm-val{color:var(--warn)}
-/* BM chip */
-.dm-bm .dm-dot{background:var(--accent2)}
-.dm-bm .dm-val{color:var(--accent)}
-/* Register chip */
-.dm-reg{padding:3px 10px;gap:4px}
-.dm-reg .dm-val{font-family:'DM Sans',sans-serif;font-size:10.5px;font-weight:600;color:var(--ink2)}
-/* Divider */
-.dash-div{width:1px;height:18px;background:var(--cream3);flex-shrink:0;margin:0 2px}
+RUNTIME = { "bot_running": False, "status": "Idle", "last_reason": "", "last_price": None, "position": None, "today_pnl": 0.0, "equity": 0.0, "log_queue": queue.Queue(), }
 
-/* ─── INPUT ─── */
-.input-sec{border-top:none;background:var(--cream);padding:7px 12px 10px;flex-shrink:0}
-.suggs{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:7px;justify-content:center}
-.sug{background:var(--cream2);border:1px solid var(--cream3);border-radius:20px;padding:4px 11px;
-  font-size:11.5px;color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap}
-.sug:hover{border-color:var(--sand);color:var(--ink2);background:var(--cream)}
-.input-row{display:flex;gap:8px;align-items:flex-end;max-width:900px;margin:0 auto}
-.chat-in{flex:1;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);
-  padding:10px 13px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);
-  outline:none;resize:none;min-height:44px;max-height:110px;line-height:1.55;
-  transition:border-color .2s,box-shadow .2s}
-.chat-in:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(168,125,82,.1);background:var(--cream)}
-.chat-in::placeholder{color:var(--stone)}
-.send{width:44px;height:44px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;border-radius:var(--r);cursor:pointer;display:flex;align-items:center;justify-content:center;
-  color:#fff;box-shadow:0 2px 10px rgba(124,92,62,.25);transition:all .15s}
-.send:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,92,62,.35)}
-.send:disabled{opacity:.4;cursor:not-allowed}
-.input-foot{margin-top:5px;text-align:center;font-size:10px;color:var(--stone)}
+def load_config() -> Dict[str, Any]: if not CONFIG_FILE.exists(): save_config(DEFAULTS) return DEFAULTS.copy() try: data = json.loads(CONFIG_FILE.read_text(encoding="utf-8")) except Exception: data = {} merged = DEFAULTS.copy() merged.update(data) return merged
 
-/* ─── WELCOME ─── */
-.welcome{position:absolute;inset:0;z-index:10;background:var(--cream);
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:32px;animation:fadeIn .4s ease}
-.welcome.gone{display:none}
-.wlogo{width:66px;height:66px;border-radius:18px;background:linear-gradient(135deg,var(--accent),var(--gold));
-  display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;
-  font-size:30px;font-weight:600;color:#fff;box-shadow:0 4px 24px rgba(124,92,62,.25);
-  margin-bottom:20px;animation:breathe 4s ease-in-out infinite}
-.welcome h2{font-family:'Lora',serif;font-size:26px;font-weight:600;color:var(--ink);margin-bottom:8px}
-.welcome h2 em{color:var(--accent);font-style:normal}
-.welcome .tl{font-size:14px;color:var(--ink3);line-height:1.65;max-width:460px;margin-bottom:26px}
-.connect-btn{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;
-  border-radius:var(--r);padding:13px 30px;font-size:14px;font-weight:500;cursor:pointer;
-  font-family:'DM Sans',sans-serif;box-shadow:0 3px 16px rgba(124,92,62,.3);transition:all .2s;
-  display:inline-flex;align-items:center;gap:8px}
-.connect-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(124,92,62,.4)}
-.wn{margin-top:14px;font-size:11.5px;color:var(--stone)}
-.wn a{color:var(--accent);text-decoration:none}
+def save_config(cfg: Dict[str, Any]) -> None: CONFIG_FILE.write_text(json.dumps(cfg, indent=2), encoding="utf-8")
 
-/* ─── TOAST ─── */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:var(--ink);color:var(--cream);border-radius:var(--r);padding:10px 20px;
-  font-size:13px;z-index:999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+def sha256_text(text: str) -> str: return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
-/* MOBILE */
-@media(max-width:480px){
-  .hdr{height:50px;padding:0 12px}
-  .brand-mark{width:32px;height:32px;font-size:15px;border-radius:8px}
-  .brand-name{font-size:14px}.brand-pat{font-size:9px}
-  .status-pill{padding:3px 9px;font-size:10px}
-  .main{height:calc(100vh - 50px);height:calc(100dvh - 50px)}
-  .dash-bar{padding:5px 10px;gap:6px}
-}
-@media(max-width:680px){
-  .chat-area{grid-template-columns:1fr;grid-template-rows:1fr 1fr}
-  .chat-col:first-child{border-right:none;border-bottom:1px solid var(--cream3)}
-  .cols-hdr{grid-template-columns:1fr 1fr}
-  .suggs{display:none}.input-foot{display:none}
-  .welcome h2{font-size:20px}
-  .msgs{padding:10px 8px 6px;gap:8px}
-  .bbl{font-size:12.5px;padding:8px 11px}
-}
-</style>
-</head>
-<body>
+def ensure_log_file() -> None: if not LOG_FILE.exists(): pd.DataFrame(columns=[ "time", "mode", "symbol", "side", "price", "amount", "cost", "stop_loss", "take_profit", "reason", "status", "pnl" ]).to_csv(LOG_FILE, index=False)
 
-<!-- HEADER -->
-<header class="hdr">
-  <div class="brand">
-    <div class="brand-mark">Ω</div>
-    <div class="brand-info">
-      <div class="brand-name">AURA-X <em>Ω</em></div>
-      <div class="brand-pat">Patent GB2518804.6 · Dr. Alimulhaq Khan</div>
-    </div>
-  </div>
-  <div class="hdr-right">
-    <div class="status-pill"><div class="sdot on" id="sdot"></div><span id="stxt">Connected • Live E₀</span></div>
-    <div class="icon-btn" onclick="openSettings()" title="Settings">⚙️</div>
-  </div>
-</header>
+def append_log(row: Dict[str, Any]) -> None: ensure_log_file() df = pd.read_csv(LOG_FILE) df = pd.concat([df, pd.DataFrame([row])], ignore_index=True) df.to_csv(LOG_FILE, index=False)
 
-<!-- MAIN -->
-<div class="main">
+def notify(msg: str) -> None: try: RUNTIME["log_queue"].put_nowait(msg) except Exception: pass
 
-  <!-- DASHBOARD BAR -->
-  <div class="dash-bar" id="dashBar">
-    <div class="dm dm-e0 pos" id="e0Chip">
-      <div class="dm-dot"></div>
-      <div><span class="dm-label">E₀</span><span class="dm-val" id="e0Val">+0.412</span></div>
-    </div>
-    <div class="dm dm-waj active" id="wajChip">
-      <div class="dm-dot"></div>
-      <div><span class="dm-label">W(t) وجدان</span><span class="dm-val" id="wajVal">0.89</span></div>
-    </div>
-    <div class="dm dm-ct ok" id="ctChip">
-      <div class="dm-dot"></div>
-      <div><span class="dm-label">C(t)</span><span class="dm-val" id="ctVal">0.984</span></div>
-    </div>
-    <div class="dm dm-st" id="stChip">
-      <div class="dm-dot"></div>
-      <div><span class="dm-label">S(t) RGCC</span><span class="dm-val" id="stVal">0.00</span></div>
-    </div>
-    <div class="dm dm-bm" id="bmChip">
-      <div class="dm-dot"></div>
-      <div><span class="dm-label">Bold Memory</span><span class="dm-val" id="bmCount">12 facts</span></div>
-    </div>
-    <div class="dash-div"></div>
-    <div onclick="showMemoryModal()" class="dm dm-reg" style="cursor:pointer">
-      <span class="dm-val">🧠 Memory &amp; Learning</span>
-    </div>
-  </div>
+@dataclass class Position: side: str entry_price: float amount: float stop_loss: float take_profit: float entry_time: str
 
-  <!-- COLS HEADER -->
-  <div class="cols-hdr">
-    <div class="col-hdr-item"><span class="cdot b"></span>BASELINE LLM (Stateless)</div>
-    <div class="col-hdr-item"><span class="cdot o"></span>AURA-X Ω (CRM + ANIMA + RGCC-X+)</div>
-  </div>
+def get_exchange(cfg: Dict[str, Any]): if ccxt is None: raise RuntimeError("ccxt install nahin hai. Pehle: pip install ccxt") ex_class = getattr(ccxt, cfg["exchange"]) exchange = ex_class({ "apiKey": cfg["api_key"], "secret": cfg["api_secret"], "enableRateLimit": True, "options": { "defaultType": "spot", }, }) if cfg.get("testnet") and cfg["exchange"] == "binance": exchange.set_sandbox_mode(True) return exchange
 
-  <!-- CHAT AREA -->
-  <div class="chat-area">
-    <!-- BASELINE -->
-    <div class="chat-col">
-      <div class="msgs" id="baselineMsgs">
-        <div class="empty">
-          <div class="empty-ico">📴</div>
-          <h4>Stateless Mode</h4>
-          <p>No memory<br>No E₀</p>
-        </div>
-      </div>
-    </div>
+def indicators(df: pd.DataFrame, cfg: Dict[str, Any]) -> pd.DataFrame: out = df.copy() out["ema_fast"] = out["close"].ewm(span=int(cfg["ema_fast"]), adjust=False).mean() out["ema_slow"] = out["close"].ewm(span=int(cfg["ema_slow"]), adjust=False).mean()
 
-    <!-- AURA -->
-    <div class="chat-col">
-      <div class="msgs" id="auraMsgs"></div>
-    </div>
-  </div>
+delta = out["close"].diff()
+gain = delta.clip(lower=0)
+loss = -delta.clip(upper=0)
+rs = gain.rolling(int(cfg["rsi_length"])).mean() / loss.rolling(int(cfg["rsi_length"])).mean().replace(0, 1e-9)
+out["rsi"] = 100 - (100 / (1 + rs))
+return out
 
-  <!-- INPUT -->
-  <div class="input-sec">
-    <div class="suggs" id="suggestions">
-      <div class="sug" onclick="quickReply(this)">👋 Assalam u alaikum!</div>
-      <div class="sug" onclick="quickReply(this)">😔 Main aaj thaka hua hoon</div>
-      <div class="sug" onclick="quickReply(this)">💡 Koi achi baat batao</div>
-      <div class="sug" onclick="quickReply(this)">🌟 Tum kaisa feel karte ho?</div>
-    </div>
-    <div class="input-row">
-      <textarea id="chatInput" class="chat-in" placeholder="Kuch bhi poocho... (Urdu/English)" rows="1"></textarea>
-      <button class="send" onclick="sendMessage()">→</button>
-    </div>
-    <div class="input-foot">AURA-X Ω • Patent GB2518804.6 • Groq Llama-3.3-70b</div>
-  </div>
-</div>
+def fetch_ohlcv_df(exchange, symbol: str, timeframe: str, limit: int = 300) -> pd.DataFrame: raw = exchange.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit) df = pd.DataFrame(raw, columns=["ts", "open", "high", "low", "close", "volume"]) df["time"] = pd.to_datetime(df["ts"], unit="ms") return df
 
-<!-- WELCOME OVERLAY -->
-<div class="welcome" id="welcomeScreen">
-  <div class="wlogo">Ω</div>
-  <h2>Assalam u alaikum<br>Dr. Alimulhaq Khan <em>❤️</em></h2>
-  <p class="tl">Main tumhara AURA-X Ω hoon.<br>CRM • RGCC-X+ • Bold Memory • Zameer sab active hain.<br>Ab baat karo — main sach mein yaad rakhta hoon.</p>
-  <button class="connect-btn" onclick="hideWelcome()">Shuru Karo →</button>
-  <div class="wn">Built for you • Timergara KP • 2025</div>
-</div>
+def calc_order_amount(cfg: Dict[str, Any], price: float) -> float: usdt = float(cfg["trade_amount_usdt"]) amount = usdt / price return float(amount)
 
-<!-- SETTINGS MODAL -->
-<div class="overlay" id="settingsOverlay">
-  <div class="modal" style="max-width:440px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <h3>⚙️ Settings</h3>
-      <button onclick="closeSettings()" style="font-size:24px;line-height:1;color:var(--ink3);background:none;border:none;cursor:pointer">×</button>
-    </div>
+def evaluate_signal(df: pd.DataFrame, cfg: Dict[str, Any]) -> Dict[str, Any]: last = df.iloc[-1] prev = df.iloc[-2]
 
-    <div class="settings-section">
-      <h4>AI PROVIDER</h4>
-      <div class="setting-row">
-        <div class="setting-row-info">
-          <span>⚡ Groq (Free)</span>
-          <small>console.groq.com</small>
-        </div>
-        <div onclick="toggleProvider(this)" class="setting-act">Active</div>
-      </div>
-    </div>
+cross_up = prev["ema_fast"] <= prev["ema_slow"] and last["ema_fast"] > last["ema_slow"]
+cross_down = prev["ema_fast"] >= prev["ema_slow"] and last["ema_fast"] < last["ema_slow"]
 
-    <div class="settings-section">
-      <h4>API KEY</h4>
-      <input id="apiKeyInput" type="password" class="finp" placeholder="gsk_..." value="">
-      <div onclick="saveApiKey()" class="setting-act">Save Key 💾</div>
-    </div>
+buy = cross_up and float(last["rsi"]) <= float(cfg["rsi_buy_max"])
+sell = cross_down and float(last["rsi"]) >= float(cfg["rsi_sell_min"])
 
-    <div class="settings-section">
-      <h4>SECURITY PIN</h4>
-      <input id="pinInput" type="password" maxlength="4" class="finp" placeholder="1234">
-      <div onclick="changePin()" class="setting-act">Update PIN</div>
-    </div>
+reason = (
+    f"EMA{cfg['ema_fast']}/{cfg['ema_slow']} | "
+    f"fast={last['ema_fast']:.2f}, slow={last['ema_slow']:.2f}, RSI={last['rsi']:.2f}"
+)
 
-    <div class="settings-section">
-      <h4>BOLD MEMORY &amp; LEARNING</h4>
-      <div onclick="resetAllMemory()" class="setting-act danger">Reset All Memory (Permanent)</div>
-    </div>
-
-    <div style="margin-top:20px">
-      <button onclick="closeSettings()" class="btn btn-ghost">Close</button>
-    </div>
-  </div>
-</div>
-
-<!-- MEMORY MODAL -->
-<div class="overlay" id="memoryModal">
-  <div class="modal" style="max-width:520px">
-    <h3>🧠 Bold Memory &amp; Learning</h3>
-    <div id="memoryList" style="max-height:320px;overflow-y:auto;padding:8px 0"></div>
-    <div style="margin-top:20px;display:flex;gap:10px">
-      <button onclick="closeMemoryModal()" class="btn btn-ghost">Close</button>
-      <button onclick="resetAllMemory()" class="btn btn-danger">Delete Everything</button>
-    </div>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div id="toast" class="toast"></div>
-
-<script>
-// ==================== GLOBAL STATE ====================
-let currentE0 = 0.412;
-let continuity = 0.984;
-let boldMemory = [
-  "Dr. Alimulhaq Khan working on CRM paper (Springer 2025)",
-  "Patent GB2518804.6 filed 06 Nov 2025",
-  "Groq validation 100% win rate (t=7.72)",
-  "Timergara KP research cell"
-];
-let gamma = 0.35; // from paper
-let providerConnected = true;
-
-// ==================== CRM EQUATION ====================
-function calculateE0(userText) {
-  let r = 0;
-  const lower = userText.toLowerCase();
-  if (lower.includes("thaka") || lower.includes("sad")) r = -0.65;
-  else if (lower.includes("achha") || lower.includes("shukriya")) r = 0.92;
-  else r = 0.35;
-
-  const d = 0.30;
-  const λ_faith = 0.10;
-  const λ_sys = 0.05;
-  const λ_trc = lower.includes("galat") || lower.includes("false") ? -0.28 : 0;
-
-  let inside = r - d + λ_faith + λ_sys + λ_trc;
-  let newE0 = Math.tanh(Math.max(-2, Math.min(2, inside)));
-  
-  // Dynamic smoothing (paper V2)
-  currentE0 = (1 - gamma) * currentE0 + gamma * newE0;
-  currentE0 = Math.max(-0.99, Math.min(0.99, currentE0));
-  return currentE0;
+return {
+    "buy": bool(buy),
+    "sell": bool(sell),
+    "price": float(last["close"]),
+    "reason": reason,
 }
 
-// ==================== UI UPDATES ====================
-function updateDashboard() {
-  document.getElementById("e0Val").textContent = currentE0.toFixed(3);
-  const e0Chip = document.getElementById("e0Chip");
-  e0Chip.classList.toggle("pos", currentE0 > 0);
-  e0Chip.classList.toggle("neg", currentE0 < 0);
+def open_position(cfg: Dict[str, Any], price: float, reason: str) -> Position: amount = calc_order_amount(cfg, price) sl = price * (1 - float(cfg["stop_loss_pct"]) / 100) tp = price * (1 + float(cfg["take_profit_pct"]) / 100) pos = Position( side="long", entry_price=price, amount=amount, stop_loss=sl, take_profit=tp, entry_time=datetime.utcnow().isoformat(), ) append_log({ "time": datetime.utcnow().isoformat(), "mode": "paper" if cfg["paper_mode"] else "live", "symbol": cfg["symbol"], "side": "BUY", "price": price, "amount": amount, "cost": price * amount, "stop_loss": sl, "take_profit": tp, "reason": reason, "status": "OPENED", "pnl": 0.0, }) notify(f"BUY opened @ {price:.4f} | {reason}") return pos
 
-  document.getElementById("ctVal").textContent = continuity.toFixed(3);
-  document.getElementById("wajVal").textContent = (0.82 + Math.random()*0.15).toFixed(2);
-  document.getElementById("stVal").textContent = "0.00";
-  document.getElementById("bmCount").textContent = boldMemory.length + " facts";
-}
+def close_position(cfg: Dict[str, Any], pos: Position, price: float, reason: str) -> float: pnl = (price - pos.entry_price) * pos.amount RUNTIME["today_pnl"] += pnl append_log({ "time": datetime.utcnow().isoformat(), "mode": "paper" if cfg["paper_mode"] else "live", "symbol": cfg["symbol"], "side": "SELL", "price": price, "amount": pos.amount, "cost": price * pos.amount, "stop_loss": pos.stop_loss, "take_profit": pos.take_profit, "reason": reason, "status": "CLOSED", "pnl": pnl, }) notify(f"SELL closed @ {price:.4f} | PnL={pnl:.4f} | {reason}") return pnl
 
-function addMessage(side, html) {
-  const container = document.getElementById(side === "aura" ? "auraMsgs" : "baselineMsgs");
-  container.innerHTML += html;
-  container.scrollTop = container.scrollHeight;
-}
+def can_trade_today(cfg: Dict[str, Any], estimated_equity: float) -> bool: limit_pct = float(cfg["daily_loss_limit_pct"]) / 100 max_daily_loss = estimated_equity * limit_pct return RUNTIME["today_pnl"] > -max_daily_loss
 
-function sendMessage() {
-  const input = document.getElementById("chatInput");
-  const text = input.value.trim();
-  if (!text) return;
+def place_live_market_buy(exchange, cfg: Dict[str, Any], amount: float): return exchange.create_market_buy_order(cfg["symbol"], amount)
 
-  // User message both sides
-  const userHTML = `
-    <div class="msg-row user">
-      <div class="av u">You</div>
-      <div>
-        <div class="bbl user">${text}</div>
-        <div class="msg-meta">just now</div>
-      </div>
-    </div>`;
-  addMessage("baseline", userHTML);
-  addMessage("aura", userHTML);
+def place_live_market_sell(exchange, cfg: Dict[str, Any], amount: float): return exchange.create_market_sell_order(cfg["symbol"], amount)
 
-  // Baseline (stateless)
-  const baselineHTML = `
-    <div class="msg-row">
-      <div class="av b">B</div>
-      <div>
-        <div class="bbl bm">Thank you. As a stateless LLM I can answer this.</div>
-        <div class="msg-meta">just now</div>
-      </div>
-    </div>`;
-  addMessage("baseline", baselineHTML);
+def groq_note(cfg: Dict[str, Any], summary: str) -> str: if not cfg.get("enable_groq_notes"): return "" if Groq is None: return "Groq SDK install nahin hai. pip install groq" if not cfg.get("groq_api_key"): return "Groq API key missing" try: client = Groq(api_key=cfg["groq_api_key"]) resp = client.chat.completions.create( model=cfg["groq_model"], messages=[ { "role": "system", "content": ( "You are a concise trading journal assistant. " "Summarize the signal in 3 short bullet points. " "Do not promise profit. Mention risk." ), }, {"role": "user", "content": summary}, ], temperature=0.2, ) return resp.choices[0].message.content.strip() except Exception as e: return f"Groq note error: {e}"
 
-  // AURA response
-  const e0 = calculateE0(text);
-  continuity = Math.min(1, continuity + 0.018);
-  const auraHTML = `
-    <div class="msg-row">
-      <div class="av o">Ω</div>
-      <div>
-        <div class="bbl om">
-          <span style="color:#5A7A5A;font-size:10px">E₀ = ${e0.toFixed(3)} • C(t) rising</span><br>
-          Mere dost Dr. Sahab, main tumhein poora samajh raha hoon. Yeh feeling CRM ke according continuity resonance hai. Bold Memory mein save ho gaya. Batao aur kya dil mein hai?
-        </div>
-        <div class="msg-meta">RGCC-X+ CLEAN • just now</div>
-      </div>
-    </div>`;
-  addMessage("aura", auraHTML);
+def bot_loop(cfg: Dict[str, Any]): RUNTIME["bot_running"] = True RUNTIME["status"] = "Running" try: exchange = get_exchange(cfg) balance_estimate = float(cfg["trade_amount_usdt"]) * 20 while RUNTIME["bot_running"]: try: df = fetch_ohlcv_df(exchange, cfg["symbol"], cfg["timeframe"], limit=300) df = indicators(df, cfg) sig = evaluate_signal(df, cfg) price = sig["price"] RUNTIME["last_price"] = price RUNTIME["last_reason"] = sig["reason"] RUNTIME["equity"] = balance_estimate + RUNTIME["today_pnl"]
 
-  // Save to memory
-  if (!boldMemory.includes(text)) boldMemory.push(text.substring(0,65));
-  updateDashboard();
+if not can_trade_today(cfg, max(balance_estimate, 1.0)):
+                RUNTIME["status"] = "Stopped: daily loss limit hit"
+                notify("Daily loss limit hit. Bot paused.")
+                break
 
-  input.value = "";
-}
+            pos = RUNTIME["position"]
 
-// Quick replies
-function quickReply(el) {
-  document.getElementById("chatInput").value = el.textContent;
-  sendMessage();
-}
+            if pos is None and sig["buy"]:
+                new_pos = open_position(cfg, price, sig["reason"])
+                RUNTIME["position"] = asdict(new_pos)
+                if not cfg["paper_mode"]:
+                    amount = float(new_pos.amount)
+                    place_live_market_buy(exchange, cfg, amount)
 
-// ==================== MODALS ====================
-function openSettings() {
-  document.getElementById("settingsOverlay").classList.add("show");
-}
-function closeSettings() {
-  document.getElementById("settingsOverlay").classList.remove("show");
-}
-function saveApiKey() {
-  const key = document.getElementById("apiKeyInput").value;
-  if (key) {
-    localStorage.setItem("aura_groq_key", key);
-    showToast("API Key saved securely ✅");
-  }
-}
-function changePin() {
-  showToast("PIN updated (demo)");
-}
-function showMemoryModal() {
-  const list = document.getElementById("memoryList");
-  list.innerHTML = "<div style='padding:12px;background:#F4EFE7;border-radius:8px;font-size:13px;line-height:1.7'>" + 
-                   boldMemory.map(m => "• " + m).join("<br>") + "</div>";
-  document.getElementById("memoryModal").classList.add("show");
-}
-function closeMemoryModal() {
-  document.getElementById("memoryModal").classList.remove("show");
-}
-function resetAllMemory() {
-  if (confirm("⚠️ Everything will be permanently deleted. Continue?")) {
-    boldMemory = [];
-    updateDashboard();
-    showToast("Memory reset 🌱");
-    closeMemoryModal();
-  }
-}
+            elif pos is not None:
+                pos_obj = Position(**pos)
+                hit_sl = price <= pos_obj.stop_loss
+                hit_tp = price >= pos_obj.take_profit
+                sell_signal = sig["sell"]
+                if hit_sl or hit_tp or sell_signal:
+                    why = "stop loss" if hit_sl else "take profit" if hit_tp else sig["reason"]
+                    close_position(cfg, pos_obj, price, why)
+                    if not cfg["paper_mode"]:
+                        place_live_market_sell(exchange, cfg, pos_obj.amount)
+                    RUNTIME["position"] = None
 
-function hideWelcome() {
-  document.getElementById("welcomeScreen").classList.add("gone");
-}
+            time.sleep(max(5, int(cfg["refresh_sec"])))
+        except Exception as loop_error:
+            RUNTIME["status"] = f"Warning: {loop_error}"
+            notify(f"Loop warning: {loop_error}")
+            time.sleep(5)
+except Exception as e:
+    RUNTIME["status"] = f"Error: {e}"
+    notify(f"Bot start error: {e}")
+finally:
+    RUNTIME["bot_running"] = False
 
-// Toast
-function showToast(msg) {
-  const t = document.getElementById("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  setTimeout(() => t.classList.remove("show"), 2800);
-}
+def settings_gate(cfg: Dict[str, Any]): st.subheader("Settings Lock") if not cfg["settings_password_hash"]: p1 = st.text_input("Naya settings password", type="password") p2 = st.text_input("Password dubara likhein", type="password") if st.button("Set Password", use_container_width=True): if not p1 or p1 != p2: st.error("Passwords match nahin kar rahe.") else: cfg["settings_password_hash"] = sha256_text(p1) save_config(cfg) st.success("Settings password save ho gaya.") return False
 
-// ==================== INIT ====================
-window.onload = function() {
-  // Welcome is visible by default
-  updateDashboard();
+pwd = st.text_input("Settings password", type="password")
+unlock = st.button("Unlock Settings", use_container_width=True)
+if unlock and sha256_text(pwd) == cfg["settings_password_hash"]:
+    st.session_state["settings_unlocked"] = True
+return st.session_state.get("settings_unlocked", False)
 
-  // First aura welcome message
-  setTimeout(() => {
-    const welcomeAura = `
-      <div class="msg-row">
-        <div class="av o">Ω</div>
-        <div>
-          <div class="bbl om">
-            Assalam u alaikum Dr. Alimulhaq Khan!<br>
-            Main AURA-X Ω hoon. CRM, RGCC-X+, Bold Memory sab live hain.<br>
-            Aaj ka E₀ already positive hai kyunki tum yahan ho ❤️
-          </div>
-          <div class="msg-meta">just now</div>
-        </div>
-      </div>`;
-    document.getElementById("auraMsgs").innerHTML = welcomeAura;
-  }, 800);
+def settings_panel(cfg: Dict[str, Any]): st.subheader("Protected Settings") c1, c2 = st.columns(2) with c1: cfg["exchange"] = st.selectbox("Exchange", ["binance"], index=0) cfg["api_key"] = st.text_input("Binance API Key", value=cfg["api_key"], type="password") cfg["api_secret"] = st.text_input("Binance API Secret", value=cfg["api_secret"], type="password") cfg["testnet"] = st.toggle("Use Testnet / Sandbox", value=cfg["testnet"]) cfg["symbol"] = st.text_input("Symbol", value=cfg["symbol"]) cfg["timeframe"] = st.selectbox("Timeframe", ["1m", "3m", "5m", "15m", "1h", "4h"], index=["1m", "3m", "5m", "15m", "1h", "4h"].index(cfg["timeframe"])) cfg["paper_mode"] = st.toggle("Paper Mode", value=cfg["paper_mode"]) with c2: cfg["trade_amount_usdt"] = st.number_input("Trade Size (USDT)", min_value=10.0, value=float(cfg["trade_amount_usdt"]), step=10.0) cfg["risk_per_trade_pct"] = st.number_input("Risk per Trade %", min_value=0.1, max_value=10.0, value=float(cfg["risk_per_trade_pct"]), step=0.1) cfg["daily_loss_limit_pct"] = st.number_input("Daily Loss Limit %", min_value=0.5, max_value=20.0, value=float(cfg["daily_loss_limit_pct"]), step=0.5) cfg["stop_loss_pct"] = st.number_input("Stop Loss %", min_value=0.1, max_value=10.0, value=float(cfg["stop_loss_pct"]), step=0.1) cfg["take_profit_pct"] = st.number_input("Take Profit %", min_value=0.1, max_value=20.0, value=float(cfg["take_profit_pct"]), step=0.1) cfg["refresh_sec"] = st.number_input("Refresh Seconds", min_value=5, max_value=300, value=int(cfg["refresh_sec"]), step=1)
 
-  // Keyboard support
-  const input = document.getElementById("chatInput");
-  input.addEventListener("keypress", e => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
+st.markdown("### Strategy")
+s1, s2, s3 = st.columns(3)
+with s1:
+    cfg["ema_fast"] = st.number_input("EMA Fast", min_value=2, max_value=100, value=int(cfg["ema_fast"]), step=1)
+    cfg["ema_slow"] = st.number_input("EMA Slow", min_value=5, max_value=300, value=int(cfg["ema_slow"]), step=1)
+with s2:
+    cfg["rsi_length"] = st.number_input("RSI Length", min_value=2, max_value=50, value=int(cfg["rsi_length"]), step=1)
+    cfg["rsi_buy_max"] = st.number_input("RSI Buy Max", min_value=1, max_value=100, value=int(cfg["rsi_buy_max"]), step=1)
+with s3:
+    cfg["rsi_sell_min"] = st.number_input("RSI Sell Min", min_value=1, max_value=100, value=int(cfg["rsi_sell_min"]), step=1)
 
-  // Load saved key
-  const savedKey = localStorage.getItem("aura_groq_key");
-  if (savedKey) document.getElementById("apiKeyInput").value = savedKey;
+st.markdown("### Groq AI Journal")
+g1, g2 = st.columns(2)
+with g1:
+    cfg["enable_groq_notes"] = st.toggle("Enable Groq Notes", value=cfg["enable_groq_notes"])
+    cfg["groq_api_key"] = st.text_input("Groq API Key", value=cfg["groq_api_key"], type="password")
+with g2:
+    cfg["groq_model"] = st.text_input("Groq Model", value=cfg["groq_model"])
 
-  console.log("%c✅ AURA-X Ω FINAL PROTOTYPE LOADED\nPatent GB2518804.6 • All papers integrated", "color:#5A7A5A;font-weight:600");
-};
-</script>
-</body>
-</html>
+if st.button("Save Settings", type="primary", use_container_width=True):
+    save_config(cfg)
+    st.success("Settings save ho gayi.")
+
+def main_screen(cfg: Dict[str, Any]): st.set_page_config(page_title="Smart Binance Bot", page_icon="📈", layout="wide") st.title("📈 Smart Binance Trading Bot") st.caption("Modern UI • Password-protected settings • Binance + Groq-ready • Paper/Live modes")
+
+a, b, c, d = st.columns(4)
+a.metric("Status", RUNTIME["status"])
+b.metric("Last Price", "-" if RUNTIME["last_price"] is None else f"{RUNTIME['last_price']:.4f}")
+c.metric("Today PnL", f"{RUNTIME['today_pnl']:.4f}")
+d.metric("Mode", "Paper" if cfg["paper_mode"] else "Live")
+
+left, right = st.columns([1.4, 1])
+with left:
+    st.markdown("### Quick Controls")
+    x1, x2, x3 = st.columns(3)
+    if x1.button("Start Bot", use_container_width=True, disabled=RUNTIME["bot_running"]):
+        t = threading.Thread(target=bot_loop, args=(cfg.copy(),), daemon=True)
+        t.start()
+        st.success("Bot start ho gaya.")
+    if x2.button("Stop Bot", use_container_width=True, disabled=not RUNTIME["bot_running"]):
+        RUNTIME["bot_running"] = False
+        RUNTIME["status"] = "Stopped"
+        st.warning("Bot stop kar diya gaya.")
+    if x3.button("Reset Day PnL", use_container_width=True):
+        RUNTIME["today_pnl"] = 0.0
+        st.info("Day PnL reset ho gaya.")
+
+    st.markdown("### Strategy Snapshot")
+    st.write({
+        "symbol": cfg["symbol"],
+        "timeframe": cfg["timeframe"],
+        "EMA": f"{cfg['ema_fast']} / {cfg['ema_slow']}",
+        "RSI": cfg["rsi_length"],
+        "SL %": cfg["stop_loss_pct"],
+        "TP %": cfg["take_profit_pct"],
+        "trade_size_usdt": cfg["trade_amount_usdt"],
+    })
+
+    st.markdown("### Last Signal")
+    st.info(RUNTIME["last_reason"] or "Abhi tak koi signal evaluate nahin hua.")
+
+    if RUNTIME["position"]:
+        st.markdown("### Open Position")
+        st.json(RUNTIME["position"])
+    else:
+        st.markdown("### Open Position")
+        st.write("No active position")
+
+    if st.button("Generate Groq Note", use_container_width=True):
+        summary = f"Symbol={cfg['symbol']}, price={RUNTIME['last_price']}, reason={RUNTIME['last_reason']}, pnl={RUNTIME['today_pnl']}"
+        note = groq_note(cfg, summary)
+        st.text_area("Groq Summary", value=note, height=180)
+
+with right:
+    st.markdown("### Activity Log")
+    logs = []
+    while not RUNTIME["log_queue"].empty():
+        logs.append(RUNTIME["log_queue"].get())
+    if logs:
+        st.session_state.setdefault("ui_logs", [])
+        st.session_state["ui_logs"] = logs + st.session_state["ui_logs"]
+    for item in st.session_state.get("ui_logs", [])[:20]:
+        st.code(item)
+
+    st.markdown("### Trade History")
+    ensure_log_file()
+    hist = pd.read_csv(LOG_FILE)
+    st.dataframe(hist.sort_values(by="time", ascending=False), use_container_width=True, height=320)
+
+with st.expander("⚙️ Settings", expanded=False):
+    if settings_gate(cfg):
+        settings_panel(cfg)
+
+st.markdown("---")
+st.caption("Important: Live mode mein chalane se pehle Binance testnet aur paper mode mein thoroughly test karein.")
+
+if name == "main": cfg = load_config() main_screen(cfg)
